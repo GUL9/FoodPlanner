@@ -31,7 +31,15 @@ class Storage {
 
 
 
+          //await db.execute("PRAGMA foreign_keys = OFF");
+          //await db.execute("DROP TABLE recipes");
+          //await db.execute("DROP TABLE ingredients");
+          //await db.execute("DROP TABLE plans");
+          //await db.execute("DROP TABLE recipe_ingredients");
+          //await db.execute("DROP TABLE shoppinglists");
+
           await db.execute("PRAGMA foreign_keys = ON");
+
 
 
           await db.execute("CREATE TABLE IF NOT EXISTS recipes"

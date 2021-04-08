@@ -10,7 +10,7 @@ class Ingredient {
   Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'name': name,
+      'name': name.toLowerCase(),
     };
   }
 

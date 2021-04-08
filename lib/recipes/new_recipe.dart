@@ -1,4 +1,7 @@
+import 'dart:async';
+import 'dart:ffi';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,6 +17,8 @@ import 'package:grocerylister/util/globals.dart' as globals;
 import 'package:grocerylister/util/util.dart' as utils;
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 
+import 'dart:developer' as developer;
+
 class NewRecipeWidget extends StatefulWidget {
   @override
   NewRecipeWidgetState createState() => NewRecipeWidgetState();
@@ -22,7 +27,6 @@ class NewRecipeWidget extends StatefulWidget {
 class NewRecipeWidgetState extends State<NewRecipeWidget> {
   stt.SpeechToText speechToText = stt.SpeechToText();
   bool isListening = false;
-  String speechInput = "";
   double confidence;
 
   List recipeIngredients = [];
@@ -32,18 +36,19 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
   List<String> units = [];
 
   Future<Recipe> saveRecipe() async {
-    int entryID = UniqueKey().hashCode;
     int recipeID = UniqueKey().hashCode;
     String recipeName = recipeNameController.text;
     Recipe recipe = Recipe(recipeID, recipeName);
 
     for (int i = 0; i < recipeIngredients.length; i++) {
+      int entryID = UniqueKey().hashCode;
+
       int ingredientID = UniqueKey().hashCode;
       String ingredientName = ingredientNameControllers[i].text;
       Ingredient ingredient = Ingredient(ingredientID, ingredientName);
 
-      String unit = units[i] == null ? Unit.unit.unitToString() : units[i];
       double quantity = double.parse(ingredientQuantityControllers[i].text);
+      String unit = units[i] == null ? Unit.unit.unitToString() : units[i];
       await Storage.instance.insertRecipeIngredient(RecipeIngredient(entryID, recipe, ingredient, unit, quantity));
     }
     return recipe;
@@ -180,7 +185,15 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                           label: Icon(isListening ? Icons.emoji_emotions_outlined : Icons.mic),
                           heroTag: null,
                           onPressed: () async {
-                            listenToSpeech();
+                            StreamController speechStream = StreamController();
+                            speechStream.stream.listen((speechInput) async {
+                              if(recipeNameController.text.isEmpty)
+                                recipeNameController.text = speechInput;
+                              else
+                                queryNLPserver(speechInput);
+                              speechStream.close();
+                            });
+                            await listenToSpeech(speechStream);
                           }))),
               Align(
                   alignment: Alignment.bottomRight,
@@ -198,21 +211,59 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
         ]));
   }
 
-  void listenToSpeech() async {
+  Future<void> queryNLPserver(String languageToProcess) async {
+    final address = InternetAddress('78.70.59.52');
+    final socket = await Socket.connect(address, 1337).timeout(Duration(milliseconds: 3000));
+    socket.writeln(languageToProcess);
+    socket.listen(
+      (Uint8List data) {
+        String ingredientTokens = String.fromCharCodes(data);
+        List<String> tokens = ingredientTokens.split(',');
+
+        TextEditingController name = TextEditingController();
+        name.text = tokens[0];
+
+        TextEditingController quantity = TextEditingController();
+        quantity.text = tokens[1];
+
+        String unit = Unit.unit.getUnitsAsStrings().contains(tokens[2]) ? tokens[2] : null;
+
+        setState(() {
+          ingredientNameControllers.add(name);
+          ingredientQuantityControllers.add(quantity);
+          units.add(unit);
+          recipeIngredients.add(RecipeIngredient(null, null, null, null, null));
+        });
+      },
+      onError: (error) {
+        developer.log("Error on connecting to NLP server");
+        socket.destroy();
+      },
+      onDone: () {
+        developer.log("Received data from NLP server");
+        socket.destroy();
+      });
+  }
+
+  Future<void> listenToSpeech(StreamController speechStream) async {
     if (!isListening) {
       bool available = await speechToText.initialize(
-        onStatus: (status) => print(status),
-        onError: (error) => print(error),
+        onStatus: (status) => developer.log(status),
+        onError: (error) => developer.log(error.errorMsg),
       );
       if (available) {
         setState(() => isListening = true);
-        speechToText.listen(
+        await speechToText.listen(
           cancelOnError: true,
-          onResult: (input) => setState(() {
-            speechInput = input.recognizedWords;
-            isListening = false;
-          }),
-        );
+          onResult: (input){
+            if(input.finalResult){
+              setState(() {
+                isListening = false;
+                speechToText.stop();
+                speechStream.sink.add(input.recognizedWords);
+              });
+            }
+          });
       }
     }else{
       speechToText.stop();
