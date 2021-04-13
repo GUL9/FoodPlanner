@@ -27,7 +27,6 @@ class NewRecipeWidget extends StatefulWidget {
 class NewRecipeWidgetState extends State<NewRecipeWidget> {
   stt.SpeechToText speechToText = stt.SpeechToText();
   bool isListening = false;
-  double confidence;
 
   List recipeIngredients = [];
   TextEditingController recipeNameController = TextEditingController();
@@ -91,7 +90,7 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
             child: DropdownButtonFormField(
               decoration: const InputDecoration.collapsed(),
               hint: Text(Strings.unit),
-              value: units[index] == null ? Strings.unit.toLowerCase() : units[index],
+              value: units[index] == null ? Unit.unit.unitToString() : units[index],
               onChanged: (newValue) {
                 setState(() {
                   units[index] = newValue;
@@ -190,7 +189,7 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                               if(recipeNameController.text.isEmpty)
                                 recipeNameController.text = speechInput;
                               else
-                                queryNLPserver(speechInput);
+                                await globals.nlpServerComm.requestForIngredient(speechInput, handleParsedIngredient);
                               speechStream.close();
                             });
                             await listenToSpeech(speechStream);
@@ -211,38 +210,23 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
         ]));
   }
 
-  Future<void> queryNLPserver(String languageToProcess) async {
-    final address = InternetAddress('78.70.59.52');
-    final socket = await Socket.connect(address, 1337).timeout(Duration(milliseconds: 3000));
-    socket.writeln(languageToProcess);
-    socket.listen(
-      (Uint8List data) {
-        String ingredientTokens = String.fromCharCodes(data);
-        List<String> tokens = ingredientTokens.split(',');
+  void handleParsedIngredient(List ingredientTokens){
 
-        TextEditingController name = TextEditingController();
-        name.text = tokens[0];
+    TextEditingController name = TextEditingController();
+    TextEditingController quantity = TextEditingController();
+    String unit = '';
 
-        TextEditingController quantity = TextEditingController();
-        quantity.text = tokens[1];
+    name.text = ingredientTokens[0];
+    quantity.text = ingredientTokens[1];
+    unit = Unit.unit.getUnitsAsStrings().contains(ingredientTokens[2]) ? ingredientTokens[2] : null;
 
-        String unit = Unit.unit.getUnitsAsStrings().contains(tokens[2]) ? tokens[2] : null;
+    setState(() {
+      ingredientNameControllers.add(name);
+      ingredientQuantityControllers.add(quantity);
+      units.add(unit);
+      recipeIngredients.add(RecipeIngredient(null, null, null, null, null));
+    });
 
-        setState(() {
-          ingredientNameControllers.add(name);
-          ingredientQuantityControllers.add(quantity);
-          units.add(unit);
-          recipeIngredients.add(RecipeIngredient(null, null, null, null, null));
-        });
-      },
-      onError: (error) {
-        developer.log("Error on connecting to NLP server");
-        socket.destroy();
-      },
-      onDone: () {
-        developer.log("Received data from NLP server");
-        socket.destroy();
-      });
   }
 
   Future<void> listenToSpeech(StreamController speechStream) async {
@@ -251,10 +235,14 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
         onStatus: (status) => developer.log(status),
         onError: (error) => developer.log(error.errorMsg),
       );
+
+
       if (available) {
         setState(() => isListening = true);
+        List locales = await speechToText.locales();
         await speechToText.listen(
           cancelOnError: true,
+          localeId: locales.firstWhere((locale) => locale.name.contains("USA")).localeId,
           onResult: (input){
             if(input.finalResult){
               setState(() {

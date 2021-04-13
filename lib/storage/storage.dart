@@ -40,8 +40,6 @@ class Storage {
 
           await db.execute("PRAGMA foreign_keys = ON");
 
-
-
           await db.execute("CREATE TABLE IF NOT EXISTS recipes"
               "("
               "id INTEGER PRIMARY KEY,"
@@ -87,70 +85,6 @@ class Storage {
               ")"
           );
           await db.execute("CREATE TABLE IF NOT EXISTS shoppinglists"
-              "("
-              "id INTEGER PRIMARY KEY,"
-              "date TEXT,"
-              "planID INTEGER,"
-              "ingredientID INTEGER,"
-              "unit TEXT,"
-              "quantity REAL,"
-              "isBought INTEGER,"
-              "FOREIGN KEY(planID) REFERENCES plans(id) ON DELETE CASCADE,"
-              "FOREIGN KEY(ingredientID) REFERENCES ingredients(id)"
-              ")"
-          );
-
-        },
-        onCreate: (Database db, int version) async {
-
-          await db.execute("PRAGMA foreign_keys = ON");
-
-          await db.execute("CREATE TABLE recipes"
-              "("
-              "id INTEGER PRIMARY KEY,"
-              "name TEXT"
-              ")"
-          );
-
-          await db.execute("CREATE TABLE ingredients"
-              "("
-              "id INTEGER PRIMARY KEY,"
-              "name TEXT"
-              ")"
-          );
-
-          await db.execute("CREATE TABLE  plans"
-              "("
-              "id INTEGER PRIMARY KEY,"
-              "date TEXT,"
-              "monday INTEGER,"
-              "tuesday INTEGER,"
-              "wednesday INTEGER,"
-              "thursday INTEGER,"
-              "friday INTEGER,"
-              "saturday INTEGER,"
-              "sunday INTEGER,"
-              "FOREIGN KEY(monday) REFERENCES recipes(id) ON DELETE CASCADE,"
-              "FOREIGN KEY(tuesday) REFERENCES recipes(id) ON DELETE CASCADE,"
-              "FOREIGN KEY(wednesday) REFERENCES recipes(id) ON DELETE CASCADE,"
-              "FOREIGN KEY(thursday) REFERENCES recipes(id) ON DELETE CASCADE,"
-              "FOREIGN KEY(friday) REFERENCES recipes(id) ON DELETE CASCADE,"
-              "FOREIGN KEY(saturday) REFERENCES recipes(id) ON DELETE CASCADE,"
-              "FOREIGN KEY(sunday) REFERENCES recipes(id) ON DELETE CASCADE"
-              ")"
-          );
-          await db.execute("CREATE TABLE recipe_ingredients"
-              "("
-              "id INTEGER PRIMARY KEY,"
-              "recipeID INTEGER,"
-              "ingredientID INTEGER,"
-              "unit TEXT,"
-              "quantity REAL,"
-              "FOREIGN KEY(recipeID) REFERENCES recipes(id) ON DELETE CASCADE,"
-              "FOREIGN KEY(ingredientID) REFERENCES ingredients(id)"
-              ")"
-          );
-          await db.execute("CREATE TABLE shoppinglists"
               "("
               "id INTEGER PRIMARY KEY,"
               "date TEXT,"

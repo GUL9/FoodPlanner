@@ -2,6 +2,7 @@ from transformers import pipeline
 
 class NLPunit:
     nlp = pipeline("question-answering")
+    
 
     def extract_product(self, context):
         result = self.nlp(question="what product?", context=context)
