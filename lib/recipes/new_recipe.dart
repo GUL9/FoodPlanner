@@ -1,7 +1,4 @@
 import 'dart:async';
-import 'dart:ffi';
-import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,9 +12,6 @@ import 'package:grocerylister/util/strings.dart';
 
 import 'package:grocerylister/util/globals.dart' as globals;
 import 'package:grocerylister/util/util.dart' as utils;
-import 'package:speech_to_text/speech_to_text.dart' as stt;
-
-import 'dart:developer' as developer;
 
 class NewRecipeWidget extends StatefulWidget {
   @override
@@ -25,8 +19,6 @@ class NewRecipeWidget extends StatefulWidget {
 }
 
 class NewRecipeWidgetState extends State<NewRecipeWidget> {
-  stt.SpeechToText speechToText = stt.SpeechToText();
-  bool isListening = false;
 
   List recipeIngredients = [];
   TextEditingController recipeNameController = TextEditingController();
@@ -174,25 +166,20 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
               Align(
                   alignment: Alignment.bottomCenter,
                   child: AvatarGlow(
-                      animate: isListening,
+                      animate: globals.sttHandler.isListening,
                       glowColor: Theme.of(context).primaryColor,
                       duration: Duration(milliseconds: 1000),
                       repeatPauseDuration: Duration(milliseconds: 100),
                       endRadius: 50,
                       repeat: true,
                       child: FloatingActionButton.extended(
-                          label: Icon(isListening ? Icons.emoji_emotions_outlined : Icons.mic),
+                          label: Icon(globals.sttHandler.isListening ? Icons.emoji_emotions_outlined : Icons.mic),
                           heroTag: null,
-                          onPressed: () async {
-                            StreamController speechStream = StreamController();
-                            speechStream.stream.listen((speechInput) async {
-                              if(recipeNameController.text.isEmpty)
-                                recipeNameController.text = speechInput;
-                              else
-                                await globals.nlpServerComm.requestForIngredient(speechInput, handleParsedIngredient);
-                              speechStream.close();
-                            });
-                            await listenToSpeech(speechStream);
+                          onPressed: () {
+                            if (recipeNameController.text.isEmpty)
+                              globals.sttHandler.listenToSpeech(null, handleTextFromSpeech);
+                            else
+                              globals.sttHandler.listenToSpeech('Storbritannien', handleTextFromSpeech);
                           }))),
               Align(
                   alignment: Alignment.bottomRight,
@@ -208,6 +195,13 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
             ],
           ),
         ]));
+  }
+
+  Future handleTextFromSpeech(String text) async {
+      if(recipeNameController.text.isEmpty)
+        recipeNameController.text = text;
+      else
+        await globals.nlpServerComm.requestForIngredient(text, handleParsedIngredient);
   }
 
   void handleParsedIngredient(List ingredientTokens){
@@ -227,35 +221,5 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
       recipeIngredients.add(RecipeIngredient(null, null, null, null, null));
     });
 
-  }
-
-  Future<void> listenToSpeech(StreamController speechStream) async {
-    if (!isListening) {
-      bool available = await speechToText.initialize(
-        onStatus: (status) => developer.log(status),
-        onError: (error) => developer.log(error.errorMsg),
-      );
-
-
-      if (available) {
-        setState(() => isListening = true);
-        List locales = await speechToText.locales();
-        await speechToText.listen(
-          cancelOnError: true,
-          localeId: locales.firstWhere((locale) => locale.name.contains("USA")).localeId,
-          onResult: (input){
-            if(input.finalResult){
-              setState(() {
-                isListening = false;
-                speechToText.stop();
-                speechStream.sink.add(input.recognizedWords);
-              });
-            }
-          });
-      }
-    }else{
-      speechToText.stop();
-      setState(() => isListening = false);
-    }
   }
 }

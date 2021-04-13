@@ -1,4 +1,3 @@
-import 'dart:async';
 
 import 'package:grocerylister/util/globals.dart' as globals;
 import 'package:flutter/material.dart';

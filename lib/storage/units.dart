@@ -1,6 +1,6 @@
 enum Unit {
   unit,
-  litre,
+  liter,
   kilogram,
   piece
 }
@@ -13,8 +13,8 @@ extension UnitExtension on Unit{
   Unit stringToUnit(String unitString){
     if (unitString == "unit")
       return Unit.unit;
-    if (unitString == "litre")
-      return Unit.litre;
+    if (unitString == "liter")
+      return Unit.liter;
     if ( unitString == "kilogram")
       return Unit.kilogram;
     if (unitString == "piece")
