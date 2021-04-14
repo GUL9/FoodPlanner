@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:grocerylister/groceries/add_new_ingredient_container.dart';
+import 'package:grocerylister/util/view/ingredient_input_container.dart';
 import 'package:grocerylister/navigation.dart';
 import 'package:grocerylister/storage/data_model/ingredient.dart';
 import 'package:grocerylister/storage/data_model/plan.dart';
@@ -124,7 +124,7 @@ class GroceriesDestinationState extends State<NavigationDestinationView> {
           showDialog(
               context: context,
               builder: (BuildContext context) {
-                return AlertDialog(content: AddNewIngredientContainer());
+                return AlertDialog(content: IngredientInputContainer());
               }).then((newIngredient) {
             if (newIngredient != null) {
               addNewIngredient(newIngredient);
