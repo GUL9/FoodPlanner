@@ -12,6 +12,7 @@ import 'package:grocerylister/util/strings.dart';
 
 import 'package:grocerylister/util/globals.dart' as globals;
 import 'package:grocerylister/util/util.dart' as utils;
+import 'package:grocerylister/util/view/ingredient_input_row.dart';
 
 class NewRecipeWidget extends StatefulWidget {
   @override
@@ -19,97 +20,12 @@ class NewRecipeWidget extends StatefulWidget {
 }
 
 class NewRecipeWidgetState extends State<NewRecipeWidget> {
+  TextEditingController _recipeNameController = TextEditingController();
+  List<IngredientInputRow> _ingredientRows = [];
 
-  List recipeIngredients = [];
-  TextEditingController recipeNameController = TextEditingController();
-  List<TextEditingController> ingredientNameControllers = [];
-  List<TextEditingController> ingredientQuantityControllers = [];
-  List<String> units = [];
-
-  Future<Recipe> saveRecipe() async {
-    int recipeID = UniqueKey().hashCode;
-    String recipeName = recipeNameController.text;
-    Recipe recipe = Recipe(recipeID, recipeName);
-
-    for (int i = 0; i < recipeIngredients.length; i++) {
-      int entryID = UniqueKey().hashCode;
-
-      int ingredientID = UniqueKey().hashCode;
-      String ingredientName = ingredientNameControllers[i].text;
-      Ingredient ingredient = Ingredient(ingredientID, ingredientName);
-
-      double quantity = double.parse(ingredientQuantityControllers[i].text);
-      String unit = units[i] == null ? Unit.unit.unitToString() : units[i];
-      await Storage.instance.insertRecipeIngredient(RecipeIngredient(entryID, recipe, ingredient, unit, quantity));
-    }
-    return recipe;
-  }
-
-  bool checkRecipeFields(BuildContext context) {
-    if (!utils.isInputNameFieldOk(context, recipeNameController.text, "Recipe")) return false;
-
-    for (int i = 0; i < recipeIngredients.length; i++) {
-      if (!utils.isInputNameFieldOk(context, ingredientNameControllers[i].text, "Ingredient") || !utils.isInputQuantityFieldOk(context, ingredientQuantityControllers[i].text))
-        return false;
-    }
-
-    return true;
-  }
-
-  Card listCard(int index) {
-    return Card(
-        margin: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-        child: Row(children: <Widget>[
-          Expanded(
-            child: TextFormField(
-              controller: ingredientNameControllers[index],
-              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: Strings.ingredient_name),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5),
-          ),
-          Expanded(
-            child: TextFormField(
-              controller: ingredientQuantityControllers[index],
-              decoration: const InputDecoration(border: OutlineInputBorder(), labelText: Strings.ingredient_quantity),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: 5),
-          ),
-          Expanded(
-            child: DropdownButtonFormField(
-              decoration: const InputDecoration.collapsed(),
-              hint: Text(Strings.unit),
-              value: units[index] == null ? Unit.unit.unitToString() : units[index],
-              onChanged: (newValue) {
-                setState(() {
-                  units[index] = newValue;
-                });
-              },
-              items: Unit.values.map((unit) {
-                return DropdownMenuItem(
-                  value: unit.unitToString(),
-                  child: Text(unit.unitToString()),
-                );
-              }).toList(),
-            ),
-          ),
-          Container(
-              child: IconButton(
-            icon: Icon(Icons.delete),
-            onPressed: () => setState(
-              () {
-                recipeIngredients.removeAt(index);
-                ingredientNameControllers.removeAt(index);
-                ingredientQuantityControllers.removeAt(index);
-                units.removeAt(index);
-              },
-            ),
-          )),
-        ]));
-  }
+  List<TextEditingController> _ingredientNameControllers = [];
+  List<TextEditingController> _ingredientQuantityControllers = [];
+  List<String> _units = [];
 
   @override
   build(BuildContext context) {
@@ -128,7 +44,7 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                 Expanded(
                   child: TextFormField(
                     decoration: InputDecoration(border: OutlineInputBorder()),
-                    controller: recipeNameController,
+                    controller: _recipeNameController,
                   ),
                 ),
               ],
@@ -138,11 +54,16 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
             child: Text(Strings.ingredients),
           ),
           Expanded(
-            child: ListView.builder(
-              itemCount: recipeIngredients.length,
-              itemBuilder: (context, index) {
-                return listCard(index);
-              },
+            child: ListView(
+              children: [
+                for (int i = 0; i < _ingredientRows.length; i++)
+                  Card(
+                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
+                      child: Row(
+                          children:[Expanded(child: _ingredientRows[i]), IconButton(icon: Icon(Icons.delete), onPressed: () => setState(() => _ingredientRows.removeAt(i)))]
+                      )
+                  )
+              ],
             ),
           ),
           Stack(
@@ -176,7 +97,7 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                           label: Icon(globals.sttHandler.isListening ? Icons.emoji_emotions_outlined : Icons.mic),
                           heroTag: null,
                           onPressed: () {
-                            if (recipeNameController.text.isEmpty)
+                            if (_recipeNameController.text.isEmpty)
                               globals.sttHandler.listenToSpeech(null, handleTextFromSpeech);
                             else
                               globals.sttHandler.listenToSpeech('Storbritannien', handleTextFromSpeech);
@@ -187,25 +108,59 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                       label: Text(Strings.new_ingredient),
                       heroTag: null,
                       onPressed: () => setState(() {
-                            ingredientNameControllers.add(TextEditingController());
-                            ingredientQuantityControllers.add(TextEditingController());
-                            units.add(null);
-                            recipeIngredients.add(RecipeIngredient(null, null, null, null, null));
+                            _ingredientNameControllers.add(TextEditingController());
+                            _ingredientQuantityControllers.add(TextEditingController());
+                            _units.add(null);
+                            _ingredientRows.add(
+                                IngredientInputRow(
+                                  nameController: _ingredientNameControllers.last,
+                                  quantityController: _ingredientQuantityControllers.last,
+                                  unitController: _units.last,
+                                ));
                           }))),
             ],
           ),
         ]));
   }
 
-  Future handleTextFromSpeech(String text) async {
-      if(recipeNameController.text.isEmpty)
-        recipeNameController.text = text;
-      else
-        await globals.nlpServerComm.requestForIngredient(text, handleParsedIngredient);
+  Future<Recipe> saveRecipe() async {
+    int recipeID = UniqueKey().hashCode;
+    String recipeName = _recipeNameController.text;
+    Recipe recipe = Recipe(recipeID, recipeName);
+
+    for (int i = 0; i < _ingredientRows.length; i++) {
+      int entryID = UniqueKey().hashCode;
+
+      int ingredientID = UniqueKey().hashCode;
+      String ingredientName = _ingredientNameControllers[i].text;
+      Ingredient ingredient = Ingredient(ingredientID, ingredientName);
+
+      double quantity = double.parse(_ingredientQuantityControllers[i].text);
+      String unit = _units[i] == null ? Unit.unit.unitToString() : _units[i];
+      await Storage.instance.insertRecipeIngredient(RecipeIngredient(entryID, recipe, ingredient, unit, quantity));
+    }
+    return recipe;
   }
 
-  void handleParsedIngredient(List ingredientTokens){
+  bool checkRecipeFields(BuildContext context) {
+    if (!utils.isInputNameFieldOk(context, _recipeNameController.text, "Recipe")) return false;
 
+    for (int i = 0; i < _ingredientRows.length; i++) {
+      if (!utils.isInputNameFieldOk(context, _ingredientNameControllers[i].text, "Ingredient") || !utils.isInputQuantityFieldOk(context, _ingredientQuantityControllers[i].text))
+        return false;
+    }
+
+    return true;
+  }
+
+  Future handleTextFromSpeech(String text) async {
+    if (_recipeNameController.text.isEmpty)
+      _recipeNameController.text = text;
+    else
+      await globals.nlpServerComm.requestForIngredient(text, handleParsedIngredient);
+  }
+
+  void handleParsedIngredient(List ingredientTokens) {
     TextEditingController name = TextEditingController();
     TextEditingController quantity = TextEditingController();
     String unit = '';
@@ -215,11 +170,16 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
     unit = Unit.unit.getUnitsAsStrings().contains(ingredientTokens[2]) ? ingredientTokens[2] : null;
 
     setState(() {
-      ingredientNameControllers.add(name);
-      ingredientQuantityControllers.add(quantity);
-      units.add(unit);
-      recipeIngredients.add(RecipeIngredient(null, null, null, null, null));
+      _ingredientNameControllers.add(name);
+      _ingredientQuantityControllers.add(quantity);
+      _units.add(unit);
+      _ingredientRows.add(
+          IngredientInputRow(
+            nameController: _ingredientNameControllers.last,
+            quantityController: _ingredientQuantityControllers.last,
+            unitController: _units.last,
+          )
+      );
     });
-
   }
 }
