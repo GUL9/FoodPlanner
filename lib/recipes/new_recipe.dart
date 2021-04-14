@@ -74,13 +74,7 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                   builder: (context) => FloatingActionButton.extended(
                     label: Text(Strings.save_recipe),
                     heroTag: null,
-                    onPressed: () async {
-                      if (checkRecipeFields(context)) {
-                        Recipe savedRecipe = await saveRecipe();
-                        globals.recipeStream.sink.add(savedRecipe);
-                        Navigator.pop(context);
-                      }
-                    },
+                    onPressed: () => saveRecipesAndReturn(context)
                   ),
                 ),
               ),
@@ -96,31 +90,41 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                       child: FloatingActionButton.extended(
                           label: Icon(globals.sttHandler.isListening ? Icons.emoji_emotions_outlined : Icons.mic),
                           heroTag: null,
-                          onPressed: () {
-                            if (_recipeNameController.text.isEmpty)
-                              globals.sttHandler.listenToSpeech(null, handleTextFromSpeech);
-                            else
-                              globals.sttHandler.listenToSpeech('Storbritannien', handleTextFromSpeech);
-                          }))),
+                          onPressed: () => takeVoiceInput()
+                          ))),
               Align(
                   alignment: Alignment.bottomRight,
                   child: FloatingActionButton.extended(
                       label: Text(Strings.new_ingredient),
                       heroTag: null,
-                      onPressed: () => setState(() {
-                            _ingredientNameControllers.add(TextEditingController());
-                            _ingredientQuantityControllers.add(TextEditingController());
-                            _units.add(null);
-                            _ingredientRows.add(
-                                IngredientInputRow(
-                                  nameController: _ingredientNameControllers.last,
-                                  quantityController: _ingredientQuantityControllers.last,
-                                  unitController: _units.last,
-                                ));
-                          }))),
+                      onPressed: () => addEmptyIngredientInputRow()
+                  )
+              )
             ],
           ),
         ]));
+  }
+
+  void addEmptyIngredientInputRow(){
+    setState(() {
+      _ingredientNameControllers.add(TextEditingController());
+      _ingredientQuantityControllers.add(TextEditingController());
+      _units.add(null);
+      _ingredientRows.add(
+          IngredientInputRow(
+            nameController: _ingredientNameControllers.last,
+            quantityController: _ingredientQuantityControllers.last,
+            unitController: _units.last,
+          ));
+    });
+  }
+
+  void saveRecipesAndReturn(BuildContext context) async {
+    if (checkRecipeFields(context)) {
+      Recipe savedRecipe = await saveRecipe();
+      globals.recipeStream.sink.add(savedRecipe);
+      Navigator.pop(context);
+    }
   }
 
   Future<Recipe> saveRecipe() async {
@@ -151,6 +155,13 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
     }
 
     return true;
+  }
+
+  void takeVoiceInput() {
+    if (_recipeNameController.text.isEmpty)
+      globals.sttHandler.listenToSpeech(null, handleTextFromSpeech);
+    else
+      globals.sttHandler.listenToSpeech('Storbritannien', handleTextFromSpeech);
   }
 
   Future handleTextFromSpeech(String text) async {
