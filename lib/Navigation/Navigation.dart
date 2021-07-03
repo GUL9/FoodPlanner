@@ -13,10 +13,8 @@ class NavigationDestination {
 }
 
 const List<NavigationDestination> allDestinations = <NavigationDestination>[
-  NavigationDestination(
-      Strings.grocery_list, Icons.shopping_cart, Colors.yellow),
-  NavigationDestination(
-      Strings.food_planner, Icons.calendar_today, Colors.blue),
+  NavigationDestination(Strings.grocery_list, Icons.shopping_cart, Colors.yellow),
+  NavigationDestination(Strings.food_planner, Icons.calendar_today, Colors.blue),
   NavigationDestination(Strings.recipe_list, Icons.list, Colors.red),
 ];
 

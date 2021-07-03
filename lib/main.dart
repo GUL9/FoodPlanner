@@ -1,3 +1,4 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'Navigation/Navigation.dart';
 
@@ -6,13 +7,11 @@ class HomePage extends StatefulWidget {
   _HomePage createState() => _HomePage();
 }
 
-class _HomePage extends State<HomePage>
-    with TickerProviderStateMixin<HomePage> {
+class _HomePage extends State<HomePage> with TickerProviderStateMixin<HomePage> {
   int _currentDestinationIndex = 0;
 
   List<Widget> _navigationViews() => allDestinations
-      .map<Widget>((NavigationDestination destination) =>
-          NavigationView(destination: destination))
+      .map<Widget>((NavigationDestination destination) => NavigationView(destination: destination))
       .toList();
 
   SafeArea _navigationView() => SafeArea(
@@ -23,14 +22,11 @@ class _HomePage extends State<HomePage>
         ),
       );
 
-  void _setNavigationDestination(int index) =>
-      setState(() => _currentDestinationIndex = index);
+  void _setNavigationDestination(int index) => setState(() => _currentDestinationIndex = index);
 
   List<BottomNavigationBarItem> _navigationDestinations() => allDestinations
       .map((NavigationDestination destination) => BottomNavigationBarItem(
-          icon: Icon(destination.icon),
-          backgroundColor: destination.color,
-          label: destination.title))
+          icon: Icon(destination.icon), backgroundColor: destination.color, label: destination.title))
       .toList();
 
   BottomNavigationBar _navigationBar() {
@@ -51,5 +47,7 @@ class _HomePage extends State<HomePage>
 }
 
 void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   runApp(MaterialApp(home: HomePage(), debugShowCheckedModeBanner: false));
 }

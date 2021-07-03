@@ -26,59 +26,48 @@ class ShoppinglistView extends State<NavigationView> {
   }
 
   void loadShoppingList() async {
-    List<ShoppingListEntry> list = [];
+    // List<ShoppingListEntry> list = [];
 
-    Plan latestPlan = await Storage.instance.getLatestPlan();
-    if (latestPlan != null)
-      list = await Storage.instance.getShoppingListWithPlanId(latestPlan.id);
+    // Plan latestPlan = await Storage.instance.getLatestPlan();
+    // if (latestPlan != null) list = await Storage.instance.getShoppingListWithPlanId(latestPlan.id);
 
-    setState(() {
-      shoppingList = list == null ? [] : list;
-    });
+    // setState(() {
+    //   shoppingList = list == null ? [] : list;
+    // });
 
-    for (int i = 0; i < shoppingList.length; i++) {
-      if (shoppingList[i].isBought) checked.add(shoppingList[i]);
-    }
+    // for (int i = 0; i < shoppingList.length; i++) {
+    //   if (shoppingList[i].isBought) checked.add(shoppingList[i]);
+    // }
   }
 
   Future<void> saveShoppingList() async {
-    for (ShoppingListEntry entry in shoppingList)
-      await Storage.instance.insertShoppinglistEntry(entry);
-  }
+    //   for (ShoppingListEntry entry in shoppingList) await Storage.instance.insertShoppinglistEntry(entry);
+    // }
 
-  Future<void> addNewIngredient(Map newIngredient) async {
-    bool isUnique = true;
-    for (ShoppingListEntry entry in shoppingList) {
-      if (entry.ingredient.name == newIngredient['name'] &&
-          entry.unit == newIngredient['unit']) {
-        setState(() {
-          entry.quantity += newIngredient['quantity'];
-        });
-        await Storage.instance.insertShoppinglistEntry(entry);
-        isUnique = false;
-      }
-    }
-    if (isUnique) {
-      Ingredient ingredient =
-          await Storage.instance.getIngredientWithName(newIngredient['name']);
-      if (ingredient == null)
-        ingredient = Ingredient(UniqueKey().hashCode, newIngredient['name']);
+    // Future<void> addNewIngredient(Map newIngredient) async {
+    //   bool isUnique = true;
+    //   for (ShoppingListEntry entry in shoppingList) {
+    //     if (entry.ingredient.name == newIngredient['name'] && entry.unit == newIngredient['unit']) {
+    //       setState(() {
+    //         entry.quantity += newIngredient['quantity'];
+    //       });
+    //       await Storage.instance.insertShoppinglistEntry(entry);
+    //       isUnique = false;
+    //     }
+    //   }
+    //   if (isUnique) {
+    //     Ingredient ingredient = await Storage.instance.getIngredientWithName(newIngredient['name']);
+    //     if (ingredient == null) ingredient = Ingredient(UniqueKey().hashCode, newIngredient['name']);
 
-      ShoppingListEntry entry = ShoppingListEntry(
-          UniqueKey().hashCode,
-          DateTime.now().toString(),
-          shoppingList.first.plan,
-          ingredient,
-          newIngredient['unit'],
-          newIngredient['quantity'],
-          false);
+    //     ShoppingListEntry entry = ShoppingListEntry(UniqueKey().hashCode, DateTime.now().toString(),
+    //         shoppingList.first.plan, ingredient, newIngredient['unit'], newIngredient['quantity'], false);
 
-      setState(() {
-        shoppingList.add(entry);
-      });
+    //     setState(() {
+    //       shoppingList.add(entry);
+    //     });
 
-      await Storage.instance.insertShoppinglistEntry(entry);
-    }
+    //     await Storage.instance.insertShoppinglistEntry(entry);
+    //   }
   }
 
   @override
@@ -111,8 +100,7 @@ class ShoppinglistView extends State<NavigationView> {
                         removed.add(recipeIngredient);
                         shoppingList.remove(recipeIngredient);
                       });
-                      await Storage.instance
-                          .deleteShoppinglistEntryWithId(recipeIngredient.id);
+                      //await Storage.instance.deleteShoppinglistEntryWithId(recipeIngredient.id);
                     },
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
@@ -129,8 +117,7 @@ class ShoppinglistView extends State<NavigationView> {
                         shoppingList[index].isBought = false;
                       }
                     });
-                    await Storage.instance
-                        .insertShoppinglistEntry(shoppingList[index]);
+                    //await Storage.instance.insertShoppinglistEntry(shoppingList[index]);
                   },
                 ),
               );
@@ -144,7 +131,7 @@ class ShoppinglistView extends State<NavigationView> {
                 return AlertDialog(content: IngredientInputContainer());
               }).then((newIngredient) {
             if (newIngredient != null) {
-              addNewIngredient(newIngredient);
+              //addNewIngredient(newIngredient);
             }
           });
         },

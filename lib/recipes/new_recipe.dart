@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/storage/data_model/ingredient.dart';
-import 'package:grocerylister/storage/data_model/recipe.dart';
 import 'package:grocerylister/storage/data_model/recipe_ingredient.dart';
 import 'package:grocerylister/storage/storage.dart';
 import 'package:grocerylister/storage/units.dart';
@@ -59,10 +59,11 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                 for (int i = 0; i < _ingredientRows.length; i++)
                   Card(
                       margin: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-                      child: Row(
-                          children:[Expanded(child: _ingredientRows[i]), IconButton(icon: Icon(Icons.delete), onPressed: () => setState(() => _ingredientRows.removeAt(i)))]
-                      )
-                  )
+                      child: Row(children: [
+                        Expanded(child: _ingredientRows[i]),
+                        IconButton(
+                            icon: Icon(Icons.delete), onPressed: () => setState(() => _ingredientRows.removeAt(i)))
+                      ]))
               ],
             ),
           ),
@@ -72,10 +73,7 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                 alignment: Alignment.bottomLeft,
                 child: Builder(
                   builder: (context) => FloatingActionButton.extended(
-                    label: Text(Strings.save_recipe),
-                    heroTag: null,
-                    onPressed: () => saveRecipesAndReturn(context)
-                  ),
+                      label: Text(Strings.save_recipe), heroTag: null, onPressed: () => saveRecipesAndReturn(context)),
                 ),
               ),
               Align(
@@ -90,68 +88,41 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
                       child: FloatingActionButton.extended(
                           label: Icon(globals.sttHandler.isListening ? Icons.emoji_emotions_outlined : Icons.mic),
                           heroTag: null,
-                          onPressed: () => takeVoiceInput()
-                          ))),
+                          onPressed: () => takeVoiceInput()))),
               Align(
                   alignment: Alignment.bottomRight,
                   child: FloatingActionButton.extended(
                       label: Text(Strings.new_ingredient),
                       heroTag: null,
-                      onPressed: () => addEmptyIngredientInputRow()
-                  )
-              )
+                      onPressed: () => addEmptyIngredientInputRow()))
             ],
           ),
         ]));
   }
 
-  void addEmptyIngredientInputRow(){
+  void addEmptyIngredientInputRow() {
     setState(() {
       _ingredientNameControllers.add(TextEditingController());
       _ingredientQuantityControllers.add(TextEditingController());
       _units.add(null);
-      _ingredientRows.add(
-          IngredientInputRow(
-            nameController: _ingredientNameControllers.last,
-            quantityController: _ingredientQuantityControllers.last,
-            unitController: _units.last,
-          ));
+      _ingredientRows.add(IngredientInputRow(
+        nameController: _ingredientNameControllers.last,
+        quantityController: _ingredientQuantityControllers.last,
+        unitController: _units.last,
+      ));
     });
   }
 
-  void saveRecipesAndReturn(BuildContext context) async {
-    if (checkRecipeFields(context)) {
-      Recipe savedRecipe = await saveRecipe();
-      globals.recipeStream.sink.add(savedRecipe);
-      Navigator.pop(context);
-    }
-  }
+  void saveRecipesAndReturn(BuildContext context) async {}
 
-  Future<Recipe> saveRecipe() async {
-    int recipeID = UniqueKey().hashCode;
-    String recipeName = _recipeNameController.text;
-    Recipe recipe = Recipe(recipeID, recipeName);
-
-    for (int i = 0; i < _ingredientRows.length; i++) {
-      int entryID = UniqueKey().hashCode;
-
-      int ingredientID = UniqueKey().hashCode;
-      String ingredientName = _ingredientNameControllers[i].text;
-      Ingredient ingredient = Ingredient(ingredientID, ingredientName);
-
-      double quantity = double.parse(_ingredientQuantityControllers[i].text);
-      String unit = _units[i] == null ? Unit.unit.unitToString() : _units[i];
-      await Storage.instance.insertRecipeIngredient(RecipeIngredient(entryID, recipe, ingredient, unit, quantity));
-    }
-    return recipe;
-  }
+  Future<Recipe> saveRecipe() async {}
 
   bool checkRecipeFields(BuildContext context) {
     if (!utils.isInputNameFieldOk(context, _recipeNameController.text, "Recipe")) return false;
 
     for (int i = 0; i < _ingredientRows.length; i++) {
-      if (!utils.isInputNameFieldOk(context, _ingredientNameControllers[i].text, "Ingredient") || !utils.isInputQuantityFieldOk(context, _ingredientQuantityControllers[i].text))
-        return false;
+      if (!utils.isInputNameFieldOk(context, _ingredientNameControllers[i].text, "Ingredient") ||
+          !utils.isInputQuantityFieldOk(context, _ingredientQuantityControllers[i].text)) return false;
     }
 
     return true;
@@ -184,13 +155,11 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
       _ingredientNameControllers.add(name);
       _ingredientQuantityControllers.add(quantity);
       _units.add(unit);
-      _ingredientRows.add(
-          IngredientInputRow(
-            nameController: _ingredientNameControllers.last,
-            quantityController: _ingredientQuantityControllers.last,
-            unitController: _units.last,
-          )
-      );
+      _ingredientRows.add(IngredientInputRow(
+        nameController: _ingredientNameControllers.last,
+        quantityController: _ingredientQuantityControllers.last,
+        unitController: _units.last,
+      ));
     });
   }
 }

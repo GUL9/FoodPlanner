@@ -1,20 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/Recipes/RecipesAPI.dart';
 import 'package:grocerylister/recipes/new_recipe.dart';
-import 'package:grocerylister/storage/data_model/recipe.dart';
-import 'package:grocerylister/storage/storage.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class RecipesView extends State<NavigationView> {
-  List<Recipe> _recipes = [];
+  List<Recipe> _recipes;
 
   @override
   void initState() {
     super.initState();
-  }
-
-  void loadRecipes() async {
-    _recipes = await Storage.instance.getRecipes();
   }
 
   AppBar _appBar() => AppBar(
@@ -22,26 +18,27 @@ class RecipesView extends State<NavigationView> {
         backgroundColor: widget.destination.color,
       );
 
-  IconButton _deleteButtonAtIndex(int index) => IconButton(
-      icon: Icon(Icons.delete),
-      onPressed: () => setState(() => _recipes.removeAt(index)));
+  IconButton _deleteButtonAtIndex(int index) =>
+      IconButton(icon: Icon(Icons.delete), onPressed: () => deleteRecipe(_recipes[index]));
 
-  Container _listContainer() => Container(
-        padding: const EdgeInsets.all(32.0),
-        alignment: Alignment.center,
-        child: ListView(children: [
-          for (int i = 0; i < _recipes.length; i++)
-            Card(
-                child: ListTile(
-              title: Text(_recipes[i].name),
-              trailing: _deleteButtonAtIndex(i),
-            ))
-        ]),
-      );
+  StreamBuilder _recipeListFromStream() => StreamBuilder(
+      stream: recipesStream,
+      builder: (context, snapshot) {
+        _recipes = getRecipesFromSnapshot(snapshot);
+        return snapshot.hasData
+            ? ListView.builder(
+                itemCount: _recipes.length,
+                itemBuilder: (context, index) => Card(
+                    child: ListTile(
+                  title: Text(_recipes[index].name),
+                  trailing: _deleteButtonAtIndex(index),
+                )),
+              )
+            : Text(Strings.loading);
+      });
 
-  FloatingActionButton _addNewRecipeButton() => FloatingActionButton.extended(
-        onPressed: () => Navigator.push(context,
-            MaterialPageRoute(builder: (context) => NewRecipeWidget())),
+  FloatingActionButton _addNewRecipeButton(BuildContext context) => FloatingActionButton.extended(
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipeWidget())),
         label: Text(Strings.add_recipe),
         icon: Icon(Icons.add),
       );
@@ -51,8 +48,8 @@ class RecipesView extends State<NavigationView> {
     return Scaffold(
       backgroundColor: widget.destination.color[100],
       appBar: _appBar(),
-      body: _listContainer(),
-      floatingActionButton: _addNewRecipeButton(),
+      body: _recipeListFromStream(),
+      floatingActionButton: _addNewRecipeButton(context),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );
   }
