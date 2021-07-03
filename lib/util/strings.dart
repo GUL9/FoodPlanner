@@ -2,13 +2,14 @@ class Strings {
   static const String recipe_list = "Recipes";
   static const String grocery_list = "Grocery list";
   static const String add_recipe = "Add new recipe";
-  static const String recipe_name = "Title";
+  static const String recipe_name = "Recipe Name";
   static const String ingredients = "Ingredients";
   static const String ingredient_name = "Name";
   static const String ingredient_quantity = "Quantity";
   static const String unit = "Unit";
   static const String new_ingredient = "New ingredient";
-  static const String save_recipe = "Save Recipe";
+
+  static const String save_recipe = "Save";
   static const String recipe_name_missing = "Recipe name is missing";
   static const String name_missing = "name is missing";
   static const String missing_quantity = "Quantity is missing";

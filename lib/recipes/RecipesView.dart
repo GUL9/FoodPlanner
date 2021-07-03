@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/RecipesAPI.dart';
-import 'package:grocerylister/recipes/new_recipe.dart';
+import 'package:grocerylister/Recipes/NewRecipeView.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class RecipesView extends State<NavigationView> {
@@ -38,7 +38,7 @@ class RecipesView extends State<NavigationView> {
       });
 
   FloatingActionButton _addNewRecipeButton(BuildContext context) => FloatingActionButton.extended(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipeWidget())),
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipeView())),
         label: Text(Strings.add_recipe),
         icon: Icon(Icons.add),
       );

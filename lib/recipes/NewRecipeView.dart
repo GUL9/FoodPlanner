@@ -4,9 +4,6 @@ import 'package:avatar_glow/avatar_glow.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
-import 'package:grocerylister/storage/data_model/ingredient.dart';
-import 'package:grocerylister/storage/data_model/recipe_ingredient.dart';
-import 'package:grocerylister/storage/storage.dart';
 import 'package:grocerylister/storage/units.dart';
 import 'package:grocerylister/util/strings.dart';
 
@@ -14,12 +11,12 @@ import 'package:grocerylister/util/globals.dart' as globals;
 import 'package:grocerylister/util/util.dart' as utils;
 import 'package:grocerylister/util/view/ingredient_input_row.dart';
 
-class NewRecipeWidget extends StatefulWidget {
+class NewRecipeView extends StatefulWidget {
   @override
-  NewRecipeWidgetState createState() => NewRecipeWidgetState();
+  NewRecipeViewState createState() => NewRecipeViewState();
 }
 
-class NewRecipeWidgetState extends State<NewRecipeWidget> {
+class NewRecipeViewState extends State<NewRecipeView> {
   TextEditingController _recipeNameController = TextEditingController();
   List<IngredientInputRow> _ingredientRows = [];
 
@@ -27,76 +24,62 @@ class NewRecipeWidgetState extends State<NewRecipeWidget> {
   List<TextEditingController> _ingredientQuantityControllers = [];
   List<String> _units = [];
 
+  Column _floatingActionButtonColumn() => Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+        AvatarGlow(
+            animate: globals.sttHandler.isListening,
+            glowColor: Theme.of(context).primaryColor,
+            duration: Duration(milliseconds: 1000),
+            repeatPauseDuration: Duration(milliseconds: 100),
+            endRadius: 50,
+            repeat: true,
+            child: FloatingActionButton.extended(
+                icon: Icon(globals.sttHandler.isListening ? Icons.emoji_emotions_outlined : Icons.mic),
+                label: Text(Strings.add),
+                heroTag: null,
+                onPressed: () => takeVoiceInput())),
+        Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: FloatingActionButton.extended(
+                icon: Icon(Icons.add),
+                label: Text(Strings.add),
+                heroTag: null,
+                onPressed: () => addEmptyIngredientInputRow())),
+        Padding(
+            padding: EdgeInsets.only(bottom: 20),
+            child: FloatingActionButton.extended(
+                icon: Icon(Icons.check),
+                label: Text(Strings.save_recipe),
+                heroTag: null,
+                onPressed: () => saveRecipesAndReturn(context)))
+      ]);
+
   @override
   build(BuildContext context) {
     return new Scaffold(
         appBar: AppBar(
-          title: Text(Strings.add_recipe),
+          title: Text(
+            Strings.add_recipe,
+          ),
         ),
-        body: Column(children: <Widget>[
+        body: Stack(children: [
           Container(
-            height: 100,
-            margin: EdgeInsets.all(20),
-            alignment: Alignment.center,
-            child: Column(
-              children: <Widget>[
-                Text(Strings.recipe_name),
+              margin: EdgeInsets.all(20),
+              child: Column(children: <Widget>[
+                Text(Strings.recipe_name, style: TextStyle(fontSize: 20)),
+                TextFormField(
+                  decoration: InputDecoration(border: OutlineInputBorder()),
+                  controller: _recipeNameController,
+                ),
+                Padding(
+                    padding: EdgeInsets.only(top: 20),
+                    child: Text(Strings.ingredients, style: TextStyle(fontSize: 20))),
                 Expanded(
-                  child: TextFormField(
-                    decoration: InputDecoration(border: OutlineInputBorder()),
-                    controller: _recipeNameController,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            child: Text(Strings.ingredients),
-          ),
-          Expanded(
-            child: ListView(
-              children: [
-                for (int i = 0; i < _ingredientRows.length; i++)
-                  Card(
-                      margin: EdgeInsets.symmetric(horizontal: 20, vertical: 3),
-                      child: Row(children: [
-                        Expanded(child: _ingredientRows[i]),
-                        IconButton(
-                            icon: Icon(Icons.delete), onPressed: () => setState(() => _ingredientRows.removeAt(i)))
-                      ]))
-              ],
-            ),
-          ),
-          Stack(
-            children: <Widget>[
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: Builder(
-                  builder: (context) => FloatingActionButton.extended(
-                      label: Text(Strings.save_recipe), heroTag: null, onPressed: () => saveRecipesAndReturn(context)),
-                ),
-              ),
-              Align(
-                  alignment: Alignment.bottomCenter,
-                  child: AvatarGlow(
-                      animate: globals.sttHandler.isListening,
-                      glowColor: Theme.of(context).primaryColor,
-                      duration: Duration(milliseconds: 1000),
-                      repeatPauseDuration: Duration(milliseconds: 100),
-                      endRadius: 50,
-                      repeat: true,
-                      child: FloatingActionButton.extended(
-                          label: Icon(globals.sttHandler.isListening ? Icons.emoji_emotions_outlined : Icons.mic),
-                          heroTag: null,
-                          onPressed: () => takeVoiceInput()))),
-              Align(
-                  alignment: Alignment.bottomRight,
-                  child: FloatingActionButton.extended(
-                      label: Text(Strings.new_ingredient),
-                      heroTag: null,
-                      onPressed: () => addEmptyIngredientInputRow()))
-            ],
-          ),
+                    child: ListView.builder(
+                        itemCount: _ingredientRows.length,
+                        itemBuilder: (context, index) =>
+                            Padding(padding: EdgeInsets.only(top: 5), child: IngredientInputRow()))),
+              ])),
+          Align(alignment: Alignment.bottomRight, child: _floatingActionButtonColumn())
         ]));
   }
 
