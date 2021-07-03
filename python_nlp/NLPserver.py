@@ -1,3 +1,4 @@
+import socket
 import socketserver
 from NLPunit import NLPunit as nlp
 from pattern.text.en import singularize
@@ -30,9 +31,9 @@ class MyTCPHandler(socketserver.StreamRequestHandler):
 
 if __name__ == "__main__":
     PORT = 1337
-    HOST  = '192.168.2.11'
+    HOST  = socket.gethostbyname(socket.gethostname())
 
-    with socketserver.TCPServer((HOST, PORT), MyTCPHandler) as server:
+    with socketserver.TCPServer(('192.168.2.11', PORT), MyTCPHandler) as server:
         server.serve_forever()
 
 

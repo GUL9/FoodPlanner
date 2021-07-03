@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1090038941875",
+    "project_id": "grocerylister-71f9c",
+    "storage_bucket": "grocerylister-71f9c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1090038941875:android:b3a5e177df652836c1c8c6",
+        "android_client_info": {
+          "package_name": "Waifu.GroceryLister"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1090038941875-behd3hd32d346uomq9ktiqvbltdvft2r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD9QJmMIGIa3Smb7kcFmsN6QTBDLd0Duvc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1090038941875-behd3hd32d346uomq9ktiqvbltdvft2r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

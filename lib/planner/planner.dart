@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:grocerylister/navigation.dart';
+import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/storage/data_model/ingredient.dart';
 import 'package:grocerylister/storage/data_model/plan.dart';
 import 'package:grocerylister/storage/data_model/recipe.dart';
@@ -14,8 +14,9 @@ import 'package:grocerylister/storage/storage.dart';
 import 'package:grocerylister/util/globals.dart' as globals;
 import 'package:grocerylister/util/view/select_recipe_container.dart';
 
-class PlannerDestinationState extends State<NavigationDestinationView> {
-  Plan currentPlan = Plan(null, null, [null, null, null, null, null, null, null]);
+class PlannerDestinationState extends State<NavigationView> {
+  Plan currentPlan =
+      Plan(null, null, [null, null, null, null, null, null, null]);
 
   String _dayFromIndex(int index) {
     if (index == 0) return Strings.monday;
@@ -33,15 +34,22 @@ class PlannerDestinationState extends State<NavigationDestinationView> {
   void initState() {
     super.initState();
     _loadPlan();
-    globals.recipeStream.stream.listen((savedRecipe) { if(savedRecipe == null)_loadPlan();});
+    globals.recipeStream.stream.listen((savedRecipe) {
+      if (savedRecipe == null) _loadPlan();
+    });
   }
 
   Future<void> _loadPlan() async {
     Plan plan = await Storage.instance.getLatestPlan();
     if (plan == null)
-      setState(() { currentPlan = Plan(UniqueKey().hashCode, null, [null, null, null, null, null, null, null]); });
+      setState(() {
+        currentPlan = Plan(UniqueKey().hashCode, null,
+            [null, null, null, null, null, null, null]);
+      });
     else
-      setState(() {currentPlan = plan;});
+      setState(() {
+        currentPlan = plan;
+      });
   }
 
   @override
@@ -69,10 +77,12 @@ class PlannerDestinationState extends State<NavigationDestinationView> {
                     Text(_dayFromIndex(i)),
                     ListTile(
                       leading: Icon(Icons.fastfood),
-                      title: currentPlan.recipes[i] == null ? Text("") : Text(currentPlan.recipes[i].name),
+                      title: currentPlan.recipes[i] == null
+                          ? Text("")
+                          : Text(currentPlan.recipes[i].name),
                       trailing: IconButton(
                         icon: Icon(Icons.swap_horiz),
-                        onPressed: (){
+                        onPressed: () {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
@@ -80,9 +90,8 @@ class PlannerDestinationState extends State<NavigationDestinationView> {
                                   title: Text(Strings.select_new_recipe),
                                   content: SelectRecipeContainer(),
                                 );
-                              }
-                          ).then((newRecipe) async {
-                            if(newRecipe != null){
+                              }).then((newRecipe) async {
+                            if (newRecipe != null) {
                               setState(() {
                                 currentPlan.recipes[i] = newRecipe;
                               });
@@ -117,11 +126,11 @@ class PlannerDestinationState extends State<NavigationDestinationView> {
   }
 
   void _moveRecipeToAnotherDay(int oldIndex, int newIndex) {
-     var old = currentPlan.recipes[oldIndex].copy();
+    var old = currentPlan.recipes[oldIndex].copy();
     setState(() {
       currentPlan.recipes.removeAt(oldIndex);
-      if(oldIndex < newIndex)
-        currentPlan.recipes.insert(newIndex-1, old);
+      if (oldIndex < newIndex)
+        currentPlan.recipes.insert(newIndex - 1, old);
       else
         currentPlan.recipes.insert(newIndex, old);
     });
@@ -144,12 +153,15 @@ class PlannerDestinationState extends State<NavigationDestinationView> {
     while (i + 1 < list.length) {
       Set ingredientsWithSameNameAndUnit = Set();
       int j = i;
-      while (j + 1 < list.length && list[j].ingredient.name == list[j + 1].ingredient.name && list[j].unit == list[j + 1].unit) {
+      while (j + 1 < list.length &&
+          list[j].ingredient.name == list[j + 1].ingredient.name &&
+          list[j].unit == list[j + 1].unit) {
         ingredientsWithSameNameAndUnit.add(list[j]);
         ingredientsWithSameNameAndUnit.add(list[j + 1]);
         j++;
       }
-      if (ingredientsWithSameNameAndUnit.isNotEmpty) toBeSquashed.add(ingredientsWithSameNameAndUnit);
+      if (ingredientsWithSameNameAndUnit.isNotEmpty)
+        toBeSquashed.add(ingredientsWithSameNameAndUnit);
       i = i == j ? i + 1 : j;
     }
 
@@ -164,7 +176,8 @@ class PlannerDestinationState extends State<NavigationDestinationView> {
         toRemove.add(item);
       }
 
-      toAdd.add(RecipeIngredient(UniqueKey().hashCode, recipe, ingredient, unit, newQuantity));
+      toAdd.add(RecipeIngredient(
+          UniqueKey().hashCode, recipe, ingredient, unit, newQuantity));
     }
 
     for (RecipeIngredient item in toRemove) list.remove(item);
@@ -174,29 +187,38 @@ class PlannerDestinationState extends State<NavigationDestinationView> {
   }
 
   Future<Plan> _savePlan() async {
-      await Storage.instance.insertPlan(currentPlan);
+    await Storage.instance.insertPlan(currentPlan);
 
-      List<RecipeIngredient> ingredients = [];
+    List<RecipeIngredient> ingredients = [];
 
-      for (Recipe recipe in currentPlan.recipes) {
-        List<RecipeIngredient> tmpList = await Storage.instance.getRecipeIngredientsForRecipeWithId(recipe.id);
-        for (RecipeIngredient tmp in tmpList) ingredients.add(tmp);
-      }
+    for (Recipe recipe in currentPlan.recipes) {
+      List<RecipeIngredient> tmpList =
+          await Storage.instance.getRecipeIngredientsForRecipeWithId(recipe.id);
+      for (RecipeIngredient tmp in tmpList) ingredients.add(tmp);
+    }
 
-      ingredients = _squash(ingredients);
-      for (RecipeIngredient recipeIngredient in ingredients)
-        await Storage.instance.insertShoppinglistEntry(
-            ShoppingListEntry(UniqueKey().hashCode, DateTime.now().toString(), currentPlan, recipeIngredient.ingredient, recipeIngredient.unit, recipeIngredient.quantity, false));
+    ingredients = _squash(ingredients);
+    for (RecipeIngredient recipeIngredient in ingredients)
+      await Storage.instance.insertShoppinglistEntry(ShoppingListEntry(
+          UniqueKey().hashCode,
+          DateTime.now().toString(),
+          currentPlan,
+          recipeIngredient.ingredient,
+          recipeIngredient.unit,
+          recipeIngredient.quantity,
+          false));
 
-      return currentPlan;
+    return currentPlan;
   }
 
   void _generateFoodPlan(List<Recipe> recipes) {
-    if (recipes.isNotEmpty){
+    if (recipes.isNotEmpty) {
       List<int> chosenIndexes = [];
       for (int i = 0; i < 7; i++) {
         int index;
-        while (chosenIndexes.contains(index = Random().nextInt(recipes.length)) && chosenIndexes.length < recipes.length) {
+        while (
+            chosenIndexes.contains(index = Random().nextInt(recipes.length)) &&
+                chosenIndexes.length < recipes.length) {
           index = Random().nextInt(recipes.length);
         }
         setState(() {
@@ -209,6 +231,5 @@ class PlannerDestinationState extends State<NavigationDestinationView> {
         currentPlan.date = DateTime.now().toString();
       });
     }
-
   }
 }

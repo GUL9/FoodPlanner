@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:grocerylister/util/view/ingredient_input_container.dart';
-import 'package:grocerylister/navigation.dart';
+import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/storage/data_model/ingredient.dart';
 import 'package:grocerylister/storage/data_model/plan.dart';
 import 'package:grocerylister/storage/data_model/shopping_list.dart';
@@ -10,7 +10,7 @@ import 'package:grocerylister/storage/storage.dart';
 import 'package:grocerylister/util/strings.dart';
 import 'package:grocerylister/util/globals.dart' as globals;
 
-class GroceriesDestinationState extends State<NavigationDestinationView> {
+class ShoppinglistView extends State<NavigationView> {
   List<ShoppingListEntry> shoppingList = [];
   List<ShoppingListEntry> checked = [];
   List<ShoppingListEntry> removed = [];
@@ -29,7 +29,8 @@ class GroceriesDestinationState extends State<NavigationDestinationView> {
     List<ShoppingListEntry> list = [];
 
     Plan latestPlan = await Storage.instance.getLatestPlan();
-    if (latestPlan != null) list = await Storage.instance.getShoppingListWithPlanId(latestPlan.id);
+    if (latestPlan != null)
+      list = await Storage.instance.getShoppingListWithPlanId(latestPlan.id);
 
     setState(() {
       shoppingList = list == null ? [] : list;
@@ -41,13 +42,15 @@ class GroceriesDestinationState extends State<NavigationDestinationView> {
   }
 
   Future<void> saveShoppingList() async {
-    for (ShoppingListEntry entry in shoppingList) await Storage.instance.insertShoppinglistEntry(entry);
+    for (ShoppingListEntry entry in shoppingList)
+      await Storage.instance.insertShoppinglistEntry(entry);
   }
 
   Future<void> addNewIngredient(Map newIngredient) async {
     bool isUnique = true;
     for (ShoppingListEntry entry in shoppingList) {
-      if (entry.ingredient.name == newIngredient['name'] && entry.unit == newIngredient['unit']) {
+      if (entry.ingredient.name == newIngredient['name'] &&
+          entry.unit == newIngredient['unit']) {
         setState(() {
           entry.quantity += newIngredient['quantity'];
         });
@@ -56,11 +59,19 @@ class GroceriesDestinationState extends State<NavigationDestinationView> {
       }
     }
     if (isUnique) {
-      Ingredient ingredient = await Storage.instance.getIngredientWithName(newIngredient['name']);
-      if (ingredient == null) ingredient = Ingredient(UniqueKey().hashCode, newIngredient['name']);
+      Ingredient ingredient =
+          await Storage.instance.getIngredientWithName(newIngredient['name']);
+      if (ingredient == null)
+        ingredient = Ingredient(UniqueKey().hashCode, newIngredient['name']);
 
-      ShoppingListEntry entry =
-          ShoppingListEntry(UniqueKey().hashCode, DateTime.now().toString(), shoppingList.first.plan, ingredient, newIngredient['unit'], newIngredient['quantity'], false);
+      ShoppingListEntry entry = ShoppingListEntry(
+          UniqueKey().hashCode,
+          DateTime.now().toString(),
+          shoppingList.first.plan,
+          ingredient,
+          newIngredient['unit'],
+          newIngredient['quantity'],
+          false);
 
       setState(() {
         shoppingList.add(entry);
@@ -88,7 +99,11 @@ class GroceriesDestinationState extends State<NavigationDestinationView> {
 
               return Card(
                 child: CheckboxListTile(
-                  title: Text(recipeIngredient.ingredient.name + ": " + recipeIngredient.quantity.toString() + " " + recipeIngredient.unit),
+                  title: Text(recipeIngredient.ingredient.name +
+                      ": " +
+                      recipeIngredient.quantity.toString() +
+                      " " +
+                      recipeIngredient.unit),
                   secondary: IconButton(
                     icon: Icon(Icons.delete),
                     onPressed: () async {
@@ -96,7 +111,8 @@ class GroceriesDestinationState extends State<NavigationDestinationView> {
                         removed.add(recipeIngredient);
                         shoppingList.remove(recipeIngredient);
                       });
-                      await Storage.instance.deleteShoppinglistEntryWithId(recipeIngredient.id);
+                      await Storage.instance
+                          .deleteShoppinglistEntryWithId(recipeIngredient.id);
                     },
                   ),
                   controlAffinity: ListTileControlAffinity.leading,
@@ -113,7 +129,8 @@ class GroceriesDestinationState extends State<NavigationDestinationView> {
                         shoppingList[index].isBought = false;
                       }
                     });
-                    await Storage.instance.insertShoppinglistEntry(shoppingList[index]);
+                    await Storage.instance
+                        .insertShoppinglistEntry(shoppingList[index]);
                   },
                 ),
               );
