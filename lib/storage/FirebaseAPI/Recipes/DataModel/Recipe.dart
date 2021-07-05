@@ -4,11 +4,11 @@ class Recipe {
   DocumentReference reference;
   String name;
 
-  Recipe(DocumentReference reference, String name) {
-    this.reference = reference;
-    this.name = name;
-  }
+  Recipe({DocumentReference reference, String name})
+      : this.reference = reference,
+        this.name = name;
+  asData() => {'name': name};
 }
 
-Recipe recipeFromDocSnap(QueryDocumentSnapshot documentSnapshot) =>
-    Recipe(documentSnapshot.reference, documentSnapshot['name']);
+Recipe recipeFromDocSnap(QueryDocumentSnapshot recipeSnapshot) =>
+    Recipe(reference: recipeSnapshot.reference, name: recipeSnapshot['name']);

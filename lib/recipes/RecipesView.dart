@@ -13,11 +13,6 @@ class RecipesView extends State<NavigationView> {
     super.initState();
   }
 
-  AppBar _appBar() => AppBar(
-        title: Text('${widget.destination.title}'),
-        backgroundColor: widget.destination.color,
-      );
-
   IconButton _deleteButtonAtIndex(int index) =>
       IconButton(icon: Icon(Icons.delete), onPressed: () => deleteRecipe(_recipes[index]));
 
@@ -28,29 +23,23 @@ class RecipesView extends State<NavigationView> {
         return snapshot.hasData
             ? ListView.builder(
                 itemCount: _recipes.length,
-                itemBuilder: (context, index) => Card(
-                    child: ListTile(
-                  title: Text(_recipes[index].name),
-                  trailing: _deleteButtonAtIndex(index),
-                )),
-              )
+                itemBuilder: (context, index) =>
+                    Card(child: ListTile(title: Text(_recipes[index].name), trailing: _deleteButtonAtIndex(index))))
             : Text(Strings.loading);
       });
 
   FloatingActionButton _addNewRecipeButton(BuildContext context) => FloatingActionButton.extended(
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipeView())),
-        label: Text(Strings.add_recipe),
-        icon: Icon(Icons.add),
-      );
+      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipeView())),
+      label: Text(Strings.add_recipe),
+      icon: Icon(Icons.add));
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: widget.destination.color[100],
-      appBar: _appBar(),
-      body: _recipeListFromStream(),
-      floatingActionButton: _addNewRecipeButton(context),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-    );
+        backgroundColor: widget.destination.color[100],
+        appBar: AppBar(title: Text('${widget.destination.title}'), backgroundColor: widget.destination.color),
+        body: _recipeListFromStream(),
+        floatingActionButton: _addNewRecipeButton(context),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }

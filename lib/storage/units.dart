@@ -1,33 +1,27 @@
-enum Unit {
-  unit,
-  liter,
-  kilogram,
-  piece
-}
+enum Units { unit, liter, kilogram, piece }
 
-extension UnitExtension on Unit{
-  String unitToString(){
+extension UnitExtension on Units {
+  String asString() {
     return this.toString().split(".").last;
   }
+}
 
-  Unit stringToUnit(String unitString){
-    if (unitString == "unit")
-      return Unit.unit;
-    if (unitString == "liter")
-      return Unit.liter;
-    if ( unitString == "kilogram")
-      return Unit.kilogram;
-    if (unitString == "piece")
-      return Unit.piece;
+List<String> allUnitsAsStrings() {
+  List<String> strings = [];
+  for (Units unit in Units.values) strings.add(unit.asString());
 
-    return null;
-  }
+  return strings;
+}
 
-  List<String> getUnitsAsStrings(){
-    List<String> strings = [];
-    for (Unit unit in Unit.values){
-      strings.add(unit.unitToString());
-    }
-    return strings;
+Units stringToUnit(String unitString) {
+  switch (unitString) {
+    case "liter":
+      return Units.liter;
+    case "kilogram":
+      return Units.kilogram;
+    case "piece":
+      return Units.piece;
+    default:
+      return Units.unit;
   }
 }

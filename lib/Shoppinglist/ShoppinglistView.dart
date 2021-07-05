@@ -3,10 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/util/view/ingredient_input_container.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
-import 'package:grocerylister/storage/data_model/ingredient.dart';
-import 'package:grocerylister/storage/data_model/plan.dart';
 import 'package:grocerylister/storage/data_model/shopping_list.dart';
-import 'package:grocerylister/storage/storage.dart';
 import 'package:grocerylister/util/strings.dart';
 import 'package:grocerylister/util/globals.dart' as globals;
 

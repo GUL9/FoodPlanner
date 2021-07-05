@@ -2,12 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/RecipeIngredients/DataModel/RecipeIngredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
-import 'package:grocerylister/storage/data_model/ingredient.dart';
 import 'package:grocerylister/storage/data_model/plan.dart';
-import 'package:grocerylister/storage/data_model/recipe_ingredient.dart';
 import 'package:grocerylister/util/strings.dart';
-import 'package:grocerylister/storage/storage.dart';
 
 import 'package:grocerylister/util/globals.dart' as globals;
 import 'package:grocerylister/util/view/select_recipe_container.dart';
@@ -131,51 +129,51 @@ class PlannerDestinationState extends State<NavigationView> {
   }
 
   List<RecipeIngredient> _squash(List<RecipeIngredient> list) {
-    list.sort((RecipeIngredient a, RecipeIngredient b) {
-      int diff = a.ingredient.name.compareTo(b.ingredient.name);
-      if (diff == 0) {
-        return a.unit.compareTo(b.unit);
-      }
-      return diff;
-    });
+    // list.sort((RecipeIngredient a, RecipeIngredient b) {
+    //   int diff = a.ingredient.name.compareTo(b.ingredient.name);
+    //   if (diff == 0) {
+    //     return a.unit.compareTo(b.unit);
+    //   }
+    //   return diff;
+    // });
 
-    List toRemove = [];
-    List toAdd = [];
-    List toBeSquashed = [];
+    // List toRemove = [];
+    // List toAdd = [];
+    // List toBeSquashed = [];
 
-    int i = 0;
-    while (i + 1 < list.length) {
-      Set ingredientsWithSameNameAndUnit = Set();
-      int j = i;
-      while (j + 1 < list.length &&
-          list[j].ingredient.name == list[j + 1].ingredient.name &&
-          list[j].unit == list[j + 1].unit) {
-        ingredientsWithSameNameAndUnit.add(list[j]);
-        ingredientsWithSameNameAndUnit.add(list[j + 1]);
-        j++;
-      }
-      if (ingredientsWithSameNameAndUnit.isNotEmpty) toBeSquashed.add(ingredientsWithSameNameAndUnit);
-      i = i == j ? i + 1 : j;
-    }
+    // int i = 0;
+    // while (i + 1 < list.length) {
+    //   Set ingredientsWithSameNameAndUnit = Set();
+    //   int j = i;
+    //   while (j + 1 < list.length &&
+    //       list[j].ingredient.name == list[j + 1].ingredient.name &&
+    //       list[j].unit == list[j + 1].unit) {
+    //     ingredientsWithSameNameAndUnit.add(list[j]);
+    //     ingredientsWithSameNameAndUnit.add(list[j + 1]);
+    //     j++;
+    //   }
+    //   if (ingredientsWithSameNameAndUnit.isNotEmpty) toBeSquashed.add(ingredientsWithSameNameAndUnit);
+    //   i = i == j ? i + 1 : j;
+    // }
 
-    for (Set sames in toBeSquashed) {
-      double newQuantity = 0;
-      Recipe recipe = sames.first.recipe;
-      Ingredient ingredient = sames.first.ingredient;
-      String unit = sames.first.unit;
+    // for (Set sames in toBeSquashed) {
+    //   double newQuantity = 0;
+    //   Recipe recipe = sames.first.recipe;
+    //   Ingredient ingredient = sames.first.ingredient;
+    //   String unit = sames.first.unit;
 
-      for (RecipeIngredient item in sames) {
-        newQuantity += item.quantity;
-        toRemove.add(item);
-      }
+    //   for (RecipeIngredient item in sames) {
+    //     newQuantity += item.quantity;
+    //     toRemove.add(item);
+    //   }
 
-      toAdd.add(RecipeIngredient(UniqueKey().hashCode, recipe, ingredient, unit, newQuantity));
-    }
+    //   toAdd.add(RecipeIngredient(UniqueKey().hashCode, recipe, ingredient, unit, newQuantity));
+    // }
 
-    for (RecipeIngredient item in toRemove) list.remove(item);
-    for (RecipeIngredient item in toAdd) list.add(item);
+    // for (RecipeIngredient item in toRemove) list.remove(item);
+    // for (RecipeIngredient item in toAdd) list.add(item);
 
-    return list;
+    // return list;
   }
 
   Future<Plan> _savePlan() async {}

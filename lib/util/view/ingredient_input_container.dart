@@ -1,10 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:grocerylister/storage/units.dart';
+import 'package:grocerylister/Storage/Units.dart';
 import 'package:grocerylister/util/strings.dart';
 
 import 'package:grocerylister/util/util.dart' as utils;
-import 'package:grocerylister/util/view/ingredient_input_row.dart';
+import 'package:grocerylister/util/view/IngredientInputRow.dart';
 
 class IngredientInputContainer extends StatefulWidget {
   @override
@@ -29,11 +29,7 @@ class _IngredientInputContainerState extends State<IngredientInputContainer> {
       width: MediaQuery.of(context).size.width,
       child: Column(
         children: <Widget>[
-          IngredientInputRow(
-            nameController: nameController,
-            quantityController: quantityController,
-            unitController: unitController,
-          ),
+          IngredientInputRow(),
           Padding(padding: EdgeInsets.only(bottom: 20)),
           TextButton(
             child: Text(
@@ -41,8 +37,12 @@ class _IngredientInputContainerState extends State<IngredientInputContainer> {
               style: TextStyle(fontSize: 20, color: Colors.amber),
             ),
             onPressed: () {
-              if(isNewGroceryInputOk(context))
-                Navigator.pop(context, {'name': nameController.text, 'quantity': double.tryParse(quantityController.text), 'unit': unitController.isEmpty ? Unit.unit.unitToString(): unitController});
+              if (isNewGroceryInputOk(context))
+                Navigator.pop(context, {
+                  'name': nameController.text,
+                  'quantity': double.tryParse(quantityController.text),
+                  'unit': unitController.isEmpty ? Units.unit.asString() : unitController
+                });
             },
           ),
         ],
