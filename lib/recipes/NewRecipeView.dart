@@ -27,7 +27,11 @@ class NewRecipeViewState extends State<NewRecipeView> {
           itemCount: _ingredientRows.length,
           itemBuilder: (context, index) => Padding(padding: EdgeInsets.only(top: 5), child: _ingredientRows[index])));
 
-  Column _floatingActionButtonColumn() => Column(mainAxisAlignment: MainAxisAlignment.end, children: [
+  _isFloatingActionButtonColumnVisible() => MediaQuery.of(context).viewInsets.bottom == 0 ? true : false;
+
+  Visibility _floatingActionButtonColumn() => Visibility(
+      visible: _isFloatingActionButtonColumnVisible(),
+      child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         AvatarGlow(
             animate: globals.sttHandler.isListening,
             glowColor: Theme.of(context).primaryColor,
@@ -41,15 +45,12 @@ class NewRecipeViewState extends State<NewRecipeView> {
                 heroTag: null,
                 onPressed: () => takeVoiceInput())),
         FloatingActionButton.extended(
-            icon: Icon(Icons.add),
-            label: Text(Strings.add),
-            heroTag: null,
-            onPressed: () => _addEmptyIngredientInputRow()),
+            icon: Icon(Icons.add), label: Text(Strings.add), heroTag: null, onPressed: _addEmptyIngredientInputRow),
         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
         FloatingActionButton.extended(
             icon: Icon(Icons.check), label: Text(Strings.save_recipe), heroTag: null, onPressed: _saveRecipeAndReturn),
         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-      ]);
+      ]));
 
   @override
   void initState() {

@@ -38,22 +38,26 @@ class _IngredientInputRowState extends State<IngredientInputRow> {
 
   TextFormField _nameFormField() => TextFormField(
         controller: _nameController,
-        decoration: const InputDecoration(border: OutlineInputBorder(), labelText: Strings.ingredient_name),
+        decoration: InputDecoration(border: OutlineInputBorder(), labelText: Strings.ingredient_name),
       );
 
   TextFormField _quantityFormField() => TextFormField(
         controller: _quantityController,
-        decoration: const InputDecoration(border: OutlineInputBorder(), labelText: Strings.ingredient_quantity),
+        decoration: InputDecoration(border: OutlineInputBorder(), labelText: Strings.ingredient_quantity),
       );
 
   void _setUnit(newValue) => setState(() => _unitController = newValue);
 
-  DropdownButtonFormField _unitDropdown() => DropdownButtonFormField(
-      decoration: const InputDecoration.collapsed(hintText: Strings.unit),
-      value: _unitController.isNotEmpty ? _unitController : Units.unit.asString(),
-      onChanged: _setUnit,
-      items:
-          Units.values.map((unit) => DropdownMenuItem(value: unit.asString(), child: Text(unit.asString()))).toList());
+  Container _unitDropdown() => Container(
+      height: 60,
+      decoration: ShapeDecoration(shape: RoundedRectangleBorder()),
+      child: DropdownButtonFormField(
+          decoration: InputDecoration(border: OutlineInputBorder(), hintText: Strings.unit),
+          value: _unitController.isNotEmpty ? _unitController : Units.unit.asString(),
+          onChanged: _setUnit,
+          items: Units.values
+              .map((unit) => DropdownMenuItem(value: unit.asString(), child: Text(unit.asString())))
+              .toList()));
 
   @override
   Widget build(BuildContext context) {
