@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Shoppinglist/ShoppinglistView.dart';
-import 'package:grocerylister/planner/planner.dart';
+import 'package:grocerylister/Plan/PlanView.dart';
 import 'package:grocerylister/Recipes/RecipesView.dart';
 import 'package:grocerylister/util/strings.dart';
 
@@ -28,7 +28,7 @@ class NavigationView extends StatefulWidget {
       case Strings.grocery_list:
         return ShoppinglistView();
       case Strings.food_planner:
-        return PlannerDestinationState();
+        return PlanView();
       case Strings.recipe_list:
         return RecipesView();
       default:

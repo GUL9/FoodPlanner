@@ -4,11 +4,13 @@ class Recipe {
   DocumentReference reference;
   String name;
 
-  Recipe({DocumentReference reference, String name})
-      : this.reference = reference,
-        this.name = name;
-  asData() => {'name': name};
-}
+  Recipe({this.reference, this.name});
 
-Recipe recipeFromDocSnap(QueryDocumentSnapshot recipeSnapshot) =>
-    Recipe(reference: recipeSnapshot.reference, name: recipeSnapshot['name']);
+  Recipe.fromDocumentSnapshot(DocumentSnapshot ds)
+      : this(reference: ds.reference, name: (ds.data() as Map<String, dynamic>)['name'] as String);
+
+  Recipe.fromJson(Map<String, Object> json)
+      : this(reference: json['reference'] as DocumentReference, name: json['name'] as String);
+
+  Map<String, Object> toJson() => {'name': name};
+}

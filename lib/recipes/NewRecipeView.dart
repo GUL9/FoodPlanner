@@ -1,16 +1,14 @@
-import 'package:avatar_glow/avatar_glow.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/IngredientsAPI.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/RecipeIngredients/DataModel/RecipeIngredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/RecipeIngredients/RecipeIngredientsAPI.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
-import 'package:grocerylister/Storage/FirebaseAPI/Recipes/RecipesAPI.dart';
 import 'package:grocerylister/util/strings.dart';
 
-import 'package:grocerylister/util/globals.dart' as globals;
 import 'package:grocerylister/util/view/IngredientInputRow.dart';
 
 class NewRecipeView extends StatefulWidget {
@@ -32,18 +30,9 @@ class NewRecipeViewState extends State<NewRecipeView> {
   Visibility _floatingActionButtonColumn() => Visibility(
       visible: _isFloatingActionButtonColumnVisible(),
       child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
-        AvatarGlow(
-            animate: globals.sttHandler.isListening,
-            glowColor: Theme.of(context).primaryColor,
-            duration: Duration(milliseconds: 1000),
-            repeatPauseDuration: Duration(milliseconds: 100),
-            endRadius: 50,
-            repeat: true,
-            child: FloatingActionButton.extended(
-                icon: Icon(globals.sttHandler.isListening ? Icons.emoji_emotions_outlined : Icons.mic),
-                label: Text(Strings.add),
-                heroTag: null,
-                onPressed: () => takeVoiceInput())),
+        FloatingActionButton.extended(
+            icon: Icon(Icons.mic), label: Text(Strings.add), heroTag: null, onPressed: () => takeVoiceInput()),
+        Padding(padding: EdgeInsets.symmetric(vertical: 10)),
         FloatingActionButton.extended(
             icon: Icon(Icons.add), label: Text(Strings.add), heroTag: null, onPressed: _addEmptyIngredientInputRow),
         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
@@ -80,7 +69,8 @@ class NewRecipeViewState extends State<NewRecipeView> {
   void _addEmptyIngredientInputRow() => setState(() => _ingredientRows.add(IngredientInputRow()));
 
   void _saveRecipe() async {
-    DocumentReference recipeRef = await saveRecipe(Recipe(name: _recipeNameController.text));
+    // TODO: FIX
+    DocumentReference recipeRef = await recipesAPI.saveRecipe(Recipe(name: _recipeNameController.text));
     for (IngredientInputRow ingredient in _ingredientRows) {
       DocumentReference ingredientRef = await saveIngredient(Ingredient(name: ingredient.getName()));
       await saveRecipeIngredient(RecipeIngredient(

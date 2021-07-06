@@ -5,7 +5,6 @@ import 'package:grocerylister/util/view/ingredient_input_container.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/storage/data_model/shopping_list.dart';
 import 'package:grocerylister/util/strings.dart';
-import 'package:grocerylister/util/globals.dart' as globals;
 
 class ShoppinglistView extends State<NavigationView> {
   List<ShoppingListEntry> shoppingList = [];
@@ -14,12 +13,12 @@ class ShoppinglistView extends State<NavigationView> {
 
   @override
   void initState() {
-    super.initState();
-    loadShoppingList();
-    globals.planStream.stream.listen((savedPlan) => loadShoppingList());
-    globals.recipeStream.stream.listen((savedRecipe) {
-      if (savedRecipe == null) loadShoppingList();
-    });
+    // super.initState();
+    // loadShoppingList();
+    // globals.planStream.stream.listen((savedPlan) => loadShoppingList());
+    // globals.recipeStream.stream.listen((savedRecipe) {
+    //   if (savedRecipe == null) loadShoppingList();
+    // });
   }
 
   void loadShoppingList() async {

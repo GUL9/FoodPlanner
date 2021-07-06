@@ -1,5 +1,5 @@
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
-import 'package:grocerylister/storage/data_model/plan.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/Plans/DataModel/Plan.dart';
 
 class ShoppingListEntry {
   int id;
