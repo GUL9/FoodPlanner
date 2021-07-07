@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Plans/PlansAPI.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
@@ -19,7 +20,7 @@ class PlanView extends State<NavigationView> {
   void _generatePlan() {}
 
   StreamBuilder _planFromStream() => StreamBuilder(
-      stream: plansStream,
+      stream: plansAPI.stream,
       builder: (context, snapshot) {
         //var a = getPlansFromSnapshot(snapshot);
         //_currentPlan = getLatestPlan();

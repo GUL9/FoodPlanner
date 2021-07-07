@@ -14,7 +14,7 @@ class RecipesView extends State<NavigationView> {
   }
 
   IconButton _deleteButtonAtIndex(int index) =>
-      IconButton(icon: Icon(Icons.delete), onPressed: () => recipesAPI.deleteRecipe(_recipes[index]));
+      IconButton(icon: Icon(Icons.delete), onPressed: () => recipesAPI.delete(_recipes[index]));
 
   StreamBuilder _recipeListFromStream() => StreamBuilder(
       stream: recipesAPI.stream,

@@ -3,9 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
-import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/IngredientsAPI.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/RecipeIngredients/DataModel/RecipeIngredient.dart';
-import 'package:grocerylister/Storage/FirebaseAPI/RecipeIngredients/RecipeIngredientsAPI.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/util/strings.dart';
 
@@ -70,10 +68,10 @@ class NewRecipeViewState extends State<NewRecipeView> {
 
   void _saveRecipe() async {
     // TODO: FIX
-    DocumentReference recipeRef = await recipesAPI.saveRecipe(Recipe(name: _recipeNameController.text));
+    DocumentReference recipeRef = await recipesAPI.save(Recipe(name: _recipeNameController.text));
     for (IngredientInputRow ingredient in _ingredientRows) {
-      DocumentReference ingredientRef = await saveIngredient(Ingredient(name: ingredient.getName()));
-      await saveRecipeIngredient(RecipeIngredient(
+      DocumentReference ingredientRef = await ingredientsAPI.save(Ingredient(name: ingredient.getName()));
+      await recipeIngredientsAPI.save(RecipeIngredient(
           recipeReference: recipeRef,
           ingredientReference: ingredientRef,
           quantity: double.parse(ingredient.getQuantity()),
