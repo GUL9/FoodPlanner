@@ -27,8 +27,8 @@ class Strings {
   static const String friday = "Friday";
   static const String saturday = "Saturday";
   static const String sunday = "Sunday";
-  static const String generate_food_plan = "FoodieFoodie";
-  static const String food_plan_updated = "Foodplan updated";
+  static const String new_plan = "New plan";
+  static const String save_plan = "Save plan";
   static const String add_grocery = "Add Grocery";
   static const String new_grocery = "New Grocery";
   static const String add = "Add";
