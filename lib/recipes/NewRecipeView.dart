@@ -48,7 +48,7 @@ class NewRecipeViewState extends State<NewRecipeView> {
   @override
   build(BuildContext context) {
     return new Scaffold(
-        appBar: AppBar(title: Text(Strings.add_recipe)),
+        appBar: AppBar(title: Text(Strings.new_recipe)),
         body: Stack(children: [
           Container(
               margin: EdgeInsets.all(20),

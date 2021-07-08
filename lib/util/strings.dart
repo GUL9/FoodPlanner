@@ -1,7 +1,7 @@
 class Strings {
   static const String recipe_list = "Recipes";
   static const String grocery_list = "Grocery list";
-  static const String add_recipe = "Add new recipe";
+  static const String new_recipe = "New recipe";
   static const String recipe_name = "Recipe Name";
   static const String ingredients = "Ingredients";
   static const String ingredient_name = "Name";
@@ -30,7 +30,6 @@ class Strings {
   static const String new_plan = "New plan";
   static const String save_plan = "Save plan";
   static const String add_grocery = "Add Grocery";
-  static const String new_grocery = "New Grocery";
   static const String add = "Add";
   static const String cancel = "Cancel";
   static const String extra = "extra";

@@ -28,7 +28,7 @@ class RecipesView extends State<NavigationView> {
 
   FloatingActionButton _addNewRecipeButton(BuildContext context) => FloatingActionButton.extended(
       onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipeView())),
-      label: Text(Strings.add_recipe),
+      label: Text(Strings.new_recipe),
       icon: Icon(Icons.add));
 
   @override
