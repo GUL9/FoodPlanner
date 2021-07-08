@@ -67,7 +67,6 @@ class NewRecipeViewState extends State<NewRecipeView> {
   void _addEmptyIngredientInputRow() => setState(() => _ingredientRows.add(IngredientInputRow()));
 
   void _saveRecipe() async {
-    // TODO: FIX
     DocumentReference recipeRef = await recipesAPI.save(Recipe(name: _recipeNameController.text));
     for (IngredientInputRow ingredient in _ingredientRows) {
       DocumentReference ingredientRef = await ingredientsAPI.save(Ingredient(name: ingredient.getName()));

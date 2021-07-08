@@ -30,10 +30,18 @@ class PlanView extends State<NavigationView> {
               title: Text(_recipes[index].name))));
 
   FloatingActionButton _newPlanButton() => FloatingActionButton.extended(
-      onPressed: _generateNewPlan, icon: Icon(Icons.add), label: Text(Strings.new_plan), heroTag: null);
+        onPressed: _generateNewPlan,
+        icon: Icon(Icons.add),
+        label: Text(Strings.new_plan),
+        heroTag: null,
+      );
 
-  FloatingActionButton _savePlanButton() =>
-      FloatingActionButton.extended(onPressed: _savePlan, icon: Icon(Icons.check), label: Text(Strings.save_plan));
+  FloatingActionButton _savePlanButton() => FloatingActionButton.extended(
+        onPressed: _savePlan,
+        icon: Icon(Icons.check),
+        label: Text(Strings.save_plan),
+        heroTag: null,
+      );
 
   @override
   Widget build(BuildContext context) {
