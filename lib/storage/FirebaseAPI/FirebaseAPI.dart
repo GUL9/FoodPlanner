@@ -5,24 +5,27 @@ abstract class FirebaseAPI {
   var dbRef;
   Stream stream;
 
-  Future<void> delete(DataModel dataModel) =>
-      dbRef.doc(dataModel.reference.id).delete().catchError((error) => print("Failed to delete recipe: $error"));
+  Future<void> delete(DataModel dataModel) async =>
+      await dbRef.doc(dataModel.reference.id).delete().catchError((error) => print("Failed to delete recipe: $error"));
 
-  Future<DocumentReference> add(DataModel recipe) async {
-    return await dbRef
-        .add(recipe)
-        .catchError((error) => print("Failed to add datamodel: $error") as DocumentReference<DataModel>);
+  Future<DocumentReference> add(DataModel dataModel) async => await dbRef
+      .add(dataModel)
+      .catchError((error) => print("Failed to add datamodel: $error") as DocumentReference<DataModel>);
+
+  Future<void> update(DataModel dataModel) async => await dbRef
+      .doc(dataModel.reference.id)
+      .update(dataModel.toJson())
+      .catchError((error) => print("Failed to update dataModel: $error") as DocumentReference<DataModel>);
+
+  Future<DocumentReference> save(DataModel dataModel) {
+    if (dataModel.reference == null) return add(dataModel);
+    return update(dataModel) as Future<DocumentReference>;
   }
 
-  Future<void> update(DataModel recipe) async {
-    return await dbRef
-        .doc(recipe.reference.id)
-        .update(recipe.toJson())
-        .catchError((error) => print("Failed to update recipe: $error") as DocumentReference<DataModel>);
-  }
-
-  Future<DocumentReference> save(DataModel recipe) async {
-    if (recipe.reference == null) return add(recipe);
-    return update(recipe) as DocumentReference;
+  Future<DataModel> getFromReference(DocumentReference reference) async {
+    DataModel ret = await dbRef.doc(reference.id).get().then((DocumentSnapshot s) {
+      if (s.exists) return s.data();
+    }).catchError((error) => print("Failed to get dataModel: $error"));
+    return ret;
   }
 }
