@@ -22,7 +22,7 @@ bool isInputQuantityFieldOk(BuildContext context, String quantity) {
   return true;
 }
 
-String indexToDay(int index) {
+String indexToDayString(int index) {
   switch (index) {
     case 0:
       return Strings.monday + ": ";

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
@@ -17,16 +19,23 @@ class PlanView extends State<NavigationView> {
     super.initState();
   }
 
-  void _changerecipeOrder(int a, int b) => setState(() {
-        Recipe tmpA = _recipes[a];
-        Recipe tmpB = _recipes[b];
-        _recipes.removeAt(a);
-        _recipes.insert(a, tmpB);
-        _recipes.removeAt(b);
-        _recipes.insert(b, tmpA);
+  void _swapRecipeOrder(int oldIndex, int newIndex) => setState(() {
+        if (oldIndex < newIndex) newIndex -= 1;
+        Recipe recipe = _recipes.removeAt(oldIndex);
+        _recipes.insert(newIndex, recipe);
       });
 
-  void _generatePlan() {}
+  Future<void> _generateNewPlan() async {
+    var allRecipes = await recipesAPI.getAll();
+    List<Recipe> planRecipes = [];
+    for (var i = 0; i < 7; i++) {
+      int index = Random().nextInt(allRecipes.length);
+      planRecipes.add(allRecipes[index]);
+    }
+    Timestamp now = Timestamp.now();
+    var recipes = planRecipes.map((Recipe r) => r.reference).toList();
+    await plansAPI.add(Plan(createdAt: now, lastModifiedAt: now, recipes: recipes));
+  }
 
   Future<void> _fetchMostRecentPlan() async {
     Plan plan = await plansAPI.getMostRecentlyCreatedPlan();
@@ -47,7 +56,7 @@ class PlanView extends State<NavigationView> {
         if (snapshot.hasData) _fetchMostRecentPlan();
         return snapshot.hasData
             ? ReorderableListView.builder(
-                onReorder: _changerecipeOrder,
+                onReorder: _swapRecipeOrder,
                 itemCount: _recipes.length,
                 itemBuilder: (context, index) => Card(
                     key: ValueKey(_recipes[index]),
@@ -65,7 +74,7 @@ class PlanView extends State<NavigationView> {
       backgroundColor: widget.destination.color[100],
       body: Container(padding: const EdgeInsets.all(20), child: _planFromStream()),
       floatingActionButton: FloatingActionButton.extended(
-          onPressed: _generatePlan,
+          onPressed: _generateNewPlan,
           label: Text(Strings.generate_food_plan),
           icon: Icon(Icons.insert_emoticon),
           heroTag: null),
