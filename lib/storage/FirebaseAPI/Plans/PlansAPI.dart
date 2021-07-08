@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/FirebaseAPI.dart';
@@ -20,6 +22,11 @@ class PlansAPI extends FirebaseAPI {
   }
 
   Future<Plan> getMostRecentlyCreatedPlan() async {
-    return await dbRef.orderBy('created_at').limitToLast(1).get().then((QuerySnapshot s) => s.docs[0].data());
+    return await dbRef
+        .orderBy('created_at')
+        .limitToLast(1)
+        .get()
+        .then((QuerySnapshot s) => s.docs[0].data())
+        .catchError((error) => stderr.writeln("Failed to get most recently created plan: $error"));
   }
 }

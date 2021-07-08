@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/DataModel.dart';
 
@@ -5,17 +7,19 @@ abstract class FirebaseAPI {
   var dbRef;
   Stream stream;
 
-  Future<void> delete(DataModel dataModel) async =>
-      await dbRef.doc(dataModel.reference.id).delete().catchError((error) => print("Failed to delete recipe: $error"));
+  Future<void> delete(DataModel dataModel) async => await dbRef
+      .doc(dataModel.reference.id)
+      .delete()
+      .catchError((error) => stderr.writeln("Failed to delete datamodel: $error"));
 
   Future<DocumentReference> add(DataModel dataModel) async => await dbRef
       .add(dataModel)
-      .catchError((error) => print("Failed to add datamodel: $error") as DocumentReference<DataModel>);
+      .catchError((error) => stderr.writeln("Failed to add datamodel: $error") as DocumentReference<DataModel>);
 
   Future<void> update(DataModel dataModel) async => await dbRef
       .doc(dataModel.reference.id)
       .update(dataModel.toJson())
-      .catchError((error) => print("Failed to update dataModel: $error") as DocumentReference<DataModel>);
+      .catchError((error) => stderr.writeln("Failed to update dataModel: $error") as DocumentReference<DataModel>);
 
   Future<DocumentReference> save(DataModel dataModel) {
     if (dataModel.reference == null) return add(dataModel);
@@ -25,7 +29,7 @@ abstract class FirebaseAPI {
   Future<DataModel> getFromReference(DocumentReference reference) async {
     DataModel ret = await dbRef.doc(reference.id).get().then((DocumentSnapshot ds) {
       if (ds.exists) return ds.data();
-    }).catchError((error) => print("Failed to get dataModel: $error"));
+    }).catchError((error) => stderr.writeln("Failed to get dataModel: $error"));
     return ret;
   }
 
@@ -33,7 +37,7 @@ abstract class FirebaseAPI {
     List<DataModel> dataList = [];
     await dbRef.get().then((QuerySnapshot qs) {
       for (var doc in qs.docs) dataList.add(doc.data());
-    });
+    }).catchError((error) => stderr.writeln("Failed to get all dataModels: $error"));
     return dataList;
   }
 }
