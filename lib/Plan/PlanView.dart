@@ -5,41 +5,69 @@ import 'package:flutter/material.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Plans/DataModel/Plan.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/RecipeIngredients/DataModel/RecipeIngredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
 import 'package:grocerylister/util/strings.dart';
 import 'package:grocerylister/util/util.dart';
 
 class PlanView extends State<NavigationView> {
-  Plan _plan;
-  List<Recipe> _recipes = [];
+  Plan _currentPlan;
+  List<Recipe> _currentRecipes = [];
   bool _isModified = false;
 
   void _swapRecipeOrder(int oldIndex, int newIndex) => setState(() {
         _isModified = true;
 
         if (oldIndex < newIndex) newIndex -= 1;
-        Recipe recipe = _recipes.removeAt(oldIndex);
-        _recipes.insert(newIndex, recipe);
+        var recipe = _currentRecipes.removeAt(oldIndex);
+        _currentRecipes.insert(newIndex, recipe);
       });
+
+  _generateNewPlanAndShoppinglist() {
+    _generateNewPlan();
+    _generateNewShoppinglistFromCurrentPlan();
+  }
 
   Future<void> _generateNewPlan() async {
     var allRecipes = await recipesAPI.getAll();
-    List<Recipe> planRecipes = [];
+    var planRecipes = [];
     for (var i = 0; i < 7; i++) {
       int index = Random().nextInt(allRecipes.length);
       planRecipes.add(allRecipes[index]);
     }
     Timestamp now = Timestamp.now();
-    var recipes = planRecipes.map((Recipe r) => r.reference).toList();
-    await plansAPI.add(Plan(createdAt: now, lastModifiedAt: now, recipes: recipes));
+    var newRecipes = planRecipes.map((r) => r.reference).toList();
+    var newPlan = Plan(createdAt: now, lastModifiedAt: now, recipes: newRecipes);
+    newPlan.reference = await plansAPI.add(newPlan);
+
+    setState(() => _currentPlan = newPlan);
+  }
+
+  Future<void> _generateNewShoppinglistFromCurrentPlan() async {
+    var shoppinglist = Shoppinglist(planReference: _currentPlan.reference);
+    shoppinglist.reference = await shoppinglistAPI.add(shoppinglist);
+
+    for (var recipe in _currentRecipes) {
+      var recipeIngredients = await recipeIngredientsAPI.getAllFromRecipeReference(recipe.reference);
+      for (var recipeIngredient in recipeIngredients) {
+        await shoppinglistIngredientsAPI.add(ShoppinglistIngredient(
+            shoppinglistReference: shoppinglist.reference,
+            ingredientReference: recipeIngredient.ingredientReference,
+            quantity: recipeIngredient.quantity,
+            unit: recipeIngredient.unit,
+            isBought: false));
+      }
+    }
   }
 
   Future<void> _savePlan() async {
     setState(() {
-      _plan.recipes = _recipes.map((r) => r.reference).toList();
-      _plan.lastModifiedAt = Timestamp.now();
+      _currentPlan.recipes = _currentRecipes.map((r) => r.reference).toList();
+      _currentPlan.lastModifiedAt = Timestamp.now();
     });
-    await plansAPI.update(_plan);
+    await plansAPI.update(_currentPlan);
   }
 
   Future<void> _loadMostRecentPlan() async {
@@ -50,8 +78,8 @@ class PlanView extends State<NavigationView> {
       recipes.add(recipe);
     }
     setState(() {
-      _plan = plan;
-      _recipes = recipes;
+      _currentPlan = plan;
+      _currentRecipes = recipes;
     });
   }
 
@@ -63,15 +91,15 @@ class PlanView extends State<NavigationView> {
 
   ReorderableListView _planRecipeList() => ReorderableListView.builder(
       onReorder: _swapRecipeOrder,
-      itemCount: _recipes.length,
+      itemCount: _currentRecipes.length,
       itemBuilder: (context, index) => Card(
-          key: ValueKey(_recipes[index]),
+          key: ValueKey(_currentRecipes[index]),
           child: ListTile(
               leading: Text(indexToDayString(index), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-              title: Text(_recipes[index].name))));
+              title: Text(_currentRecipes[index].name))));
 
   FloatingActionButton _newPlanButton() => FloatingActionButton.extended(
-        onPressed: _generateNewPlan,
+        onPressed: _generateNewPlanAndShoppinglist(),
         icon: Icon(Icons.add),
         label: Text(Strings.new_plan),
         heroTag: null,
