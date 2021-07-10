@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/FirebaseAPI.dart';
-import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/ShoppingList.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
 
 class ShoppinglistAPI extends FirebaseAPI {
   ShoppinglistAPI() {

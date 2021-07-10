@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
-import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/ShoppingList.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/util/strings.dart';
 
@@ -14,8 +14,11 @@ class ShoppinglistView extends State<NavigationView> {
   List<Ingredient> _ingredients = [];
 
   Future<void> _loadMostRecentShoppinglist() async {
-    _shoppinglist = await shoppinglistAPI.getMostRecentlyCreatedShoppinglist();
-    setState(() {});
+    var mostRecentShoppinglist = await shoppinglistAPI.getMostRecentlyCreatedShoppinglist();
+
+    setState(() {
+      _shoppinglist = mostRecentShoppinglist;
+    });
   }
 
   @override

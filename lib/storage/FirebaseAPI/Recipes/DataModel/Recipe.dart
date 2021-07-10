@@ -2,15 +2,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/DataModel.dart';
 
 class Recipe implements DataModel {
-  DocumentReference reference;
+  String id;
   String name;
 
-  Recipe({this.reference, this.name});
+  Recipe({this.id, this.name});
 
   Recipe.fromDocumentSnapshot(DocumentSnapshot ds)
-      : this(reference: ds.reference, name: (ds.data() as Map<String, dynamic>)['name'] as String);
+      : this(id: ds.reference.id, name: (ds.data() as Map<String, dynamic>)['name']);
 
-  Recipe.fromJson(Map<String, Object> json) : this(name: json['name'] as String);
+  Recipe.fromJson(Map<String, dynamic> json) : this(name: json['name']);
 
-  Map<String, Object> toJson() => {'name': name};
+  Map<String, dynamic> toJson() => {'name': name};
 }

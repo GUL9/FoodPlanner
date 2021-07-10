@@ -7,23 +7,29 @@ abstract class FirebaseAPI {
   var dbRef;
   Stream stream;
 
-  Future<void> delete(DataModel dataModel) async => await dbRef
-      .doc(dataModel.reference.id)
-      .delete()
-      .catchError((error) => stderr.writeln("Failed to delete datamodel: $error"));
+  Future<void> delete(DataModel dataModel) async {
+    return await dbRef
+        .doc(dataModel.id)
+        .delete()
+        .catchError((error) => stderr.writeln("Failed to delete datamodel: $error"));
+  }
 
-  Future<DocumentReference> add(DataModel dataModel) async => await dbRef
-      .add(dataModel)
-      .catchError((error) => stderr.writeln("Failed to add datamodel: $error") as DocumentReference<DataModel>);
+  Future<String> add(DataModel dataModel) async {
+    var reference = await dbRef.add(dataModel).catchError((error) => stderr.writeln("Failed to add datamodel: $error"));
+    return reference.id;
+  }
 
-  Future<void> update(DataModel dataModel) async => await dbRef
-      .doc(dataModel.reference.id)
-      .update(dataModel.toJson())
-      .catchError((error) => stderr.writeln("Failed to update dataModel: $error") as DocumentReference<DataModel>);
+  Future<String> update(DataModel dataModel) async {
+    var reference = await dbRef
+        .doc(dataModel.id)
+        .update(dataModel.toJson())
+        .catchError((error) => stderr.writeln("Failed to update dataModel: $error"));
+    return reference.id;
+  }
 
-  Future<DocumentReference> save(DataModel dataModel) {
-    if (dataModel.reference == null) return add(dataModel);
-    return update(dataModel) as Future<DocumentReference>;
+  Future<String> save(DataModel dataModel) {
+    if (dataModel.id == null) return add(dataModel);
+    return update(dataModel);
   }
 
   Future<DataModel> getFromReference(DocumentReference reference) async {

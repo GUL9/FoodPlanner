@@ -2,39 +2,38 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/DataModel.dart';
 
 class ShoppinglistIngredient implements DataModel {
-  DocumentReference reference;
-  DocumentReference shoppinglistReference;
-  DocumentReference ingredientReference;
+  String id;
+  String shoppinglistId;
+  String ingredientId;
 
   double quantity;
   String unit;
   bool isBought;
 
-  ShoppinglistIngredient(
-      {this.reference, this.shoppinglistReference, this.ingredientReference, this.quantity, this.unit, this.isBought});
+  ShoppinglistIngredient({this.id, this.shoppinglistId, this.ingredientId, this.quantity, this.unit, this.isBought});
 
   ShoppinglistIngredient.fromDocumentSnapshot(DocumentSnapshot ds)
       : this(
-            reference: ds.reference,
-            shoppinglistReference: (ds.data() as Map<String, dynamic>)['shoppinglist'] as DocumentReference,
-            ingredientReference: (ds.data() as Map<String, dynamic>)['ingredient'] as DocumentReference,
-            quantity: (ds.data() as Map<String, dynamic>)['quantity'] as double,
-            unit: (ds.data() as Map<String, dynamic>)['unit'] as String,
-            isBought: (ds.data() as Map<String, dynamic>)['is_bought'] as bool);
+            id: ds.reference.id,
+            shoppinglistId: (ds.data() as Map<String, dynamic>)['shoppinglistId'],
+            ingredientId: (ds.data() as Map<String, dynamic>)['ingredientId'],
+            quantity: (ds.data() as Map<String, dynamic>)['quantity'],
+            unit: (ds.data() as Map<String, dynamic>)['unit'],
+            isBought: (ds.data() as Map<String, dynamic>)['isBought']);
 
-  ShoppinglistIngredient.fromJson(Map<String, Object> json)
+  ShoppinglistIngredient.fromJson(Map<String, dynamic> json)
       : this(
-            shoppinglistReference: json['shoppinglist'] as DocumentReference,
-            ingredientReference: json['ingredient'] as DocumentReference,
-            quantity: json['quantity'] as double,
-            unit: json['unit'] as String,
-            isBought: json['is_bought'] as bool);
+            shoppinglistId: json['shoppinglistId'],
+            ingredientId: json['ingredientId'],
+            quantity: json['quantity'],
+            unit: json['unit'],
+            isBought: json['isBought']);
 
-  Map<String, Object> toJson() => {
-        'shoppinglist': shoppinglistReference,
-        ' ingredient': ingredientReference,
+  Map<String, dynamic> toJson() => {
+        'shoppinglistId': shoppinglistId,
+        'ingredientId': ingredientId,
         'quantity': quantity,
         'unit': unit,
-        'is_bought': isBought
+        'isBought': isBought
       };
 }

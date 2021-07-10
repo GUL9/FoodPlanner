@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
@@ -17,6 +16,28 @@ class NewRecipeView extends StatefulWidget {
 class NewRecipeViewState extends State<NewRecipeView> {
   TextEditingController _recipeNameController = TextEditingController();
   List<IngredientInputRow> _ingredientRows = [];
+
+  void _addEmptyIngredientInputRow() => setState(() => _ingredientRows.add(IngredientInputRow()));
+
+  void _saveRecipe() async {
+    var recipe = Recipe(name: _recipeNameController.text);
+    recipe.id = await recipesAPI.add(recipe);
+    for (var row in _ingredientRows) {
+      var ingredient = Ingredient(name: row.getName());
+      ingredient.id = await ingredientsAPI.add(ingredient);
+      var recipeIngredient = RecipeIngredient(
+          recipeId: recipe.id,
+          ingredientId: ingredient.id,
+          quantity: double.parse(row.getQuantity()),
+          unit: row.getUnit());
+      recipeIngredient.id = await recipeIngredientsAPI.add(recipeIngredient);
+    }
+  }
+
+  void _saveRecipeAndReturn() {
+    _saveRecipe();
+    Navigator.pop(context);
+  }
 
   Expanded _ingredientList() => Expanded(
       child: ListView.builder(
@@ -62,25 +83,6 @@ class NewRecipeViewState extends State<NewRecipeView> {
               ])),
           Align(alignment: Alignment.bottomRight, child: _floatingActionButtonColumn())
         ]));
-  }
-
-  void _addEmptyIngredientInputRow() => setState(() => _ingredientRows.add(IngredientInputRow()));
-
-  void _saveRecipe() async {
-    DocumentReference recipeRef = await recipesAPI.save(Recipe(name: _recipeNameController.text));
-    for (IngredientInputRow ingredient in _ingredientRows) {
-      DocumentReference ingredientRef = await ingredientsAPI.save(Ingredient(name: ingredient.getName()));
-      await recipeIngredientsAPI.save(RecipeIngredient(
-          recipeReference: recipeRef,
-          ingredientReference: ingredientRef,
-          quantity: double.parse(ingredient.getQuantity()),
-          unit: ingredient.getUnit()));
-    }
-  }
-
-  void _saveRecipeAndReturn() {
-    _saveRecipe();
-    Navigator.pop(context);
   }
 
   void takeVoiceInput() {

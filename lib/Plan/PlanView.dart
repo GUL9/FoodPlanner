@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Plans/DataModel/Plan.dart';
-import 'package:grocerylister/Storage/FirebaseAPI/RecipeIngredients/DataModel/RecipeIngredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
@@ -25,49 +24,50 @@ class PlanView extends State<NavigationView> {
         _currentRecipes.insert(newIndex, recipe);
       });
 
-  _generateNewPlanAndShoppinglist() {
+  void _generateNewPlanAndShoppinglist() {
     _generateNewPlan();
     _generateNewShoppinglistFromCurrentPlan();
   }
 
   Future<void> _generateNewPlan() async {
-    var allRecipes = await recipesAPI.getAll();
-    var planRecipes = [];
-    for (var i = 0; i < 7; i++) {
-      int index = Random().nextInt(allRecipes.length);
-      planRecipes.add(allRecipes[index]);
-    }
-    Timestamp now = Timestamp.now();
-    var newRecipes = planRecipes.map((r) => r.reference).toList();
-    var newPlan = Plan(createdAt: now, lastModifiedAt: now, recipes: newRecipes);
-    newPlan.reference = await plansAPI.add(newPlan);
+    // var allRecipes = await recipesAPI.getAll();
+    // var planRecipes = [];
+    // for (var i = 0; i < 7; i++) {
+    //   var index = Random().nextInt(allRecipes.length);
+    //   planRecipes.add(allRecipes[index]);
+    // }
+    // var now = Timestamp.now();
+    // var newRecipes = planRecipes.map((r) => r.reference).toList();
+    // var newPlan = Plan(createdAt: now, lastModifiedAt: now, recipes: newRecipes);
+    // newPlan.reference = await plansAPI.add(newPlan);
 
-    setState(() => _currentPlan = newPlan);
+    // setState(() => _currentPlan = newPlan);
   }
 
   Future<void> _generateNewShoppinglistFromCurrentPlan() async {
-    var shoppinglist = Shoppinglist(planReference: _currentPlan.reference);
-    shoppinglist.reference = await shoppinglistAPI.add(shoppinglist);
+    // var now = Timestamp.now();
+    // var shoppinglist = Shoppinglist(planReference: _currentPlan.reference, createdAt: now, lastModifiedAt: now);
+    // shoppinglist.reference = await shoppinglistAPI.add(shoppinglist);
 
-    for (var recipe in _currentRecipes) {
-      var recipeIngredients = await recipeIngredientsAPI.getAllFromRecipeReference(recipe.reference);
-      for (var recipeIngredient in recipeIngredients) {
-        await shoppinglistIngredientsAPI.add(ShoppinglistIngredient(
-            shoppinglistReference: shoppinglist.reference,
-            ingredientReference: recipeIngredient.ingredientReference,
-            quantity: recipeIngredient.quantity,
-            unit: recipeIngredient.unit,
-            isBought: false));
-      }
-    }
+    // for (var recipe in _currentRecipes) {
+    //   var recipeIngredients = await recipeIngredientsAPI.getAllFromRecipeReference(recipe.reference);
+    //   for (var recipeIngredient in recipeIngredients) {
+    //     await shoppinglistIngredientsAPI.add(ShoppinglistIngredient(
+    //         shoppinglistReference: shoppinglist.reference,
+    //         ingredientReference: recipeIngredient.ingredientReference,
+    //         quantity: recipeIngredient.quantity,
+    //         unit: recipeIngredient.unit,
+    //         isBought: false));
+    //   }
+    // }
   }
 
   Future<void> _savePlan() async {
-    setState(() {
-      _currentPlan.recipes = _currentRecipes.map((r) => r.reference).toList();
-      _currentPlan.lastModifiedAt = Timestamp.now();
-    });
-    await plansAPI.update(_currentPlan);
+    // setState(() {
+    //   _currentPlan.recipes = _currentRecipes.map((r) => r.reference).toList();
+    //   _currentPlan.lastModifiedAt = Timestamp.now();
+    // });
+    // await plansAPI.update(_currentPlan);
   }
 
   Future<void> _loadMostRecentPlan() async {
@@ -99,7 +99,7 @@ class PlanView extends State<NavigationView> {
               title: Text(_currentRecipes[index].name))));
 
   FloatingActionButton _newPlanButton() => FloatingActionButton.extended(
-        onPressed: _generateNewPlanAndShoppinglist(),
+        onPressed: _generateNewPlanAndShoppinglist,
         icon: Icon(Icons.add),
         label: Text(Strings.new_plan),
         heroTag: null,

@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-
 abstract class DataModel {
-  DocumentReference reference;
+  String id;
 
-  Map<String, Object> toJson();
+  Map<String, dynamic> toJson();
 }

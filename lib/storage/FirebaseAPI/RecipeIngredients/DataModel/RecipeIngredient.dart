@@ -2,30 +2,30 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/DataModel.dart';
 
 class RecipeIngredient implements DataModel {
-  DocumentReference reference;
-  DocumentReference recipeReference;
-  DocumentReference ingredientReference;
+  String id;
+  String recipeId;
+  String ingredientId;
 
   double quantity;
   String unit;
 
-  RecipeIngredient({this.reference, this.recipeReference, this.ingredientReference, this.quantity, this.unit});
+  RecipeIngredient({this.id, this.recipeId, this.ingredientId, this.quantity, this.unit});
 
   RecipeIngredient.fromDocumentSnapshot(DocumentSnapshot ds)
       : this(
-            reference: ds.reference,
-            recipeReference: (ds.data() as Map<String, dynamic>)['recipe'] as DocumentReference,
-            ingredientReference: (ds.data() as Map<String, dynamic>)['ingredient'] as DocumentReference,
-            quantity: (ds.data() as Map<String, dynamic>)['quantity'] as double,
-            unit: (ds.data() as Map<String, dynamic>)['unit'] as String);
+            id: ds.reference.id,
+            recipeId: (ds.data() as Map<String, dynamic>)['recipeId'],
+            ingredientId: (ds.data() as Map<String, dynamic>)['ingredientId'],
+            quantity: (ds.data() as Map<String, dynamic>)['quantity'],
+            unit: (ds.data() as Map<String, dynamic>)['unit']);
 
-  RecipeIngredient.fromJson(Map<String, Object> json)
+  RecipeIngredient.fromJson(Map<String, dynamic> json)
       : this(
-            recipeReference: json['recipe'] as DocumentReference,
-            ingredientReference: json['ingredient'] as DocumentReference,
-            quantity: json['quantity'] as double,
-            unit: json['unit'] as String);
+            recipeId: json['recipeId'],
+            ingredientId: json['ingredientId'],
+            quantity: json['quantity'],
+            unit: json['unit']);
 
-  Map<String, Object> toJson() =>
-      {'recipe': recipeReference, ' ingredient': ingredientReference, 'quantity': quantity, 'unit': unit};
+  Map<String, dynamic> toJson() =>
+      {'recipeId': recipeId, ' ingredientId': ingredientId, 'quantity': quantity, 'unit': unit};
 }
