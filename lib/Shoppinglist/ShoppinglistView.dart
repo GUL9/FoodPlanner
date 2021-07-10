@@ -14,7 +14,7 @@ class ShoppinglistView extends State<NavigationView> {
   List<Ingredient> _ingredients = [];
 
   Future<void> _loadMostRecentShoppinglist() async {
-    var mostRecentShoppinglist = await shoppinglistAPI.getMostRecentlyCreatedShoppinglist();
+    var mostRecentShoppinglist = await shoppinglistAPI.getMostRecentlyCreated();
 
     setState(() {
       _shoppinglist = mostRecentShoppinglist;

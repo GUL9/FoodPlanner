@@ -32,8 +32,8 @@ abstract class FirebaseAPI {
     return update(dataModel);
   }
 
-  Future<DataModel> getFromReference(DocumentReference reference) async {
-    DataModel ret = await dbRef.doc(reference.id).get().then((DocumentSnapshot ds) {
+  Future<DataModel> getFromId(String id) async {
+    DataModel ret = await dbRef.doc(id).get().then((DocumentSnapshot ds) {
       if (ds.exists) return ds.data();
     }).catchError((error) => stderr.writeln("Failed to get dataModel: $error"));
     return ret;

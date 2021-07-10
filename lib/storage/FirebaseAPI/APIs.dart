@@ -10,7 +10,7 @@ const String INGREDIENTS = 'ingredients';
 const String RECIPE_INGREDIENTS = 'recipe_ingredients';
 const String PLANS = 'plans';
 const String SHOPPINGLISTS = 'shoppinglists';
-const String SHOPPINGLIST_INGREDIENTS = 'shoppinglists';
+const String SHOPPINGLIST_INGREDIENTS = 'shoppinglist_ingredients';
 
 final recipesAPI = RecipesAPI();
 final ingredientsAPI = IngredientsAPI();

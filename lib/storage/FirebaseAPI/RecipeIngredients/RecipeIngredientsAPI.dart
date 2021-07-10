@@ -22,11 +22,11 @@ class RecipeIngredientsAPI extends FirebaseAPI {
     return recipeIngredients;
   }
 
-  Future<List<RecipeIngredient>> getAllFromRecipeReference(DocumentReference recipeReference) async {
+  Future<List<RecipeIngredient>> getAllFromRecipeId(String recipeId) async {
     List<RecipeIngredient> recipeIngredients = [];
-    await dbRef.where('recipe', equalTo: recipeReference).get().then((QuerySnapshot qs) {
+    await dbRef.where('recipeId', isEqualTo: recipeId).get().then((QuerySnapshot qs) {
       for (var doc in qs.docs) recipeIngredients.add(doc.data());
-    }).catchError((error) => stderr.writeln("Failed to get all recipeingredients from recipe reference: $error"));
+    }).catchError((error) => stderr.writeln("Failed to get all recipeingredients from recipe id: $error"));
     return recipeIngredients;
   }
 }

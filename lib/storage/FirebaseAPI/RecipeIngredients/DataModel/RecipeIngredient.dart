@@ -27,5 +27,5 @@ class RecipeIngredient implements DataModel {
             unit: json['unit']);
 
   Map<String, dynamic> toJson() =>
-      {'recipeId': recipeId, ' ingredientId': ingredientId, 'quantity': quantity, 'unit': unit};
+      {'recipeId': recipeId, 'ingredientId': ingredientId, 'quantity': quantity, 'unit': unit};
 }

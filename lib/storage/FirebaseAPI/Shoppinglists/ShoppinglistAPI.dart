@@ -14,19 +14,27 @@ class ShoppinglistAPI extends FirebaseAPI {
         toFirestore: (shoppinglist, _) => shoppinglist.toJson());
   }
 
-  List<Shoppinglist> getRecipesFromSnapshot(AsyncSnapshot snapshot) {
+  List<Shoppinglist> getAllFromSnapshot(AsyncSnapshot snapshot) {
     List<Shoppinglist> shoppinglists = [];
     if (snapshot.hasData)
       for (DocumentSnapshot ds in snapshot.data.docs) shoppinglists.add(Shoppinglist.fromDocumentSnapshot(ds));
     return shoppinglists;
   }
 
-  Future<Shoppinglist> getMostRecentlyCreatedShoppinglist() async {
+  Future<Shoppinglist> getMostRecentlyCreated() async {
     return await dbRef
         .orderBy('created_at')
         .limitToLast(1)
         .get()
-        .then((QuerySnapshot s) => s.docs[0].data())
+        .then((QuerySnapshot qs) => qs.docs[0].data())
         .catchError((error) => stderr.writeln("Failed to get most recently created shoppinglist: $error"));
+  }
+
+  Future<Shoppinglist> getFromPlanId(String planId) async {
+    return await dbRef
+        .where('planId', equalTo: planId)
+        .get()
+        .then((QuerySnapshot qs) => qs.docs[0].data())
+        .catchError((error) => stderr.writeln("Failed to get shoppinglist from plan id: $error"));
   }
 }
