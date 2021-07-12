@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:grocerylister/DataStreams/DataStreams.dart';
+import 'package:grocerylister/DataNotifierStreams/DataNotifierStreams.dart';
 import 'package:grocerylister/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/Helpers/PlanHelper.dart';
@@ -27,7 +27,7 @@ class PlanView extends State<NavigationView> {
     var newPlan = await PlanHelper.generateNewPlan();
     var newRecipes = await PlanHelper.getRecipesFromPlan(newPlan);
     var newShoppinglist = await ShoppinglistHelper.generateNewShoppinglistFromPlan(newPlan);
-    shoppinglistStream.sink.add(newShoppinglist);
+    shoppinglistNotifierStream.sink.add(newShoppinglist);
     setState(() {
       _currentPlan = newPlan;
       _currentPlanRecipes = newRecipes;

@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:grocerylister/DataStreams/DataStreams.dart';
+import 'package:grocerylister/DataNotifierStreams/DataNotifierStreams.dart';
 import 'package:grocerylister/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
@@ -33,7 +32,7 @@ class ShoppinglistView extends State<NavigationView> {
   void initState() {
     super.initState();
     _loadMostRecentShoppinglist()
-        .then((_) => shoppinglistStream.stream.listen((event) => _loadMostRecentShoppinglist()));
+        .then((_) => shoppinglistNotifierStream.stream.listen((event) => _loadMostRecentShoppinglist()));
   }
 
   ListView _shoppinglistIngredientsView() => ListView.builder(
