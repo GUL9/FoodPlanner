@@ -23,7 +23,7 @@ class PlansAPI extends FirebaseAPI {
 
   Future<Plan> getMostRecentlyCreatedPlan() async {
     return await dbRef
-        .orderBy('created_at')
+        .orderBy('createdAt')
         .limitToLast(1)
         .get()
         .then((QuerySnapshot s) => s.docs[0].data())

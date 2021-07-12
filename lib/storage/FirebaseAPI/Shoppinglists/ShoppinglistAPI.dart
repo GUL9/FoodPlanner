@@ -23,7 +23,7 @@ class ShoppinglistAPI extends FirebaseAPI {
 
   Future<Shoppinglist> getMostRecentlyCreated() async {
     return await dbRef
-        .orderBy('created_at')
+        .orderBy('createdAt')
         .limitToLast(1)
         .get()
         .then((QuerySnapshot qs) => qs.docs[0].data())

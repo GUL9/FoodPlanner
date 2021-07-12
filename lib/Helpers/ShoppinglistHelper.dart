@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
+import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
@@ -25,5 +26,15 @@ class ShoppinglistHelper {
     }
 
     return shoppinglist;
+  }
+
+  static Future<List<Ingredient>> getIngredientsFromShoppinglistIngredients(
+      List<ShoppinglistIngredient> shoppinglistIngredients) async {
+    List<Ingredient> ingredients = [];
+    for (var shoppinglistIngredient in shoppinglistIngredients) {
+      var ingredient = await ingredientsAPI.getFromId(shoppinglistIngredient.ingredientId);
+      ingredients.add(ingredient);
+    }
+    return ingredients;
   }
 }

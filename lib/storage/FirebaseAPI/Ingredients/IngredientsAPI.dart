@@ -13,7 +13,7 @@ class IngredientsAPI extends FirebaseAPI {
         toFirestore: (ingredient, _) => ingredient.toJson());
   }
 
-  List<Ingredient> getIngredientsFromSnapshot(AsyncSnapshot snapshot) {
+  List<Ingredient> getAllFromSnapshot(AsyncSnapshot snapshot) {
     List<Ingredient> ingredients = [];
     if (snapshot.hasData)
       for (DocumentSnapshot ds in snapshot.data.docs) ingredients.add(Ingredient.fromDocumentSnapshot(ds));
