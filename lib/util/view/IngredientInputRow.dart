@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:grocerylister/Storage/units.dart';
+import 'package:grocerylister/Storage/Units.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class IngredientInputRow extends StatefulWidget {
@@ -14,7 +14,7 @@ class IngredientInputRow extends StatefulWidget {
         _quantityController = quantity != null
             ? TextEditingController.fromValue(TextEditingValue(text: quantity))
             : TextEditingController(),
-        _unitController = unit != null ? unit : "";
+        _unitController = unit != null ? unit : Units.unit.asString();
 
   String getName() => _nameController.text;
   String getQuantity() => _quantityController.text;
@@ -37,13 +37,15 @@ class _IngredientInputRowState extends State<IngredientInputRow> {
         _unitController = unitController;
 
   TextFormField _nameFormField() => TextFormField(
+        style: Theme.of(context).textTheme.bodyText2,
         controller: _nameController,
-        decoration: InputDecoration(border: OutlineInputBorder(), labelText: Strings.ingredient_name),
+        decoration: InputDecoration(labelText: Strings.ingredient_name),
       );
 
   TextFormField _quantityFormField() => TextFormField(
+        style: Theme.of(context).textTheme.bodyText2,
         controller: _quantityController,
-        decoration: InputDecoration(border: OutlineInputBorder(), labelText: Strings.ingredient_quantity),
+        decoration: InputDecoration(labelText: Strings.ingredient_quantity),
       );
 
   void _setUnit(newValue) => setState(() => _unitController = newValue);
@@ -52,20 +54,21 @@ class _IngredientInputRowState extends State<IngredientInputRow> {
       height: 60,
       decoration: ShapeDecoration(shape: RoundedRectangleBorder()),
       child: DropdownButtonFormField(
-          decoration: InputDecoration(border: OutlineInputBorder(), hintText: Strings.unit),
+          decoration: InputDecoration(labelText: Strings.unit),
           value: _unitController.isNotEmpty ? _unitController : Units.unit.asString(),
           onChanged: _setUnit,
           items: Units.values
-              .map((unit) => DropdownMenuItem(value: unit.asString(), child: Text(unit.asString())))
+              .map((unit) => DropdownMenuItem(
+                  value: unit.asString(), child: Text(unit.asString(), style: Theme.of(context).textTheme.bodyText2)))
               .toList()));
 
   @override
   Widget build(BuildContext context) {
     return Row(children: <Widget>[
       Expanded(child: _nameFormField()),
-      Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
       Expanded(child: _quantityFormField()),
-      Padding(padding: EdgeInsets.symmetric(horizontal: 5)),
+      Padding(padding: EdgeInsets.symmetric(horizontal: 3)),
       Expanded(child: _unitDropdown())
     ]);
   }

@@ -1,6 +1,6 @@
 class Strings {
   static const String recipe_list = "Recipes";
-  static const String grocery_list = "Grocery list";
+  static const String shoppinglist = "Shoppinglist";
   static const String new_recipe = "New recipe";
   static const String recipe_name = "Recipe Name";
   static const String ingredients = "Ingredients";
@@ -19,7 +19,7 @@ class Strings {
   static const String grocery_name_missing = "Grocery name is missing";
   static const String quantity_must_be_number = "Quantity must be a number";
 
-  static const String food_planner = "Food planner";
+  static const String plan = "Plan";
   static const String monday = "Monday";
   static const String tuesday = "Tuesday";
   static const String wednesday = "Wednesday";

@@ -66,8 +66,12 @@ class PlanView extends State<NavigationView> {
       itemBuilder: (context, index) => Card(
           key: ValueKey(_currentPlanRecipes[index]),
           child: ListTile(
-              leading: Text(indexToDayString(index), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-              title: Text(_currentPlanRecipes[index].name))));
+              leading: Container(
+                  width: 55, child: Text(indexToDayString(index), style: Theme.of(context).textTheme.bodyText1)),
+              title: Text(
+                _currentPlanRecipes[index].name,
+                style: Theme.of(context).textTheme.bodyText2,
+              ))));
 
   FloatingActionButton _newPlanButton() => FloatingActionButton.extended(
         onPressed: _generateNewPlanAndShoppinglist,
@@ -86,8 +90,7 @@ class PlanView extends State<NavigationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('${widget.destination.title}'), backgroundColor: widget.destination.color),
-      backgroundColor: widget.destination.color[100],
+      appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
       body: Container(padding: const EdgeInsets.all(20), child: _planRecipeList()),
       floatingActionButton: _isCurrentPlanModified ? _savePlanButton() : _newPlanButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

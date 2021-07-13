@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:grocerylister/Styling/Themes/Themes.dart';
 import 'Navigation/Navigation.dart';
 
 class HomePage extends StatefulWidget {
@@ -25,8 +26,8 @@ class _HomePage extends State<HomePage> with TickerProviderStateMixin<HomePage> 
   void _setNavigationDestination(int index) => setState(() => _currentDestinationIndex = index);
 
   List<BottomNavigationBarItem> _navigationDestinations() => allDestinations
-      .map((NavigationDestination destination) => BottomNavigationBarItem(
-          icon: Icon(destination.icon), backgroundColor: destination.color, label: destination.title))
+      .map((NavigationDestination destination) =>
+          BottomNavigationBarItem(icon: Icon(destination.icon), label: destination.title))
       .toList();
 
   BottomNavigationBar _navigationBar() {
@@ -49,5 +50,5 @@ class _HomePage extends State<HomePage> with TickerProviderStateMixin<HomePage> 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MaterialApp(home: HomePage(), debugShowCheckedModeBanner: false));
+  runApp(MaterialApp(theme: standardTheme, home: HomePage(), debugShowCheckedModeBanner: false));
 }

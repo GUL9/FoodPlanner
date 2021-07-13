@@ -14,7 +14,7 @@ class RecipesView extends State<NavigationView> {
   }
 
   IconButton _deleteButtonAtIndex(int index) =>
-      IconButton(icon: Icon(Icons.delete), onPressed: () => recipesAPI.delete(_recipes[index]));
+      IconButton(icon: Icon(Icons.delete, color: Colors.white), onPressed: () => recipesAPI.delete(_recipes[index]));
 
   StreamBuilder _recipeListFromStream() => StreamBuilder(
       stream: recipesAPI.stream,
@@ -22,8 +22,10 @@ class RecipesView extends State<NavigationView> {
         if (snapshot.connectionState == ConnectionState.active) _recipes = recipesAPI.getRecipesFromSnapshot(snapshot);
         return ListView.builder(
             itemCount: _recipes.length,
-            itemBuilder: (context, index) =>
-                Card(child: ListTile(title: Text(_recipes[index].name), trailing: _deleteButtonAtIndex(index))));
+            itemBuilder: (context, index) => Card(
+                child: ListTile(
+                    title: Text(_recipes[index].name, style: Theme.of(context).textTheme.bodyText2),
+                    trailing: _deleteButtonAtIndex(index))));
       });
 
   FloatingActionButton _addNewRecipeButton(BuildContext context) => FloatingActionButton.extended(
@@ -34,8 +36,7 @@ class RecipesView extends State<NavigationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: widget.destination.color[100],
-        appBar: AppBar(title: Text('${widget.destination.title}'), backgroundColor: widget.destination.color),
+        appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
         body: Container(margin: EdgeInsets.all(20), child: _recipeListFromStream()),
         floatingActionButton: _addNewRecipeButton(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);

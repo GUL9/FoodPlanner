@@ -69,16 +69,16 @@ class NewRecipeViewState extends State<NewRecipeView> {
   @override
   build(BuildContext context) {
     return new Scaffold(
-        appBar: AppBar(title: Text(Strings.new_recipe)),
+        appBar: AppBar(title: Text(Strings.new_recipe, style: Theme.of(context).textTheme.headline1)),
         body: Stack(children: [
           Container(
               margin: EdgeInsets.all(20),
               child: Column(children: <Widget>[
-                Text(Strings.recipe_name, style: TextStyle(fontSize: 20)),
-                TextFormField(
-                    decoration: InputDecoration(border: OutlineInputBorder()), controller: _recipeNameController),
+                Text(Strings.recipe_name, style: Theme.of(context).textTheme.headline5),
                 Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                Text(Strings.ingredients, style: TextStyle(fontSize: 20)),
+                TextFormField(controller: _recipeNameController, style: Theme.of(context).textTheme.bodyText2),
+                Padding(padding: EdgeInsets.symmetric(vertical: 10)),
+                Text(Strings.ingredients, style: Theme.of(context).textTheme.headline5),
                 _ingredientList()
               ])),
           Align(alignment: Alignment.bottomRight, child: _floatingActionButtonColumn())

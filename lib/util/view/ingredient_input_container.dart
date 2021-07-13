@@ -34,7 +34,6 @@ class _IngredientInputContainerState extends State<IngredientInputContainer> {
           TextButton(
             child: Text(
               Strings.add,
-              style: TextStyle(fontSize: 20, color: Colors.amber),
             ),
             onPressed: () {
               if (isNewGroceryInputOk(context))

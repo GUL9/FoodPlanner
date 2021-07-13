@@ -40,15 +40,19 @@ class ShoppinglistView extends State<NavigationView> {
       itemBuilder: (context, index) {
         return Card(
           child: CheckboxListTile(
-              title: Text(_ingredients[index].name +
-                  ": " +
-                  _shoppinglistIngredients[index].quantity.toString() +
-                  " " +
-                  _shoppinglistIngredients[index].unit),
-              secondary: IconButton(icon: Icon(Icons.delete), onPressed: null),
+              title: Text(
+                _ingredients[index].name +
+                    ": " +
+                    _shoppinglistIngredients[index].quantity.toString() +
+                    " " +
+                    _shoppinglistIngredients[index].unit,
+                style: Theme.of(context).textTheme.bodyText2,
+              ),
+              secondary: IconButton(
+                icon: Icon(Icons.delete, color: Colors.white),
+                onPressed: null,
+              ),
               controlAffinity: ListTileControlAffinity.leading,
-              activeColor: Colors.green,
-              checkColor: Colors.white,
               value: _shoppinglistIngredients[index].isBought,
               onChanged: null),
         );
@@ -64,8 +68,7 @@ class ShoppinglistView extends State<NavigationView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(title: Text('${widget.destination.title}'), backgroundColor: widget.destination.color),
-        backgroundColor: widget.destination.color[100],
+        appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
         body: Container(
           padding: const EdgeInsets.all(20),
           child: _shoppinglistIngredientsView(),

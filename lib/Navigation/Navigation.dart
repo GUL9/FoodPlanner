@@ -6,16 +6,15 @@ import 'package:grocerylister/Recipes/RecipesView.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class NavigationDestination {
-  const NavigationDestination(this.title, this.icon, this.color);
+  const NavigationDestination(this.title, this.icon);
   final String title;
   final IconData icon;
-  final MaterialColor color;
 }
 
 const List<NavigationDestination> allDestinations = <NavigationDestination>[
-  NavigationDestination(Strings.grocery_list, Icons.shopping_cart, Colors.yellow),
-  NavigationDestination(Strings.food_planner, Icons.calendar_today, Colors.blue),
-  NavigationDestination(Strings.recipe_list, Icons.list, Colors.red),
+  NavigationDestination(Strings.shoppinglist, Icons.shopping_cart),
+  NavigationDestination(Strings.plan, Icons.calendar_today),
+  NavigationDestination(Strings.recipe_list, Icons.list),
 ];
 
 class NavigationView extends StatefulWidget {
@@ -25,9 +24,9 @@ class NavigationView extends StatefulWidget {
   @override
   State createState() {
     switch (destination.title) {
-      case Strings.grocery_list:
+      case Strings.shoppinglist:
         return ShoppinglistView();
-      case Strings.food_planner:
+      case Strings.plan:
         return PlanView();
       case Strings.recipe_list:
         return RecipesView();
