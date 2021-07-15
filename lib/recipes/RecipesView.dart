@@ -3,6 +3,7 @@ import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/Recipes/NewRecipeView.dart';
+import 'package:grocerylister/Styling/Themes/Themes.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class RecipesView extends State<NavigationView> {
@@ -14,7 +15,7 @@ class RecipesView extends State<NavigationView> {
   }
 
   IconButton _deleteButtonAtIndex(int index) =>
-      IconButton(icon: Icon(Icons.delete, color: Colors.white), onPressed: () => recipesAPI.delete(_recipes[index]));
+      IconButton(icon: Icon(Icons.delete, color: primary3), onPressed: () => recipesAPI.delete(_recipes[index]));
 
   StreamBuilder _recipeListFromStream() => StreamBuilder(
       stream: recipesAPI.stream,

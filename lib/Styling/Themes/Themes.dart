@@ -1,42 +1,46 @@
 import 'package:flutter/material.dart';
 
-final Color _primary = Colors.amber;
-final Color _primary2 = Colors.amber[600];
-final Color _primary3 = Colors.amber[800];
+final Color primary = Colors.blue;
+final Color primary2 = Colors.blue[600];
+final Color primary3 = Colors.blue[800];
 
-final Color _secondary = Colors.blue[400];
-final Color _secondary2 = Colors.blue;
+final Color seconday = Colors.red;
+final Color secondary2 = Colors.red[600];
+final Color secondary3 = Colors.red[800];
 
-final Color _neutral = Colors.white;
-final Color _neutral2 = Colors.grey[100];
+final Color neutral = Colors.white;
+final Color neutral2 = Colors.grey;
+
+final Color neutralCompliment = Colors.black;
 
 final standardTheme = ThemeData(
-    appBarTheme: AppBarTheme(backgroundColor: _primary2, centerTitle: true),
-    canvasColor: _primary,
+    appBarTheme: AppBarTheme(backgroundColor: neutral, centerTitle: true),
+    canvasColor: neutral,
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
-      backgroundColor: _primary2,
-      selectedItemColor: _neutral,
-      unselectedItemColor: _neutral2,
+      backgroundColor: neutral,
+      selectedItemColor: primary2,
+      unselectedItemColor: primary3,
     ),
-    cardTheme: CardTheme(color: _primary2, shadowColor: _primary3, elevation: 5),
-    iconTheme: IconThemeData(color: Colors.red),
+    cardTheme: CardTheme(color: neutral, shadowColor: neutral2, elevation: 5),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
-      backgroundColor: _secondary2,
+      backgroundColor: primary3,
     ),
     checkboxTheme: CheckboxThemeData(
-      fillColor: MaterialStateProperty.all(_neutral),
-      checkColor: MaterialStateProperty.all(_secondary),
+      fillColor: MaterialStateProperty.all(primary3),
+      checkColor: MaterialStateProperty.all(secondary3),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: _primary2,
-      focusColor: _secondary,
+      fillColor: neutral,
+      focusColor: primary3,
       border: OutlineInputBorder(),
     ),
-    hintColor: _neutral,
+    hintColor: primary3,
     fontFamily: 'Roboto',
     textTheme: TextTheme(
-        bodyText1: TextStyle(color: _neutral, fontSize: 10),
-        bodyText2: TextStyle(color: _neutral, fontSize: 18),
-        headline1: TextStyle(color: _neutral, fontSize: 25, fontWeight: FontWeight.bold),
-        headline5: TextStyle(color: _neutral, fontSize: 22, fontWeight: FontWeight.bold)));
+      bodyText1: TextStyle(color: primary3, fontSize: 10, fontWeight: FontWeight.bold),
+      bodyText2: TextStyle(color: neutralCompliment, fontSize: 18),
+      headline1: TextStyle(color: neutralCompliment, fontSize: 25, fontWeight: FontWeight.bold),
+      headline2: TextStyle(color: neutralCompliment, fontSize: 20, fontWeight: FontWeight.bold),
+      headline5: TextStyle(color: primary3, fontSize: 18),
+    ));

@@ -8,6 +8,7 @@ import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredie
 import 'package:grocerylister/Storage/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
+import 'package:grocerylister/Styling/Themes/Themes.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class ShoppinglistView extends State<NavigationView> {
@@ -49,7 +50,7 @@ class ShoppinglistView extends State<NavigationView> {
                 style: Theme.of(context).textTheme.bodyText2,
               ),
               secondary: IconButton(
-                icon: Icon(Icons.delete, color: Colors.white),
+                icon: Icon(Icons.delete, color: primary3),
                 onPressed: null,
               ),
               controlAffinity: ListTileControlAffinity.leading,

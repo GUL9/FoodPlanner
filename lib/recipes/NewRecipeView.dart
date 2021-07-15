@@ -74,11 +74,11 @@ class NewRecipeViewState extends State<NewRecipeView> {
           Container(
               margin: EdgeInsets.all(20),
               child: Column(children: <Widget>[
-                Text(Strings.recipe_name, style: Theme.of(context).textTheme.headline5),
+                Text(Strings.recipe_name, style: Theme.of(context).textTheme.headline2),
                 Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                 TextFormField(controller: _recipeNameController, style: Theme.of(context).textTheme.bodyText2),
                 Padding(padding: EdgeInsets.symmetric(vertical: 10)),
-                Text(Strings.ingredients, style: Theme.of(context).textTheme.headline5),
+                Text(Strings.ingredients, style: Theme.of(context).textTheme.headline2),
                 _ingredientList()
               ])),
           Align(alignment: Alignment.bottomRight, child: _floatingActionButtonColumn())
