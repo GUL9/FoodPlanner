@@ -19,12 +19,11 @@ abstract class FirebaseAPI {
     return reference.id;
   }
 
-  Future<String> update(DataModel dataModel) async {
-    var reference = await dbRef
+  Future<void> update(DataModel dataModel) async {
+    await dbRef
         .doc(dataModel.id)
         .update(dataModel.toJson())
         .catchError((error) => stderr.writeln("Failed to update dataModel: $error"));
-    return reference.id;
   }
 
   Future<String> save(DataModel dataModel) {

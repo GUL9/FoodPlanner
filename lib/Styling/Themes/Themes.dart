@@ -21,13 +21,13 @@ final standardTheme = ThemeData(
       selectedItemColor: primary2,
       unselectedItemColor: primary3,
     ),
-    cardTheme: CardTheme(color: neutral, shadowColor: neutral2, elevation: 5),
+    cardTheme: CardTheme(color: neutral, shadowColor: primary3, elevation: 5),
     floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: primary3,
     ),
     checkboxTheme: CheckboxThemeData(
       fillColor: MaterialStateProperty.all(primary3),
-      checkColor: MaterialStateProperty.all(secondary3),
+      checkColor: MaterialStateProperty.all(neutral),
     ),
     inputDecorationTheme: InputDecorationTheme(
       filled: true,

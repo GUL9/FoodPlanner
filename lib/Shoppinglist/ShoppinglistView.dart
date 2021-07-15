@@ -29,6 +29,11 @@ class ShoppinglistView extends State<NavigationView> {
     });
   }
 
+  void checkShoppinglistIngredient(bool isChecked, ShoppinglistIngredient checkedIngredient) {
+    setState(() => checkedIngredient.isBought = isChecked);
+    shoppinglistIngredientsAPI.update(checkedIngredient);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +60,7 @@ class ShoppinglistView extends State<NavigationView> {
               ),
               controlAffinity: ListTileControlAffinity.leading,
               value: _shoppinglistIngredients[index].isBought,
-              onChanged: null),
+              onChanged: (bool isChecked) => checkShoppinglistIngredient(isChecked, _shoppinglistIngredients[index])),
         );
       });
 
