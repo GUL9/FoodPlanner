@@ -14,65 +14,20 @@ class ShoppinglistHelper {
     var shoppinglistIngredients = <ShoppinglistIngredient>[];
     for (var recipeId in plan.recipes) {
       var recipeIngredients = await recipeIngredientsAPI.getAllFromRecipeId(recipeId);
-      for (var recipeIngredient in recipeIngredients) {
+      for (var ri in recipeIngredients) {
         shoppinglistIngredients.add(ShoppinglistIngredient(
             shoppinglistId: shoppinglist.id,
-            ingredientId: recipeIngredient.ingredientId,
-            quantity: recipeIngredient.quantity,
-            unit: recipeIngredient.unit,
+            ingredientId: ri.ingredientId,
+            quantity: ri.quantity,
+            unit: ri.unit,
             isBought: false));
       }
     }
 
-    shoppinglistIngredients = squashIngredientsInShoppinglist(shoppinglistIngredients);
-    for (var shoppinglistIngredient in shoppinglistIngredients)
-      shoppinglistIngredient.id = await shoppinglistIngredientsAPI.add(shoppinglistIngredient);
+    shoppinglistIngredients = _squashShoppinglistIngredients(shoppinglistIngredients);
+    for (var si in shoppinglistIngredients) si.id = await shoppinglistIngredientsAPI.add(si);
 
     return shoppinglist;
-  }
-
-  static List<ShoppinglistIngredient> squashSpecificIngredient(
-      List<ShoppinglistIngredient> shoppinglistWithSameIngredient) {
-    shoppinglistWithSameIngredient.sort((a, b) => a.unit.compareTo(b.unit));
-
-    var squashedShoppinglist = <ShoppinglistIngredient>[];
-    var quantity = shoppinglistWithSameIngredient[0].quantity;
-    for (var i = 1; i < shoppinglistWithSameIngredient.length; i++) {
-      if (shoppinglistWithSameIngredient[i].unit == shoppinglistWithSameIngredient[i - 1].unit)
-        quantity += shoppinglistWithSameIngredient[i].quantity;
-      if (shoppinglistWithSameIngredient[i].unit != shoppinglistWithSameIngredient[i - 1].unit ||
-          i == shoppinglistWithSameIngredient.length - 1) {
-        squashedShoppinglist.add(ShoppinglistIngredient(
-            shoppinglistId: shoppinglistWithSameIngredient[i - 1].shoppinglistId,
-            ingredientId: shoppinglistWithSameIngredient[i - 1].ingredientId,
-            unit: shoppinglistWithSameIngredient[i - 1].unit,
-            isBought: false,
-            quantity: quantity));
-        quantity = shoppinglistWithSameIngredient[i].quantity;
-      }
-    }
-    return squashedShoppinglist;
-  }
-
-  static List<ShoppinglistIngredient> squashIngredientsInShoppinglist(List<ShoppinglistIngredient> shoppinglist) {
-    shoppinglist.sort((a, b) => a.ingredientId.compareTo(b.ingredientId));
-    var shoppinglistPerIngredient = Map<String, List<ShoppinglistIngredient>>();
-
-    shoppinglistPerIngredient[shoppinglist[0].ingredientId] = [shoppinglist[0]];
-    for (var i = 1; i < shoppinglist.length; i++) {
-      if (shoppinglist[i].ingredientId == shoppinglist[i - 1].ingredientId)
-        shoppinglistPerIngredient[shoppinglist[i].ingredientId].add(shoppinglist[i]);
-      else
-        shoppinglistPerIngredient[shoppinglist[i].ingredientId] = [shoppinglist[i]];
-    }
-
-    var squashedShoppinglist = <ShoppinglistIngredient>[];
-    for (var shoppinglistIngredient in shoppinglistPerIngredient.values) {
-      var squashedShoppinglistIngredients = squashSpecificIngredient(shoppinglistIngredient);
-      squashedShoppinglist.addAll(squashedShoppinglistIngredients);
-    }
-
-    return squashedShoppinglist;
   }
 
   static Future<List<Ingredient>> getIngredientsFromShoppinglistIngredients(
@@ -83,5 +38,52 @@ class ShoppinglistHelper {
       ingredients.add(ingredient);
     }
     return ingredients;
+  }
+
+  static List<ShoppinglistIngredient> _squashForSpecificIngredient(
+      List<ShoppinglistIngredient> shoppinglistIngredients) {
+    shoppinglistIngredients.sort((a, b) => a.unit.compareTo(b.unit));
+
+    var squashedShoppinglistIngredients = <ShoppinglistIngredient>[];
+    var quantity = shoppinglistIngredients[0].quantity;
+    for (var i = 1; i < shoppinglistIngredients.length; i++) {
+      var current = shoppinglistIngredients[i];
+      var previous = shoppinglistIngredients[i - 1];
+
+      if (current.unit == previous.unit) quantity += current.quantity;
+
+      if (current.unit != previous.unit || i == shoppinglistIngredients.length - 1) {
+        squashedShoppinglistIngredients.add(ShoppinglistIngredient(
+            shoppinglistId: previous.shoppinglistId,
+            ingredientId: previous.ingredientId,
+            unit: previous.unit,
+            isBought: false,
+            quantity: quantity));
+        quantity = current.quantity;
+      }
+    }
+    return squashedShoppinglistIngredients;
+  }
+
+  static List<ShoppinglistIngredient> _squashShoppinglistIngredients(
+      List<ShoppinglistIngredient> shoppinglistIngredients) {
+    shoppinglistIngredients.sort((a, b) => a.ingredientId.compareTo(b.ingredientId));
+    var perIngredientMap = Map<String, List<ShoppinglistIngredient>>();
+
+    perIngredientMap[shoppinglistIngredients[0].ingredientId] = [shoppinglistIngredients[0]];
+    for (var i = 1; i < shoppinglistIngredients.length; i++) {
+      if (shoppinglistIngredients[i].ingredientId == shoppinglistIngredients[i - 1].ingredientId)
+        perIngredientMap[shoppinglistIngredients[i].ingredientId].add(shoppinglistIngredients[i]);
+      else
+        perIngredientMap[shoppinglistIngredients[i].ingredientId] = [shoppinglistIngredients[i]];
+    }
+
+    var squashedShoppinglist = <ShoppinglistIngredient>[];
+    for (var siList in perIngredientMap.values) {
+      var squashedShoppinglistIngredients = _squashForSpecificIngredient(siList);
+      squashedShoppinglist.addAll(squashedShoppinglistIngredients);
+    }
+
+    return squashedShoppinglist;
   }
 }
