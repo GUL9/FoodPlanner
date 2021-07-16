@@ -29,7 +29,7 @@ class ShoppinglistView extends State<NavigationView> {
     });
   }
 
-  void checkShoppinglistIngredient(bool isChecked, ShoppinglistIngredient checkedIngredient) {
+  void _checkShoppinglistIngredient(bool isChecked, ShoppinglistIngredient checkedIngredient) {
     setState(() => checkedIngredient.isBought = isChecked);
     shoppinglistIngredientsAPI.update(checkedIngredient);
   }
@@ -38,7 +38,7 @@ class ShoppinglistView extends State<NavigationView> {
   void initState() {
     super.initState();
     _loadMostRecentShoppinglist()
-        .then((_) => shoppinglistNotifierStream.stream.listen((event) => _loadMostRecentShoppinglist()));
+        .then((_) => shoppinglistNotifierStream.stream.listen((_) => _loadMostRecentShoppinglist()));
   }
 
   ListView _shoppinglistIngredientsView() => ListView.builder(
@@ -54,13 +54,10 @@ class ShoppinglistView extends State<NavigationView> {
                     _shoppinglistIngredients[index].unit,
                 style: Theme.of(context).textTheme.bodyText2,
               ),
-              secondary: IconButton(
-                icon: Icon(Icons.delete, color: primary3),
-                onPressed: null,
-              ),
+              secondary: IconButton(icon: Icon(Icons.delete, color: primary3), onPressed: null),
               controlAffinity: ListTileControlAffinity.leading,
               value: _shoppinglistIngredients[index].isBought,
-              onChanged: (bool isChecked) => checkShoppinglistIngredient(isChecked, _shoppinglistIngredients[index])),
+              onChanged: (bool isChecked) => _checkShoppinglistIngredient(isChecked, _shoppinglistIngredients[index])),
         );
       });
 
