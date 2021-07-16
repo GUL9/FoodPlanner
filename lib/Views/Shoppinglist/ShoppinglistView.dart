@@ -9,12 +9,16 @@ import 'package:grocerylister/Storage/FirebaseAPI/ShoppinglistIngredients/DataMo
 import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/Styling/Themes/Themes.dart';
+import 'package:grocerylister/Views/Components/IngredientInputDialog.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class ShoppinglistView extends State<NavigationView> {
   Shoppinglist _shoppinglist;
   List<ShoppinglistIngredient> _shoppinglistIngredients = [];
   List<Ingredient> _ingredients = [];
+
+  void _openNewShoppinglistIngredientDialog() =>
+      showDialog(context: context, builder: (_) => IngredientInputDialog()).then((value) => null);
 
   Future<void> _loadMostRecentShoppinglist() async {
     var mostRecentShoppinglist = await shoppinglistAPI.getMostRecentlyCreated();
@@ -62,7 +66,7 @@ class ShoppinglistView extends State<NavigationView> {
       });
 
   FloatingActionButton _addButton() => FloatingActionButton.extended(
-        onPressed: null,
+        onPressed: _openNewShoppinglistIngredientDialog,
         icon: Icon(Icons.add),
         label: Text(Strings.new_ingredient),
         heroTag: null,

@@ -8,7 +8,7 @@ import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/util/strings.dart';
-import 'package:grocerylister/util/util.dart';
+import 'package:grocerylister/util/InputValidator.dart';
 
 class PlanView extends State<NavigationView> {
   bool _isCurrentPlanModified = false;

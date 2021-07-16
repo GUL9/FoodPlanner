@@ -35,9 +35,11 @@ final standardTheme = ThemeData(
       focusColor: primary3,
       border: OutlineInputBorder(),
     ),
+    textButtonTheme: TextButtonThemeData(style: ButtonStyle(backgroundColor: MaterialStateProperty.all(primary3))),
     hintColor: primary3,
     fontFamily: 'Roboto',
     textTheme: TextTheme(
+      button: TextStyle(color: neutral, fontSize: 18),
       bodyText1: TextStyle(color: primary3, fontSize: 10, fontWeight: FontWeight.bold),
       bodyText2: TextStyle(color: neutralCompliment, fontSize: 18),
       headline1: TextStyle(color: neutralCompliment, fontSize: 25, fontWeight: FontWeight.bold),

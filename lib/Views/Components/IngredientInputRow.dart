@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Storage/Units.dart';
+import 'package:grocerylister/util/InputValidator.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class IngredientInputRow extends StatefulWidget {
@@ -15,6 +16,10 @@ class IngredientInputRow extends StatefulWidget {
             ? TextEditingController.fromValue(TextEditingValue(text: quantity))
             : TextEditingController(),
         _unitController = unit != null ? unit : Units.unit.asString();
+
+  bool isInputOk(BuildContext context) =>
+      InputValidator.isIngredientNameFieldOk(context, _nameController.text) &&
+      InputValidator.isQuantityFieldOk(context, _quantityController.text);
 
   String getName() => _nameController.text;
   String getQuantity() => _quantityController.text;
@@ -39,7 +44,7 @@ class _IngredientInputRowState extends State<IngredientInputRow> {
   TextFormField _nameFormField() => TextFormField(
         style: Theme.of(context).textTheme.bodyText2,
         controller: _nameController,
-        decoration: InputDecoration(labelText: Strings.ingredient_name),
+        decoration: InputDecoration(labelText: Strings.name),
       );
 
   TextFormField _quantityFormField() => TextFormField(

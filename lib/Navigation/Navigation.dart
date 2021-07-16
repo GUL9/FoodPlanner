@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:grocerylister/Shoppinglist/ShoppinglistView.dart';
-import 'package:grocerylister/Plan/PlanView.dart';
-import 'package:grocerylister/Recipes/RecipesView.dart';
+import 'package:grocerylister/Views/Plan/PlanView.dart';
+import 'package:grocerylister/Views/Recipes/RecipesView.dart';
+import 'package:grocerylister/Views/Shoppinglist/ShoppinglistView.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class NavigationDestination {

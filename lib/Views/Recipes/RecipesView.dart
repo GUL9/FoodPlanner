@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
-import 'package:grocerylister/Recipes/NewRecipeView.dart';
 import 'package:grocerylister/Styling/Themes/Themes.dart';
+import 'package:grocerylister/Views/Recipes/NewRecipeView.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class RecipesView extends State<NavigationView> {

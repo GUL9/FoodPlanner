@@ -6,7 +6,7 @@ import 'package:grocerylister/Storage/FirebaseAPI/RecipeIngredients/DataModel/Re
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/util/strings.dart';
 
-import 'package:grocerylister/util/view/IngredientInputRow.dart';
+import 'package:grocerylister/Views/Components/IngredientInputRow.dart';
 
 class NewRecipeView extends StatefulWidget {
   @override
