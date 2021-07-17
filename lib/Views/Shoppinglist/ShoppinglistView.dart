@@ -79,6 +79,16 @@ class ShoppinglistView extends State<NavigationView> {
     shoppinglistAPI.update(_shoppinglist);
   }
 
+  void _removeShoppinglistIngredient(int index) {
+    shoppinglistIngredientsAPI.delete(_shoppinglistIngredients[index]);
+    setState(() {
+      _shoppinglistIngredients.removeAt(index);
+      _ingredients.removeAt(index);
+      _shoppinglist.lastModifiedAt = Timestamp.now();
+    });
+    shoppinglistAPI.update(_shoppinglist);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -99,7 +109,8 @@ class ShoppinglistView extends State<NavigationView> {
                     _shoppinglistIngredients[index].unit,
                 style: Theme.of(context).textTheme.bodyText2,
               ),
-              secondary: IconButton(icon: Icon(Icons.delete, color: primary3), onPressed: null),
+              secondary: IconButton(
+                  icon: Icon(Icons.delete, color: primary3), onPressed: () => _removeShoppinglistIngredient(index)),
               controlAffinity: ListTileControlAffinity.leading,
               value: _shoppinglistIngredients[index].isBought,
               onChanged: (bool isChecked) => _checkShoppinglistIngredient(isChecked, _shoppinglistIngredients[index])),
