@@ -7,7 +7,7 @@ import 'package:grocerylister/util/strings.dart';
 class IngredientInputRow extends StatefulWidget {
   final TextEditingController _nameController;
   final TextEditingController _quantityController;
-  final String _unitController;
+  final StringBuffer _unitController;
 
   IngredientInputRow({String name, String quantity, String unit})
       : _nameController =
@@ -15,7 +15,7 @@ class IngredientInputRow extends StatefulWidget {
         _quantityController = quantity != null
             ? TextEditingController.fromValue(TextEditingValue(text: quantity))
             : TextEditingController(),
-        _unitController = unit != null ? unit : Units.unit.asString();
+        _unitController = unit != null ? StringBuffer(unit) : StringBuffer(Units.unit.asString());
 
   bool isInputOk(BuildContext context) =>
       InputValidator.isIngredientNameFieldOk(context, _nameController.text) &&
@@ -23,7 +23,7 @@ class IngredientInputRow extends StatefulWidget {
 
   String getName() => _nameController.text;
   String getQuantity() => _quantityController.text;
-  String getUnit() => _unitController;
+  String getUnit() => _unitController.toString();
 
   @override
   _IngredientInputRowState createState() => _IngredientInputRowState(
@@ -33,34 +33,37 @@ class IngredientInputRow extends StatefulWidget {
 class _IngredientInputRowState extends State<IngredientInputRow> {
   final TextEditingController _nameController;
   final TextEditingController _quantityController;
-  String _unitController;
+  StringBuffer _unitController;
 
   _IngredientInputRowState(
-      {TextEditingController nameController, TextEditingController quantityController, String unitController})
+      {TextEditingController nameController, TextEditingController quantityController, StringBuffer unitController})
       : _nameController = nameController,
         _quantityController = quantityController,
         _unitController = unitController;
 
-  TextFormField _nameFormField() => TextFormField(
+  void _setUnit(newValue) => setState(() {
+        _unitController.clear();
+        _unitController.write(newValue);
+      });
+
+  Widget _nameFormField() => TextFormField(
         style: Theme.of(context).textTheme.bodyText2,
         controller: _nameController,
         decoration: InputDecoration(labelText: Strings.name),
       );
 
-  TextFormField _quantityFormField() => TextFormField(
+  Widget _quantityFormField() => TextFormField(
         style: Theme.of(context).textTheme.bodyText2,
         controller: _quantityController,
         decoration: InputDecoration(labelText: Strings.ingredient_quantity),
       );
 
-  void _setUnit(newValue) => setState(() => _unitController = newValue);
-
-  Container _unitDropdown() => Container(
+  Widget _unitDropdown() => Container(
       height: 60,
       decoration: ShapeDecoration(shape: RoundedRectangleBorder()),
       child: DropdownButtonFormField(
           decoration: InputDecoration(labelText: Strings.unit),
-          value: _unitController.isNotEmpty ? _unitController : Units.unit.asString(),
+          value: _unitController.isNotEmpty ? _unitController.toString() : Units.unit.asString(),
           onChanged: _setUnit,
           items: Units.values
               .map((unit) => DropdownMenuItem(
