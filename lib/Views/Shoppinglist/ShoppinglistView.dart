@@ -41,6 +41,7 @@ class ShoppinglistView extends State<NavigationView> {
       ingredient = Ingredient(name: name);
       ingredient.id = await ingredientsAPI.add(ingredient);
     }
+
     var shoppinglistIngredient =
         _shoppinglistIngredients.firstWhere((si) => si.ingredientId == ingredient.id, orElse: () => null);
 
@@ -53,21 +54,20 @@ class ShoppinglistView extends State<NavigationView> {
           isBought: false);
 
       shoppinglistIngredient.id = await shoppinglistIngredientsAPI.add(shoppinglistIngredient);
-      //TODO: fix this
-      setState(() => _shoppinglistIngredients.add(shoppinglistIngredient));
     } else {
-      setState(() => shoppinglistIngredient.quantity += quantity);
-      shoppinglistIngredientsAPI.update(shoppinglistIngredient);
+      shoppinglistIngredient.quantity += quantity;
+      await shoppinglistIngredientsAPI.update(shoppinglistIngredient);
     }
 
     setState(() => _shoppinglist.lastModifiedAt = Timestamp.now());
-    shoppinglistAPI.update(_shoppinglist);
+    await shoppinglistAPI.update(_shoppinglist);
+    await _loadMostRecentShoppinglist();
   }
 
   void _openNewShoppinglistIngredientDialog() {
-    showDialog(context: context, builder: (_) => IngredientInputDialog()).then((newIngredientData) async {
-      if (newIngredientData != null) await _updateShoppinglistFromNewShoppinglistIngredientData(newIngredientData);
-    }).then((_) => null);
+    showDialog(context: context, builder: (_) => IngredientInputDialog()).then((newIngredientData) {
+      if (newIngredientData != null) _updateShoppinglistFromNewShoppinglistIngredientData(newIngredientData);
+    });
   }
 
   void _checkShoppinglistIngredient(bool isChecked, ShoppinglistIngredient checkedIngredient) {

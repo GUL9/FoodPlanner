@@ -24,6 +24,7 @@ class NewRecipeViewState extends State<NewRecipeView> {
     recipe.id = await recipesAPI.add(recipe);
     for (var row in _ingredientRows) {
       var ingredient = Ingredient(name: row.getName());
+      // TODO: add check if already exist
       ingredient.id = await ingredientsAPI.add(ingredient);
       var recipeIngredient = RecipeIngredient(
           recipeId: recipe.id,
