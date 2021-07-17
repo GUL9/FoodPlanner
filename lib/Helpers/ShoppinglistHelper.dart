@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:grocerylister/Helpers/IngredientHelper.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Plans/DataModel/Plan.dart';
@@ -36,11 +37,7 @@ class ShoppinglistHelper {
     var quantity = double.tryParse(newIngredientData['quantity']);
     var unit = newIngredientData['unit'];
 
-    var ingredient = await ingredientsAPI.getFromName(name);
-    if (ingredient == null) {
-      ingredient = Ingredient(name: name);
-      ingredient.id = await ingredientsAPI.add(ingredient);
-    }
+    var ingredient = await IngredientHelper.getFromNameOrCreateNew(name);
 
     var shoppinglistIngredient =
         shoppinglistIngredients.firstWhere((si) => si.ingredientId == ingredient.id, orElse: () => null);
