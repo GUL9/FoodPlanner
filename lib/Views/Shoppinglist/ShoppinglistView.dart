@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/DataNotifierStreams/DataNotifierStreams.dart';
 import 'package:grocerylister/Helpers/ShoppinglistHelper.dart';
@@ -17,9 +18,6 @@ class ShoppinglistView extends State<NavigationView> {
   List<ShoppinglistIngredient> _shoppinglistIngredients = [];
   List<Ingredient> _ingredients = [];
 
-  void _openNewShoppinglistIngredientDialog() =>
-      showDialog(context: context, builder: (_) => IngredientInputDialog()).then((value) => null);
-
   Future<void> _loadMostRecentShoppinglist() async {
     var mostRecentShoppinglist = await shoppinglistAPI.getMostRecentlyCreated();
     var mostRecentShoppinglistIngredients =
@@ -33,9 +31,52 @@ class ShoppinglistView extends State<NavigationView> {
     });
   }
 
+  Future<void> _updateShoppinglistFromNewShoppinglistIngredientData(Map<String, String> newIngredientData) async {
+    var name = newIngredientData['name'];
+    var quantity = double.tryParse(newIngredientData['quantity']);
+    var unit = newIngredientData['unit'];
+
+    var ingredient = await ingredientsAPI.getFromName(name);
+    if (ingredient == null) {
+      ingredient = Ingredient(name: name);
+      ingredient.id = await ingredientsAPI.add(ingredient);
+    }
+    var shoppinglistIngredient =
+        _shoppinglistIngredients.firstWhere((si) => si.ingredientId == ingredient.id, orElse: () => null);
+
+    if (shoppinglistIngredient == null) {
+      shoppinglistIngredient = ShoppinglistIngredient(
+          shoppinglistId: _shoppinglist.id,
+          ingredientId: ingredient.id,
+          quantity: quantity,
+          unit: unit,
+          isBought: false);
+
+      shoppinglistIngredient.id = await shoppinglistIngredientsAPI.add(shoppinglistIngredient);
+      //TODO: fix this
+      setState(() => _shoppinglistIngredients.add(shoppinglistIngredient));
+    } else {
+      setState(() => shoppinglistIngredient.quantity += quantity);
+      shoppinglistIngredientsAPI.update(shoppinglistIngredient);
+    }
+
+    setState(() => _shoppinglist.lastModifiedAt = Timestamp.now());
+    shoppinglistAPI.update(_shoppinglist);
+  }
+
+  void _openNewShoppinglistIngredientDialog() {
+    showDialog(context: context, builder: (_) => IngredientInputDialog()).then((newIngredientData) async {
+      if (newIngredientData != null) await _updateShoppinglistFromNewShoppinglistIngredientData(newIngredientData);
+    }).then((_) => null);
+  }
+
   void _checkShoppinglistIngredient(bool isChecked, ShoppinglistIngredient checkedIngredient) {
-    setState(() => checkedIngredient.isBought = isChecked);
+    setState(() {
+      checkedIngredient.isBought = isChecked;
+      _shoppinglist.lastModifiedAt = Timestamp.now();
+    });
     shoppinglistIngredientsAPI.update(checkedIngredient);
+    shoppinglistAPI.update(_shoppinglist);
   }
 
   @override
