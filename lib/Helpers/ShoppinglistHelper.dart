@@ -8,6 +8,7 @@ import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/Shoppi
 
 class ShoppinglistHelper {
   static Future<Shoppinglist> generateNewShoppinglistFromPlan(Plan plan) async {
+    // TODO: fix bug
     var now = Timestamp.now();
     var shoppinglist = Shoppinglist(planId: plan.id, createdAt: now, lastModifiedAt: now);
     shoppinglist.id = await shoppinglistAPI.add(shoppinglist);

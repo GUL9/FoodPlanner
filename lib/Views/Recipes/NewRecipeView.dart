@@ -30,6 +30,10 @@ class NewRecipeViewState extends State<NewRecipeView> {
     });
   }
 
+  void _deleteIngredientRow(int index) => setState(() => _ingredientRows.removeAt(index));
+
+  bool _isFloatingActionButtonColumnVisible() => MediaQuery.of(context).viewInsets.bottom == 0 ? true : false;
+
   Widget _newIngredientButton() => Padding(
       padding: EdgeInsets.all(1),
       child: Align(
@@ -46,7 +50,7 @@ class NewRecipeViewState extends State<NewRecipeView> {
       title: Text(
           "${_ingredientRows[index]['quantity']} ${_ingredientRows[index]['unit']} ${_ingredientRows[index]['name']} ",
           style: Theme.of(context).textTheme.bodyText2),
-      trailing: IconButton(icon: Icon(Icons.delete, color: primary3), onPressed: null));
+      trailing: IconButton(icon: Icon(Icons.delete, color: primary3), onPressed: () => _deleteIngredientRow(index)));
 
   Widget _ingredientListNEW() => Expanded(
       child: ListView.builder(
@@ -54,8 +58,6 @@ class NewRecipeViewState extends State<NewRecipeView> {
           itemCount: _ingredientRows.length + 1,
           itemBuilder: (context, index) =>
               Card(child: index == _ingredientRows.length ? _newIngredientButton() : _ingredientListTile(index))));
-
-  _isFloatingActionButtonColumnVisible() => MediaQuery.of(context).viewInsets.bottom == 0 ? true : false;
 
   Widget _floatingActionButtonColumn() => Visibility(
       visible: _isFloatingActionButtonColumnVisible(),
