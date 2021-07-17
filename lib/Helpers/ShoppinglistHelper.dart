@@ -30,6 +30,39 @@ class ShoppinglistHelper {
     return shoppinglist;
   }
 
+  static Future<void> updateShoppinglistFromNewShoppinglistIngredientData(Shoppinglist shoppinglist,
+      List<ShoppinglistIngredient> shoppinglistIngredients, Map<String, String> newIngredientData) async {
+    var name = newIngredientData['name'];
+    var quantity = double.tryParse(newIngredientData['quantity']);
+    var unit = newIngredientData['unit'];
+
+    var ingredient = await ingredientsAPI.getFromName(name);
+    if (ingredient == null) {
+      ingredient = Ingredient(name: name);
+      ingredient.id = await ingredientsAPI.add(ingredient);
+    }
+
+    var shoppinglistIngredient =
+        shoppinglistIngredients.firstWhere((si) => si.ingredientId == ingredient.id, orElse: () => null);
+
+    if (shoppinglistIngredient == null) {
+      shoppinglistIngredient = ShoppinglistIngredient(
+          shoppinglistId: shoppinglist.id,
+          ingredientId: ingredient.id,
+          quantity: quantity,
+          unit: unit,
+          isBought: false);
+
+      shoppinglistIngredient.id = await shoppinglistIngredientsAPI.add(shoppinglistIngredient);
+    } else {
+      shoppinglistIngredient.quantity += quantity;
+      await shoppinglistIngredientsAPI.update(shoppinglistIngredient);
+    }
+
+    shoppinglist.lastModifiedAt = Timestamp.now();
+    await shoppinglistAPI.update(shoppinglist);
+  }
+
   static Future<List<Ingredient>> getIngredientsFromShoppinglistIngredients(
       List<ShoppinglistIngredient> shoppinglistIngredients) async {
     List<Ingredient> ingredients = [];

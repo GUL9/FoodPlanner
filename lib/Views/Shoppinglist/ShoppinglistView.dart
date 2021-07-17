@@ -31,42 +31,12 @@ class ShoppinglistView extends State<NavigationView> {
     });
   }
 
-  Future<void> _updateShoppinglistFromNewShoppinglistIngredientData(Map<String, String> newIngredientData) async {
-    var name = newIngredientData['name'];
-    var quantity = double.tryParse(newIngredientData['quantity']);
-    var unit = newIngredientData['unit'];
-
-    var ingredient = await ingredientsAPI.getFromName(name);
-    if (ingredient == null) {
-      ingredient = Ingredient(name: name);
-      ingredient.id = await ingredientsAPI.add(ingredient);
-    }
-
-    var shoppinglistIngredient =
-        _shoppinglistIngredients.firstWhere((si) => si.ingredientId == ingredient.id, orElse: () => null);
-
-    if (shoppinglistIngredient == null) {
-      shoppinglistIngredient = ShoppinglistIngredient(
-          shoppinglistId: _shoppinglist.id,
-          ingredientId: ingredient.id,
-          quantity: quantity,
-          unit: unit,
-          isBought: false);
-
-      shoppinglistIngredient.id = await shoppinglistIngredientsAPI.add(shoppinglistIngredient);
-    } else {
-      shoppinglistIngredient.quantity += quantity;
-      await shoppinglistIngredientsAPI.update(shoppinglistIngredient);
-    }
-
-    setState(() => _shoppinglist.lastModifiedAt = Timestamp.now());
-    await shoppinglistAPI.update(_shoppinglist);
-    await _loadMostRecentShoppinglist();
-  }
-
   void _openNewShoppinglistIngredientDialog() {
     showDialog(context: context, builder: (_) => IngredientInputDialog()).then((newIngredientData) {
-      if (newIngredientData != null) _updateShoppinglistFromNewShoppinglistIngredientData(newIngredientData);
+      if (newIngredientData != null)
+        ShoppinglistHelper.updateShoppinglistFromNewShoppinglistIngredientData(
+                _shoppinglist, _shoppinglistIngredients, newIngredientData)
+            .then((_) => _loadMostRecentShoppinglist());
     });
   }
 
