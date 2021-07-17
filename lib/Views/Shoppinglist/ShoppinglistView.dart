@@ -72,11 +72,7 @@ class ShoppinglistView extends State<NavigationView> {
         return Card(
           child: CheckboxListTile(
               title: Text(
-                _ingredients[index].name +
-                    ": " +
-                    _shoppinglistIngredients[index].quantity.toString() +
-                    " " +
-                    _shoppinglistIngredients[index].unit,
+                "${_shoppinglistIngredients[index].quantity.toString()} ${_shoppinglistIngredients[index].unit} ${_ingredients[index].name}",
                 style: Theme.of(context).textTheme.bodyText2,
               ),
               secondary: IconButton(
