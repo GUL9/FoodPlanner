@@ -7,6 +7,8 @@ import 'package:grocerylister/Helpers/PlanHelper.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
+import 'package:grocerylister/Styling/Themes/Themes.dart';
+import 'package:grocerylister/Views/Components/SelectRecipeDialog.dart';
 import 'package:grocerylister/util/strings.dart';
 import 'package:grocerylister/util/InputValidator.dart';
 
@@ -22,6 +24,10 @@ class PlanView extends State<NavigationView> {
         var recipe = _currentPlanRecipes.removeAt(oldIndex);
         _currentPlanRecipes.insert(newIndex, recipe);
       });
+
+  void _openSelectRecipeDialog(Recipe recipeToChange) {
+    showDialog(context: context, builder: (_) => SelectRecipeDialog(oldRecipe: recipeToChange));
+  }
 
   Future<void> _generateNewPlanAndShoppinglist() async {
     var newPlan = await PlanHelper.generateNewPlan();
@@ -60,7 +66,7 @@ class PlanView extends State<NavigationView> {
     _loadMostRecentPlan();
   }
 
-  ReorderableListView _planRecipeList() => ReorderableListView.builder(
+  Widget _planRecipeList() => ReorderableListView.builder(
       onReorder: _swapRecipeOrder,
       itemCount: _currentPlanRecipes.length,
       itemBuilder: (context, index) => Card(
@@ -71,16 +77,20 @@ class PlanView extends State<NavigationView> {
               title: Text(
                 _currentPlanRecipes[index].name,
                 style: Theme.of(context).textTheme.bodyText2,
+              ),
+              trailing: IconButton(
+                icon: Icon(Icons.swap_horiz, color: primary3),
+                onPressed: () => _openSelectRecipeDialog(_currentPlanRecipes[index]),
               ))));
 
-  FloatingActionButton _newPlanButton() => FloatingActionButton.extended(
+  Widget _newPlanButton() => FloatingActionButton.extended(
         onPressed: _generateNewPlanAndShoppinglist,
         icon: Icon(Icons.add),
         label: Text(Strings.new_plan),
         heroTag: null,
       );
 
-  FloatingActionButton _savePlanButton() => FloatingActionButton.extended(
+  Widget _savePlanButton() => FloatingActionButton.extended(
         onPressed: _savePlanAndUpdateShoppinglist,
         icon: Icon(Icons.check),
         label: Text(Strings.save_plan),
