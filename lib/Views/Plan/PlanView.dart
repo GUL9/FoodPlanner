@@ -67,7 +67,7 @@ class PlanView extends State<NavigationView> {
           key: ValueKey(_currentPlanRecipes[index]),
           child: ListTile(
               leading: Container(
-                  width: 55, child: Text(indexToDayString(index), style: Theme.of(context).textTheme.bodyText1)),
+                  width: 65, child: Text(indexToDayString(index), style: Theme.of(context).textTheme.bodyText1)),
               title: Text(
                 _currentPlanRecipes[index].name,
                 style: Theme.of(context).textTheme.bodyText2,

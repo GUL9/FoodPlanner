@@ -40,7 +40,7 @@ final standardTheme = ThemeData(
     fontFamily: 'Roboto',
     textTheme: TextTheme(
       button: TextStyle(color: neutral, fontSize: 18),
-      bodyText1: TextStyle(color: primary3, fontSize: 10, fontWeight: FontWeight.bold),
+      bodyText1: TextStyle(color: primary3, fontSize: 11, fontWeight: FontWeight.bold),
       bodyText2: TextStyle(color: neutralCompliment, fontSize: 18),
       headline1: TextStyle(color: neutralCompliment, fontSize: 25, fontWeight: FontWeight.bold),
       headline2: TextStyle(color: neutralCompliment, fontSize: 20, fontWeight: FontWeight.bold),
