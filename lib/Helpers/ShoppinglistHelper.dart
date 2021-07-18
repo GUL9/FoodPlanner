@@ -103,18 +103,20 @@ class ShoppinglistHelper {
 
     perIngredientMap[shoppinglistIngredients[0].ingredientId] = [shoppinglistIngredients[0]];
     for (var i = 1; i < shoppinglistIngredients.length; i++) {
-      if (shoppinglistIngredients[i].ingredientId == shoppinglistIngredients[i - 1].ingredientId)
-        perIngredientMap[shoppinglistIngredients[i].ingredientId].add(shoppinglistIngredients[i]);
+      var previous = shoppinglistIngredients[i - 1];
+      var current = shoppinglistIngredients[i];
+
+      if (current.ingredientId == previous.ingredientId)
+        perIngredientMap[current.ingredientId].add(current);
       else
-        perIngredientMap[shoppinglistIngredients[i].ingredientId] = [shoppinglistIngredients[i]];
+        perIngredientMap[current.ingredientId] = [current];
     }
 
     var squashedShoppinglist = <ShoppinglistIngredient>[];
     for (var siList in perIngredientMap.values) {
-      var squashedShoppinglistIngredients = _squashForSpecificIngredient(siList);
+      var squashedShoppinglistIngredients = siList.length == 1 ? siList : _squashForSpecificIngredient(siList);
       squashedShoppinglist.addAll(squashedShoppinglistIngredients);
     }
-
     return squashedShoppinglist;
   }
 }
