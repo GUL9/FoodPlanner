@@ -52,7 +52,7 @@ class NewRecipeViewState extends State<NewRecipeView> {
           style: Theme.of(context).textTheme.bodyText2),
       trailing: IconButton(icon: Icon(Icons.delete, color: primary3), onPressed: () => _deleteIngredientRow(index)));
 
-  Widget _ingredientListNEW() => Expanded(
+  Widget _ingredientList() => Expanded(
       child: ListView.builder(
           controller: _ingredientListScrollController,
           itemCount: _ingredientRows.length + 1,
@@ -63,10 +63,18 @@ class NewRecipeViewState extends State<NewRecipeView> {
       visible: _isFloatingActionButtonColumnVisible(),
       child: Column(mainAxisAlignment: MainAxisAlignment.end, children: [
         FloatingActionButton.extended(
-            icon: Icon(Icons.mic), label: Text(Strings.add), heroTag: null, onPressed: () => takeVoiceInput()),
+            icon: Icon(Icons.mic),
+            label: Text(Strings.add),
+            shape: Theme.of(context).buttonTheme.shape,
+            heroTag: null,
+            onPressed: () => takeVoiceInput()),
         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
         FloatingActionButton.extended(
-            icon: Icon(Icons.check), label: Text(Strings.save_recipe), heroTag: null, onPressed: _saveRecipeAndReturn),
+            icon: Icon(Icons.check),
+            label: Text(Strings.save_recipe),
+            shape: Theme.of(context).buttonTheme.shape,
+            heroTag: null,
+            onPressed: _saveRecipeAndReturn),
         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
       ]));
 
@@ -84,7 +92,7 @@ class NewRecipeViewState extends State<NewRecipeView> {
                 Padding(padding: EdgeInsets.symmetric(vertical: 10)),
                 Text(Strings.ingredients, style: Theme.of(context).textTheme.headline2),
                 Padding(padding: EdgeInsets.symmetric(vertical: 5)),
-                _ingredientListNEW()
+                _ingredientList()
               ])),
           Align(alignment: Alignment.bottomRight, child: _floatingActionButtonColumn())
         ]));

@@ -25,8 +25,15 @@ class PlanView extends State<NavigationView> {
         _currentPlanRecipes.insert(newIndex, recipe);
       });
 
-  void _openSelectRecipeDialog(Recipe recipeToChange) {
-    showDialog(context: context, builder: (_) => SelectRecipeDialog(oldRecipe: recipeToChange));
+  void _openSelectRecipeDialog(int indexToChange) {
+    showDialog(context: context, builder: (_) => SelectRecipeDialog(oldRecipe: _currentPlanRecipes[indexToChange]))
+        .then((newRecipe) {
+      if (newRecipe != null)
+        setState(() {
+          _currentPlanRecipes[indexToChange] = newRecipe;
+          _isCurrentPlanModified = true;
+        });
+    });
   }
 
   Future<void> _generateNewPlanAndShoppinglist() async {
@@ -80,20 +87,23 @@ class PlanView extends State<NavigationView> {
               ),
               trailing: IconButton(
                 icon: Icon(Icons.swap_horiz, color: primary3),
-                onPressed: () => _openSelectRecipeDialog(_currentPlanRecipes[index]),
+                onPressed: () => _openSelectRecipeDialog(index),
               ))));
 
   Widget _newPlanButton() => FloatingActionButton.extended(
         onPressed: _generateNewPlanAndShoppinglist,
         icon: Icon(Icons.add),
         label: Text(Strings.new_plan),
+        shape: Theme.of(context).buttonTheme.shape,
         heroTag: null,
       );
 
   Widget _savePlanButton() => FloatingActionButton.extended(
         onPressed: _savePlanAndUpdateShoppinglist,
+        backgroundColor: _isCurrentPlanModified ? secondary2 : primary3,
         icon: Icon(Icons.check),
         label: Text(Strings.save_plan),
+        shape: Theme.of(context).buttonTheme.shape,
         heroTag: null,
       );
 

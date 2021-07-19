@@ -5,11 +5,11 @@ final Color primary2 = Colors.blue[600];
 final Color primary3 = Colors.blue[800];
 
 final Color secondary = Colors.yellow[50];
-final Color secondary2 = Colors.yellow[100];
-final Color secondary3 = Colors.yellow[200];
+final Color secondary2 = Colors.yellow[600];
+final Color secondary3 = Colors.yellow[800];
 
 final Color neutral = Colors.white;
-final Color neutral2 = Colors.grey;
+final Color neutral2 = Colors.grey[100];
 
 final Color neutralCompliment = Colors.black;
 
@@ -22,7 +22,8 @@ final standardTheme = ThemeData(
       unselectedItemColor: primary3,
     ),
     cardTheme: CardTheme(
-        shape: RoundedRectangleBorder(side: BorderSide(width: 3), borderRadius: BorderRadius.circular(5)),
+        shape:
+            RoundedRectangleBorder(side: BorderSide(width: 3, color: primary3), borderRadius: BorderRadius.circular(5)),
         color: neutral,
         shadowColor: primary3,
         elevation: 10),
@@ -39,6 +40,9 @@ final standardTheme = ThemeData(
       focusColor: primary3,
       border: OutlineInputBorder(),
     ),
+    buttonTheme: ButtonThemeData(
+        shape: RoundedRectangleBorder(
+            side: BorderSide(width: 3, color: primary3), borderRadius: BorderRadius.circular(5))),
     textButtonTheme: TextButtonThemeData(style: ButtonStyle(backgroundColor: MaterialStateProperty.all(primary3))),
     hintColor: primary3,
     fontFamily: 'Roboto',

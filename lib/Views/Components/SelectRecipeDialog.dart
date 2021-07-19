@@ -25,6 +25,7 @@ class _SelectRecipeDialogState extends State<SelectRecipeDialog> {
   }
 
   void _selectRecipe(int index) => setState(() => _selectedIndex = index);
+  void _returnSelectedRecipe() => Navigator.pop(context, _selectedIndex != -1 ? _recipes[_selectedIndex] : null);
 
   Widget _recipeList() => Container(
       width: 250,
@@ -32,6 +33,7 @@ class _SelectRecipeDialogState extends State<SelectRecipeDialog> {
       child: ListView.builder(
           itemCount: _recipes.length,
           itemBuilder: (context, index) => Card(
+              color: _selectedIndex == index ? neutral2 : neutral,
               shape: RoundedRectangleBorder(
                   side: BorderSide(width: 3, color: _selectedIndex == index ? primary3 : neutral),
                   borderRadius: BorderRadius.circular(5)),
@@ -44,7 +46,7 @@ class _SelectRecipeDialogState extends State<SelectRecipeDialog> {
         Strings.ok,
         style: Theme.of(context).textTheme.button,
       ),
-      onPressed: null);
+      onPressed: _returnSelectedRecipe);
 
   @override
   void initState() {

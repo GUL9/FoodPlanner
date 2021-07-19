@@ -87,6 +87,7 @@ class ShoppinglistView extends State<NavigationView> {
         onPressed: _openNewShoppinglistIngredientDialog,
         icon: Icon(Icons.add),
         label: Text(Strings.new_ingredient),
+        shape: Theme.of(context).buttonTheme.shape,
         heroTag: null,
       );
 
