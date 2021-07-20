@@ -22,8 +22,8 @@ final standardTheme = ThemeData(
       unselectedItemColor: primary3,
     ),
     cardTheme: CardTheme(
-        shape:
-            RoundedRectangleBorder(side: BorderSide(width: 3, color: primary3), borderRadius: BorderRadius.circular(5)),
+        shape: RoundedRectangleBorder(
+            side: BorderSide(width: 2.5, color: primary3), borderRadius: BorderRadius.circular(5)),
         color: neutral,
         shadowColor: primary3,
         elevation: 10),
@@ -38,11 +38,12 @@ final standardTheme = ThemeData(
       filled: true,
       fillColor: neutral,
       focusColor: primary3,
-      border: OutlineInputBorder(),
+      enabledBorder: OutlineInputBorder(borderSide: BorderSide(width: 2.5, color: primary3)),
+      focusedBorder: OutlineInputBorder(borderSide: BorderSide(width: 2.5, color: primary2)),
     ),
     buttonTheme: ButtonThemeData(
         shape: RoundedRectangleBorder(
-            side: BorderSide(width: 3, color: primary3), borderRadius: BorderRadius.circular(5))),
+            side: BorderSide(width: 1.5, color: primary3), borderRadius: BorderRadius.circular(5))),
     textButtonTheme: TextButtonThemeData(style: ButtonStyle(backgroundColor: MaterialStateProperty.all(primary3))),
     hintColor: primary3,
     fontFamily: 'Roboto',
