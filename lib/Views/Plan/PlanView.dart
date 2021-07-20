@@ -13,7 +13,6 @@ import 'package:grocerylister/util/Loading.dart';
 import 'package:grocerylister/util/strings.dart';
 import 'package:grocerylister/util/InputValidator.dart';
 
-// TODO: add loading
 class PlanView extends State<NavigationView> {
   bool _isCurrentPlanModified = false;
   Plan _currentPlan;
@@ -103,7 +102,7 @@ class PlanView extends State<NavigationView> {
 
   Widget _savePlanButton() => FloatingActionButton.extended(
         onPressed: _savePlanAndUpdateShoppinglist,
-        backgroundColor: _isCurrentPlanModified ? secondary2 : primary3,
+        backgroundColor: _isCurrentPlanModified ? affirmative : primary3,
         icon: Icon(Icons.check),
         label: Text(Strings.save_plan),
         shape: Theme.of(context).buttonTheme.shape,

@@ -15,7 +15,6 @@ import 'package:grocerylister/Views/Components/IngredientInputDialog.dart';
 import 'package:grocerylister/util/Loading.dart';
 import 'package:grocerylister/util/strings.dart';
 
-//TODO: add loading
 class ShoppinglistView extends State<NavigationView> {
   Shoppinglist _shoppinglist;
   List<ShoppinglistIngredient> _shoppinglistIngredients = [];

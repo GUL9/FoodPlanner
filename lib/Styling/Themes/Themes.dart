@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+final Color affirmative = Colors.green[700];
 final Color primary = Colors.blue;
 final Color primary2 = Colors.blue[600];
 final Color primary3 = Colors.blue[800];
