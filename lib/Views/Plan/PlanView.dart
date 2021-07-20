@@ -9,6 +9,7 @@ import 'package:grocerylister/Storage/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/Styling/Themes/Themes.dart';
 import 'package:grocerylister/Views/Components/SelectRecipeDialog.dart';
+import 'package:grocerylister/util/Loading.dart';
 import 'package:grocerylister/util/strings.dart';
 import 'package:grocerylister/util/InputValidator.dart';
 
@@ -40,8 +41,8 @@ class PlanView extends State<NavigationView> {
   Future<void> _generateNewPlanAndShoppinglist() async {
     var newPlan = await PlanHelper.generateNewPlan();
     var newRecipes = await PlanHelper.getRecipesFromPlan(newPlan);
-    var newShoppinglist = await ShoppinglistHelper.generateNewShoppinglistFromPlan(newPlan);
-    shoppinglistNotifierStream.sink.add(newShoppinglist);
+    Loader.show(context: context, showWhile: ShoppinglistHelper.generateNewShoppinglistFromPlan(newPlan))
+        .then((newShoppinglist) => shoppinglistNotifierStream.sink.add(newShoppinglist));
     setState(() {
       _currentPlan = newPlan;
       _currentPlanRecipes = newRecipes;
@@ -56,8 +57,8 @@ class PlanView extends State<NavigationView> {
       _isCurrentPlanModified = false;
     });
     await plansAPI.update(_currentPlan);
-    var updatedShoppinglist = await ShoppinglistHelper.updateShoppinglistFromPlan(_currentPlan);
-    shoppinglistNotifierStream.sink.add(updatedShoppinglist);
+    Loader.show(context: context, showWhile: ShoppinglistHelper.updateShoppinglistFromPlan(_currentPlan))
+        .then((updatedShoppinglist) => shoppinglistNotifierStream.sink.add(updatedShoppinglist));
   }
 
   Future<void> _loadMostRecentPlan() async {

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:grocerylister/DataNotifierStreams/DataNotifierStreams.dart';
 import 'package:grocerylister/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
@@ -11,6 +12,7 @@ import 'package:grocerylister/Storage/FirebaseAPI/Shoppinglists/DataModel/Shoppi
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/Styling/Themes/Themes.dart';
 import 'package:grocerylister/Views/Components/IngredientInputDialog.dart';
+import 'package:grocerylister/util/Loading.dart';
 import 'package:grocerylister/util/strings.dart';
 
 //TODO: add loading
@@ -63,8 +65,10 @@ class ShoppinglistView extends State<NavigationView> {
   @override
   void initState() {
     super.initState();
-    _loadMostRecentShoppinglist()
-        .then((_) => shoppinglistNotifierStream.stream.listen((_) => _loadMostRecentShoppinglist()));
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      Loader.show(context: context, showWhile: _loadMostRecentShoppinglist())
+          .then((_) => shoppinglistNotifierStream.stream.listen((_) => _loadMostRecentShoppinglist()));
+    });
   }
 
   ListView _shoppinglistIngredientsView() => ListView.builder(
