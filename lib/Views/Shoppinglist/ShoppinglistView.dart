@@ -13,6 +13,7 @@ import 'package:grocerylister/Styling/Themes/Themes.dart';
 import 'package:grocerylister/Views/Components/IngredientInputDialog.dart';
 import 'package:grocerylister/util/strings.dart';
 
+//TODO: add loading
 class ShoppinglistView extends State<NavigationView> {
   Shoppinglist _shoppinglist;
   List<ShoppinglistIngredient> _shoppinglistIngredients = [];

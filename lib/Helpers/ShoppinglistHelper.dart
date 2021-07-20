@@ -31,6 +31,31 @@ class ShoppinglistHelper {
     return shoppinglist;
   }
 
+  static Future<Shoppinglist> updateShoppinglistFromPlan(Plan plan) async {
+    var shoppinglist = await shoppinglistAPI.getFromPlanId(plan.id);
+    await shoppinglistIngredientsAPI.deleteAllfromShoppinglistId(shoppinglist.id);
+
+    var shoppinglistIngredients = <ShoppinglistIngredient>[];
+    for (var recipeId in plan.recipes) {
+      var recipeIngredients = await recipeIngredientsAPI.getAllFromRecipeId(recipeId);
+      for (var ri in recipeIngredients) {
+        shoppinglistIngredients.add(ShoppinglistIngredient(
+            shoppinglistId: shoppinglist.id,
+            ingredientId: ri.ingredientId,
+            quantity: ri.quantity,
+            unit: ri.unit,
+            isBought: false));
+      }
+    }
+
+    shoppinglistIngredients = _squashShoppinglistIngredients(shoppinglistIngredients);
+    for (var si in shoppinglistIngredients) si.id = await shoppinglistIngredientsAPI.add(si);
+
+    shoppinglist.lastModifiedAt = Timestamp.now();
+    shoppinglistAPI.update(shoppinglist);
+    return shoppinglist;
+  }
+
   static Future<void> updateShoppinglistFromNewShoppinglistIngredientData(Shoppinglist shoppinglist,
       List<ShoppinglistIngredient> shoppinglistIngredients, Map<String, String> newIngredientData) async {
     var name = newIngredientData['name'];

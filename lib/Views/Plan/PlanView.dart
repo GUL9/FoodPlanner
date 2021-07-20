@@ -12,6 +12,7 @@ import 'package:grocerylister/Views/Components/SelectRecipeDialog.dart';
 import 'package:grocerylister/util/strings.dart';
 import 'package:grocerylister/util/InputValidator.dart';
 
+// TODO: add loading
 class PlanView extends State<NavigationView> {
   bool _isCurrentPlanModified = false;
   Plan _currentPlan;
@@ -55,7 +56,8 @@ class PlanView extends State<NavigationView> {
       _isCurrentPlanModified = false;
     });
     await plansAPI.update(_currentPlan);
-    // TODO: update shoppinglist in db
+    var updatedShoppinglist = await ShoppinglistHelper.updateShoppinglistFromPlan(_currentPlan);
+    shoppinglistNotifierStream.sink.add(updatedShoppinglist);
   }
 
   Future<void> _loadMostRecentPlan() async {

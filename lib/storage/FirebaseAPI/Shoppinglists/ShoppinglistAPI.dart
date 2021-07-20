@@ -32,7 +32,7 @@ class ShoppinglistAPI extends FirebaseAPI {
 
   Future<Shoppinglist> getFromPlanId(String planId) async {
     return await dbRef
-        .where('planId', equalTo: planId)
+        .where('planId', isEqualTo: planId)
         .get()
         .then((QuerySnapshot qs) => qs.docs[0].data())
         .catchError((error) => stderr.writeln("Failed to get shoppinglist from plan id: $error"));
