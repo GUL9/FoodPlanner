@@ -113,7 +113,8 @@ class PlanView extends State<NavigationView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
-      body: Container(padding: const EdgeInsets.all(20), child: _planRecipeList()),
+      body: Container(
+          padding: const EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100), child: _planRecipeList()),
       floatingActionButton: _isCurrentPlanModified ? _savePlanButton() : _newPlanButton(),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
     );

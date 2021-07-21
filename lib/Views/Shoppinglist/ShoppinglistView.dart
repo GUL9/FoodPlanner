@@ -38,7 +38,7 @@ class ShoppinglistView extends State<NavigationView> {
       if (newIngredientData != null)
         ShoppinglistHelper.updateShoppinglistFromNewShoppinglistIngredientData(
                 _shoppinglist, _shoppinglistIngredients, newIngredientData)
-            .then((_) => _loadMostRecentShoppinglist());
+            .then((_) => Loader.show(context: context, showWhile: _loadMostRecentShoppinglist()));
     });
   }
 
@@ -100,7 +100,7 @@ class ShoppinglistView extends State<NavigationView> {
     return Scaffold(
         appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
         body: Container(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
           child: _shoppinglistIngredientsView(),
         ),
         floatingActionButton: _addButton(),

@@ -39,7 +39,8 @@ class RecipesView extends State<NavigationView> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
-        body: Container(margin: EdgeInsets.all(20), child: _recipeListFromStream()),
+        body: Container(
+            margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100), child: _recipeListFromStream()),
         floatingActionButton: _addNewRecipeButton(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
