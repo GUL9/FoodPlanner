@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:grocerylister/Styling/Themes/Themes.dart';
 
 class LoadingDialog extends StatefulWidget {
@@ -29,11 +30,7 @@ class _LoadingDialogState extends State<LoadingDialog> {
                   if (snapshot.connectionState == ConnectionState.done) {
                     Navigator.pop(context, snapshot.data);
                   }
-                  return CircularProgressIndicator(
-                    strokeWidth: 6,
-                    color: primary3,
-                    backgroundColor: neutral,
-                  );
+                  return SpinKitFadingCube(color: neutral);
                 })));
   }
 }
