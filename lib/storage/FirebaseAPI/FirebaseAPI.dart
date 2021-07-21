@@ -45,4 +45,16 @@ abstract class FirebaseAPI {
     }).catchError((error) => stderr.writeln("Failed to get all dataModels: $error"));
     return dataList;
   }
+
+  Future<void> addNewFieldWithDefaultValue(String field, dynamic value) async {
+    var allDatamodels = await getAll();
+    for (var dataModel in allDatamodels) {
+      var asJson = dataModel.toJson();
+      asJson[field] = value;
+      await dbRef
+          .doc(dataModel.id)
+          .update(asJson)
+          .catchError((error) => stderr.writeln("Failed to add new field with default value $error"));
+    }
+  }
 }

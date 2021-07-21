@@ -1,7 +1,9 @@
 class Strings {
   static const String recipe_list = "Recipes";
   static const String shoppinglist = "Shoppinglist";
+  static const String stock = "Stock";
   static const String new_recipe = "New recipe";
+  static const String add_ingredient = "Add ingredient";
   static const String recipe_name = "Recipe name";
   static const String ingredients = "Ingredients";
   static const String ingredient_name = "Ingredient name";

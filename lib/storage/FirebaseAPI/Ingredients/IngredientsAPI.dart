@@ -24,10 +24,26 @@ class IngredientsAPI extends FirebaseAPI {
     }).catchError((error) => stderr.writeln("Failed to get ingredient from name $error"));
   }
 
+  Future<List<Ingredient>> getAllInStock() async {
+    var ingredientsInStock = [];
+    await dbRef.where('isInStock', isEqualTo: true).get().then((QuerySnapshot qs) {
+      for (var doc in qs.docs) ingredientsInStock.add(doc.data());
+    }).catchError((error) => stderr.writeln("Failed to get ingredients in stock $error"));
+    return ingredientsInStock;
+  }
+
   List<Ingredient> getAllFromSnapshot(AsyncSnapshot snapshot) {
     List<Ingredient> ingredients = [];
     if (snapshot.hasData)
       for (DocumentSnapshot ds in snapshot.data.docs) ingredients.add(Ingredient.fromDocumentSnapshot(ds));
+    return ingredients;
+  }
+
+  List<Ingredient> getAllInStockFromSnapshot(AsyncSnapshot snapshot) {
+    List<Ingredient> ingredients = [];
+    if (snapshot.hasData)
+      for (DocumentSnapshot ds in snapshot.data.docs)
+        if ((ds.data() as Map<String, dynamic>)['isInStock']) ingredients.add(Ingredient.fromDocumentSnapshot(ds));
     return ingredients;
   }
 }
