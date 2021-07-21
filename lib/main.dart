@@ -39,6 +39,12 @@ class _HomePage extends State<HomePage> with TickerProviderStateMixin<HomePage> 
   }
 
   @override
+  void initState() {
+    super.initState();
+    _setNavigationDestination(1);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _navigationView(),
