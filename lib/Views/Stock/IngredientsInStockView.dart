@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grocerylister/Navigation/Navigation.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
-import 'package:grocerylister/Views/Recipes/NewRecipeView.dart';
+import 'package:grocerylister/Views/Components/SelectIngredientsInStockDialog.dart';
 import 'package:grocerylister/util/strings.dart';
 
 class IngredientsInStockView extends State<NavigationView> {
@@ -12,6 +12,9 @@ class IngredientsInStockView extends State<NavigationView> {
     setState(() => ingredientToUncheck.isInStock = false);
     ingredientsAPI.update(ingredientToUncheck);
   }
+
+  void _openSelectInredientsInStockDialog() =>
+      showDialog(context: context, builder: (_) => SelectIngredientsInStockDialog());
 
   @override
   void initState() {
@@ -35,7 +38,7 @@ class IngredientsInStockView extends State<NavigationView> {
       });
 
   Widget _addIngredientButton(BuildContext context) => FloatingActionButton.extended(
-      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => NewRecipeView())),
+      onPressed: _openSelectInredientsInStockDialog,
       label: Text(Strings.add_ingredient),
       icon: Icon(Icons.add),
       shape: Theme.of(context).buttonTheme.shape);
