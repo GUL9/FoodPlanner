@@ -33,11 +33,11 @@ class IngredientsAPI extends FirebaseAPI {
   }
 
   Future<List<Ingredient>> getAllNotInStock() async {
-    var ingredientsInStock = <Ingredient>[];
+    var ingredientsNotInStock = <Ingredient>[];
     await dbRef.where('isInStock', isEqualTo: false).get().then((QuerySnapshot qs) {
-      for (var doc in qs.docs) ingredientsInStock.add(doc.data());
+      for (var doc in qs.docs) ingredientsNotInStock.add(doc.data());
     }).catchError((error) => stderr.writeln("Failed to get ingredients not in stock $error"));
-    return ingredientsInStock;
+    return ingredientsNotInStock;
   }
 
   List<Ingredient> getAllFromSnapshot(AsyncSnapshot snapshot) {

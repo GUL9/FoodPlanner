@@ -32,6 +32,8 @@ class Strings {
   static const String sunday = "Sunday";
   static const String new_plan = "New plan";
   static const String save_plan = "Save plan";
+  static const String save_stock = "Save stock";
+
   static const String add_grocery = "Add Grocery";
   static const String add = "Add";
   static const String ok = "Ok";
@@ -42,6 +44,7 @@ class Strings {
 
   static const String ingredient = "ingredient";
   static const String select_new_recipe = "Select new recipe";
+  static const String add_ingredient_toStock = "Add ingredient to stock";
 
   static const String loading = "Loading...";
 }

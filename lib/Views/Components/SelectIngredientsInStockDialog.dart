@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:grocerylister/DataNotifierStreams/DataNotifierStreams.dart';
-import 'package:grocerylister/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/util/Loading.dart';
@@ -24,24 +22,11 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
 
   void _checkIngredient(bool isChecked, Ingredient ingredient) => setState(() => ingredient.isInStock = isChecked);
 
-  Future<void> _updateCheckedIngredients() async {
-    for (var i in _ingredientsNotInStock) if (i.isInStock) await ingredientsAPI.update(i);
+  void _returnCheckedIngredients() {
+    var checkedIngredients = <Ingredient>[];
+    for (var i in _ingredientsNotInStock) if (i.isInStock) checkedIngredients.add(i);
+    Navigator.pop(context, checkedIngredients);
   }
-
-  Future<void> _updateShoppinglistWithNewStock() async {
-    var latestPlan = await plansAPI.getMostRecentlyCreatedPlan();
-    await ShoppinglistHelper.updateShoppinglistFromPlan(latestPlan);
-  }
-
-  Future<void> _updateCheckedIngredientsAndShoppinglistWithNewStock() async {
-    await _updateCheckedIngredients();
-    await _updateShoppinglistWithNewStock();
-    shoppinglistNotifierStream.sink.add(null);
-  }
-
-  void _updateAndReturn() =>
-      Loader.show(context: context, showWhile: _updateCheckedIngredientsAndShoppinglistWithNewStock())
-          .then((_) => Navigator.pop(context));
 
   Widget _recipeList() => Container(
       width: 250,
@@ -54,8 +39,8 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
                   value: _ingredientsNotInStock[index].isInStock,
                   onChanged: (isChecked) => _checkIngredient(isChecked, _ingredientsNotInStock[index])))));
 
-  Widget _okButton() =>
-      TextButton(child: Text(Strings.ok, style: Theme.of(context).textTheme.button), onPressed: _updateAndReturn);
+  Widget _okButton() => TextButton(
+      child: Text(Strings.ok, style: Theme.of(context).textTheme.button), onPressed: _returnCheckedIngredients);
 
   @override
   void initState() {
@@ -72,7 +57,7 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
             width: 250,
             height: 600,
             child: Column(children: [
-              Text(Strings.select_new_recipe, style: Theme.of(context).textTheme.headline2),
+              Text(Strings.add_ingredient_toStock, style: Theme.of(context).textTheme.headline2),
               Padding(padding: EdgeInsets.only(bottom: 20)),
               _recipeList(),
               _okButton()
