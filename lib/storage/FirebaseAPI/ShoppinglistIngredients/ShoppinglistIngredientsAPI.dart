@@ -32,8 +32,12 @@ class ShoppinglistIngredientsAPI extends FirebaseAPI {
     return shoppinglistIngredients;
   }
 
-  Future<void> deleteAllfromShoppinglistId(String shoppinglistId) async {
-    await dbRef.where('shoppinglistId', isEqualTo: shoppinglistId).get().then((QuerySnapshot qs) {
+  Future<void> deleteAllNotExtrafromShoppinglistId(String shoppinglistId) async {
+    await dbRef
+        .where('shoppinglistId', isEqualTo: shoppinglistId)
+        .where('isExtra', isEqualTo: false)
+        .get()
+        .then((QuerySnapshot qs) {
       for (var doc in qs.docs) delete(doc.data());
     }).catchError((error) => stderr.writeln("Failed to remove all shoppinglist ingredients from id $error"));
   }

@@ -23,7 +23,8 @@ class ShoppinglistHelper {
               ingredientId: ri.ingredientId,
               quantity: ri.quantity,
               unit: ri.unit,
-              isBought: false));
+              isBought: false,
+              isExtra: false));
       }
     }
 
@@ -35,18 +36,21 @@ class ShoppinglistHelper {
 
   static Future<Shoppinglist> updateShoppinglistFromPlan(Plan plan) async {
     var shoppinglist = await shoppinglistAPI.getFromPlanId(plan.id);
-    await shoppinglistIngredientsAPI.deleteAllfromShoppinglistId(shoppinglist.id);
+    await shoppinglistIngredientsAPI.deleteAllNotExtrafromShoppinglistId(shoppinglist.id);
 
     var shoppinglistIngredients = <ShoppinglistIngredient>[];
     for (var recipeId in plan.recipes) {
       var recipeIngredients = await recipeIngredientsAPI.getAllFromRecipeId(recipeId);
       for (var ri in recipeIngredients) {
-        shoppinglistIngredients.add(ShoppinglistIngredient(
-            shoppinglistId: shoppinglist.id,
-            ingredientId: ri.ingredientId,
-            quantity: ri.quantity,
-            unit: ri.unit,
-            isBought: false));
+        var ingredient = await ingredientsAPI.getFromId(ri.ingredientId) as Ingredient;
+        if (!ingredient.isInStock)
+          shoppinglistIngredients.add(ShoppinglistIngredient(
+              shoppinglistId: shoppinglist.id,
+              ingredientId: ri.ingredientId,
+              quantity: ri.quantity,
+              unit: ri.unit,
+              isBought: false,
+              isExtra: false));
       }
     }
 
@@ -75,7 +79,8 @@ class ShoppinglistHelper {
           ingredientId: ingredient.id,
           quantity: quantity,
           unit: unit,
-          isBought: false);
+          isBought: false,
+          isExtra: true);
 
       shoppinglistIngredient.id = await shoppinglistIngredientsAPI.add(shoppinglistIngredient);
     } else {
@@ -114,8 +119,9 @@ class ShoppinglistHelper {
             shoppinglistId: previous.shoppinglistId,
             ingredientId: previous.ingredientId,
             unit: previous.unit,
+            quantity: quantity,
             isBought: false,
-            quantity: quantity));
+            isExtra: false));
         quantity = current.quantity;
       }
     }

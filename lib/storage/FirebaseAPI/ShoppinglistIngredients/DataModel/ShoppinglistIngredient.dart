@@ -9,8 +9,10 @@ class ShoppinglistIngredient implements DataModel {
   double quantity;
   String unit;
   bool isBought;
+  bool isExtra;
 
-  ShoppinglistIngredient({this.id, this.shoppinglistId, this.ingredientId, this.quantity, this.unit, this.isBought});
+  ShoppinglistIngredient(
+      {this.id, this.shoppinglistId, this.ingredientId, this.quantity, this.unit, this.isBought, this.isExtra});
 
   ShoppinglistIngredient.fromDocumentSnapshot(DocumentSnapshot ds)
       : this(
@@ -19,7 +21,8 @@ class ShoppinglistIngredient implements DataModel {
             ingredientId: (ds.data() as Map<String, dynamic>)['ingredientId'],
             quantity: (ds.data() as Map<String, dynamic>)['quantity'],
             unit: (ds.data() as Map<String, dynamic>)['unit'],
-            isBought: (ds.data() as Map<String, dynamic>)['isBought']);
+            isBought: (ds.data() as Map<String, dynamic>)['isBought'],
+            isExtra: (ds.data() as Map<String, dynamic>)['isExtra']);
 
   ShoppinglistIngredient.fromJson(Map<String, dynamic> json)
       : this(
@@ -27,13 +30,15 @@ class ShoppinglistIngredient implements DataModel {
             ingredientId: json['ingredientId'],
             quantity: json['quantity'],
             unit: json['unit'],
-            isBought: json['isBought']);
+            isBought: json['isBought'],
+            isExtra: json['isExtra']);
 
   Map<String, dynamic> toJson() => {
         'shoppinglistId': shoppinglistId,
         'ingredientId': ingredientId,
         'quantity': quantity,
         'unit': unit,
-        'isBought': isBought
+        'isBought': isBought,
+        'isExtra': isExtra
       };
 }
