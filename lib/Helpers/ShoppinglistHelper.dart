@@ -16,12 +16,14 @@ class ShoppinglistHelper {
     for (var recipeId in plan.recipes) {
       var recipeIngredients = await recipeIngredientsAPI.getAllFromRecipeId(recipeId);
       for (var ri in recipeIngredients) {
-        shoppinglistIngredients.add(ShoppinglistIngredient(
-            shoppinglistId: shoppinglist.id,
-            ingredientId: ri.ingredientId,
-            quantity: ri.quantity,
-            unit: ri.unit,
-            isBought: false));
+        var ingredient = await ingredientsAPI.getFromId(ri.ingredientId) as Ingredient;
+        if (!ingredient.isInStock)
+          shoppinglistIngredients.add(ShoppinglistIngredient(
+              shoppinglistId: shoppinglist.id,
+              ingredientId: ri.ingredientId,
+              quantity: ri.quantity,
+              unit: ri.unit,
+              isBought: false));
       }
     }
 

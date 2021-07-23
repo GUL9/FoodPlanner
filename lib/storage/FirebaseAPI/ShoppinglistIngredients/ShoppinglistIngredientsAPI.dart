@@ -15,11 +15,12 @@ class ShoppinglistIngredientsAPI extends FirebaseAPI {
         toFirestore: (shoppinglistIngredient, _) => shoppinglistIngredient.toJson());
   }
 
-  List<ShoppinglistIngredient> getAllFromSnapshot(AsyncSnapshot snapshot) {
+  List<ShoppinglistIngredient> getAllWithShoppinglistIdFromSnapshot(AsyncSnapshot snapshot, String shoppinglistId) {
     List<ShoppinglistIngredient> shoppinglistIngredients = [];
     if (snapshot.hasData)
       for (DocumentSnapshot ds in snapshot.data.docs)
-        shoppinglistIngredients.add(ShoppinglistIngredient.fromDocumentSnapshot(ds));
+        if ((ds.data() as Map<String, dynamic>)['shoppinglistId'] == shoppinglistId)
+          shoppinglistIngredients.add(ShoppinglistIngredient.fromDocumentSnapshot(ds));
     return shoppinglistIngredients;
   }
 
