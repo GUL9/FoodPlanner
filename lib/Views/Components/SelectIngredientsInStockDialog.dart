@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:grocerylister/DataNotifierStreams/DataNotifierStreams.dart';
+import 'package:grocerylister/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/Storage/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/util/Loading.dart';
@@ -26,8 +28,20 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
     for (var i in _ingredientsNotInStock) if (i.isInStock) await ingredientsAPI.update(i);
   }
 
-  void _updateCheckedIngredientsAndReturn() =>
-      Loader.show(context: context, showWhile: _updateCheckedIngredients()).then((_) => Navigator.pop(context));
+  Future<void> _updateShoppinglistWithNewStock() async {
+    var latestPlan = await plansAPI.getMostRecentlyCreatedPlan();
+    await ShoppinglistHelper.updateShoppinglistFromPlan(latestPlan);
+  }
+
+  Future<void> _updateCheckedIngredientsAndShoppinglistWithNewStock() async {
+    await _updateCheckedIngredients();
+    await _updateShoppinglistWithNewStock();
+    shoppinglistNotifierStream.sink.add(null);
+  }
+
+  void _updateAndReturn() =>
+      Loader.show(context: context, showWhile: _updateCheckedIngredientsAndShoppinglistWithNewStock())
+          .then((_) => Navigator.pop(context));
 
   Widget _recipeList() => Container(
       width: 250,
@@ -40,9 +54,8 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
                   value: _ingredientsNotInStock[index].isInStock,
                   onChanged: (isChecked) => _checkIngredient(isChecked, _ingredientsNotInStock[index])))));
 
-  Widget _okButton() => TextButton(
-      child: Text(Strings.ok, style: Theme.of(context).textTheme.button),
-      onPressed: _updateCheckedIngredientsAndReturn);
+  Widget _okButton() =>
+      TextButton(child: Text(Strings.ok, style: Theme.of(context).textTheme.button), onPressed: _updateAndReturn);
 
   @override
   void initState() {
