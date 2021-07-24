@@ -3,7 +3,7 @@ import 'package:grocerylister/Middleware/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Middleware/States/StateNotifierStreams/StateNotifierStreams.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
-import 'package:grocerylister/UI/Navigation/Navigation.dart';
+import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/SelectIngredientsInStockDialog.dart';
 import 'package:grocerylister/util/Loading.dart';

@@ -6,7 +6,7 @@ import 'package:grocerylister/Middleware/States/StateNotifierStreams/StateNotifi
 import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
-import 'package:grocerylister/UI/Navigation/Navigation.dart';
+import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/SelectRecipeDialog.dart';
 import 'package:grocerylister/util/Loading.dart';
