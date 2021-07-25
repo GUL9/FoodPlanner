@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Middleware/Helpers/PlanHelper.dart';
 import 'package:grocerylister/Middleware/Helpers/ShoppinglistHelper.dart';
-import 'package:grocerylister/Middleware/States/StateNotifierStreams/StateNotifierStreams.dart';
+import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
@@ -50,14 +49,14 @@ class PlanView extends State<NavigationView> {
   }
 
   Future<void> _savePlanAndUpdateShoppinglist() async {
-    setState(() {
-      _currentPlan.recipes = _currentPlanRecipes.map((r) => r.id).toList();
-      _currentPlan.lastModifiedAt = Timestamp.now();
-      _isCurrentPlanModified = false;
-    });
-    await plansAPI.update(_currentPlan);
-    Loader.show(context: context, showWhile: ShoppinglistHelper.updateShoppinglistFromPlan(_currentPlan))
-        .then((updatedShoppinglist) => shoppinglistNotifierStream.sink.add(updatedShoppinglist));
+    // setState(() {
+    //   _currentPlan.recipes = _currentPlanRecipes.map((r) => r.id).toList();
+    //   _currentPlan.lastModifiedAt = Timestamp.now();
+    //   _isCurrentPlanModified = false;
+    // });
+    // await plansAPI.update(_currentPlan);
+    // Loader.show(context: context, showWhile: ShoppinglistHelper.updateShoppinglistFromPlan(_currentPlan))
+    //     .then((updatedShoppinglist) => shoppinglistNotifierStream.sink.add(updatedShoppinglist));
   }
 
   Future<void> _loadMostRecentPlan() async {

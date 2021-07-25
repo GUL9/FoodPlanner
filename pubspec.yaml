@@ -40,12 +40,12 @@ dev_dependencies:
 
 flutter_native_splash:
   color: "#FFFFFF"
-  image: "lib/Styling/Icons/app_icon.png"
+  image: "lib/UI/Styling/Icons/app_icon.png"
 
 flutter_icons:
   android: "launcher_icon"
   ios: false
-  image_path: "lib/Styling/Icons/app_icon.png"
+  image_path: "lib/UI/Styling/Icons/app_icon.png"
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -71,7 +71,7 @@ flutter:
   fonts: 
     - family: Roboto
       fonts: 
-        - asset: lib/Styling/Fonts/Roboto/Roboto-Light.ttf
+        - asset: lib/UI/Styling/Fonts/Roboto/Roboto-Light.ttf
   # To add custom fonts to your application, add a fonts section here,
   # in this "flutter" section. Each entry in this list should have a
   # "family" key with the font family name, and a "fonts" key with a

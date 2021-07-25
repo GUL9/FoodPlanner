@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:grocerylister/Middleware/Helpers/ShoppinglistHelper.dart';
-import 'package:grocerylister/Middleware/States/StateNotifierStreams/StateNotifierStreams.dart';
-import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
+import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
+import 'package:grocerylister/Middleware/States/StatesHelper.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/SelectIngredientsInStockDialog.dart';
@@ -22,30 +21,32 @@ class IngredientsInStockView extends State<NavigationView> {
 
   void _openSelectIngredientsInStockDialog() =>
       showDialog(context: context, builder: (_) => SelectIngredientsInStockDialog()).then((ingredientsToAddInStock) {
-        setState(() {
-          _isModified = true;
-          _ingredientsInStock.addAll(ingredientsToAddInStock);
-        });
+        if ((ingredientsToAddInStock as List<Ingredient>).isNotEmpty)
+          setState(() {
+            _isModified = true;
+            _ingredientsInStock.addAll(ingredientsToAddInStock);
+          });
       });
 
   Future<void> _updateIngredientsInStockAndShoppinglist() async {
-    for (var i in _ingredientsInStock) await ingredientsAPI.update(i);
-    var latestPlan = await plansAPI.getMostRecentlyCreated();
-    var shoppinglist = await ShoppinglistHelper.updateShoppinglistFromPlan(latestPlan);
-    shoppinglistNotifierStream.sink.add(shoppinglist);
-    stockNotifierStream.sink.add(null);
+    Loader.show(
+        context: context,
+        showWhile:
+            StatesHelper.updateIngredientsInStock(_ingredientsInStock).then((_) => StatesHelper.updateShoppinglist()));
     setState(() => _isModified = false);
   }
 
-  Future<void> _loadIngredientsInStock() async {
-    var ingredientsInStock = await ingredientsAPI.getAllInStock();
-    setState(() => _ingredientsInStock = ingredientsInStock);
+  void loadAndListenToState() {
+    _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList();
+    ingredientsNotifierStream.stream.listen((ingredients) {
+      setState(() => _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList());
+    });
   }
 
   @override
   void initState() {
     super.initState();
-    _loadIngredientsInStock().then((_) => stockNotifierStream.stream.listen((_) => _loadIngredientsInStock()));
+    loadAndListenToState();
   }
 
   Widget _ingredientsInstockList() => ListView.builder(

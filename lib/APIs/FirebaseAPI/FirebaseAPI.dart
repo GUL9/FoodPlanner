@@ -39,7 +39,7 @@ abstract class FirebaseAPI {
   }
 
   Future<List<DataModel>> getAll() async {
-    List<DataModel> dataList = [];
+    var dataList = <DataModel>[];
     await dbRef.get().then((QuerySnapshot qs) {
       for (var doc in qs.docs) dataList.add(doc.data());
     }).catchError((error) => stderr.writeln("Failed to get all dataModels: $error"));

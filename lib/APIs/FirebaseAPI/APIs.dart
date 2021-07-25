@@ -16,5 +16,5 @@ final recipesAPI = RecipesAPI();
 final ingredientsAPI = IngredientsAPI();
 final recipeIngredientsAPI = RecipeIngredientsAPI();
 final plansAPI = PlansAPI();
-final shoppinglistAPI = ShoppinglistAPI();
+final shoppinglistsAPI = ShoppinglistAPI();
 final shoppinglistIngredientsAPI = ShoppinglistIngredientsAPI();

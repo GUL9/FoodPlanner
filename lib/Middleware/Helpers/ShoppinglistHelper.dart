@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:grocerylister/APIs/FirebaseAPI/RecipeIngredients/DataModel/RecipeIngredient.dart';
 import 'package:grocerylister/Middleware/Helpers/IngredientHelper.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
@@ -10,7 +11,7 @@ class ShoppinglistHelper {
   static Future<Shoppinglist> generateNewShoppinglistFromPlan(Plan plan) async {
     var now = Timestamp.now();
     var shoppinglist = Shoppinglist(planId: plan.id, createdAt: now, lastModifiedAt: now);
-    shoppinglist.id = await shoppinglistAPI.add(shoppinglist);
+    shoppinglist.id = await shoppinglistsAPI.add(shoppinglist);
 
     var shoppinglistIngredients = <ShoppinglistIngredient>[];
     for (var recipeId in plan.recipes) {
@@ -34,18 +35,18 @@ class ShoppinglistHelper {
     return shoppinglist;
   }
 
-  static Future<Shoppinglist> updateShoppinglistFromPlan(Plan plan) async {
-    var shoppinglist = await shoppinglistAPI.getFromPlanId(plan.id);
-    await shoppinglistIngredientsAPI.deleteAllNotExtrafromShoppinglistId(shoppinglist.id);
+  static Future<Shoppinglist> updateShoppinglist(Shoppinglist currentShoppinglist, Plan currentPlan,
+      List<Ingredient> currentIngredients, List<RecipeIngredient> currentRecipeIngredients) async {
+    await shoppinglistIngredientsAPI.deleteAllNotExtrafromShoppinglistId(currentShoppinglist.id);
 
     var shoppinglistIngredients = <ShoppinglistIngredient>[];
-    for (var recipeId in plan.recipes) {
-      var recipeIngredients = await recipeIngredientsAPI.getAllFromRecipeId(recipeId);
+    for (var recipeId in currentPlan.recipes) {
+      var recipeIngredients = currentRecipeIngredients.where((ri) => ri.recipeId == recipeId).toList();
       for (var ri in recipeIngredients) {
-        var ingredient = await ingredientsAPI.getFromId(ri.ingredientId) as Ingredient;
+        var ingredient = currentIngredients.singleWhere((i) => i.id == ri.ingredientId);
         if (!ingredient.isInStock)
           shoppinglistIngredients.add(ShoppinglistIngredient(
-              shoppinglistId: shoppinglist.id,
+              shoppinglistId: currentShoppinglist.id,
               ingredientId: ri.ingredientId,
               quantity: ri.quantity,
               unit: ri.unit,
@@ -55,23 +56,24 @@ class ShoppinglistHelper {
     }
 
     shoppinglistIngredients = _squashShoppinglistIngredients(shoppinglistIngredients);
-    for (var si in shoppinglistIngredients) si.id = await shoppinglistIngredientsAPI.add(si);
+    for (var si in shoppinglistIngredients) await shoppinglistIngredientsAPI.add(si);
 
-    shoppinglist.lastModifiedAt = Timestamp.now();
-    shoppinglistAPI.update(shoppinglist);
-    return shoppinglist;
+    currentShoppinglist.lastModifiedAt = Timestamp.now();
+    await shoppinglistsAPI.update(currentShoppinglist);
+
+    return currentShoppinglist;
   }
 
-  static Future<void> updateShoppinglistFromNewShoppinglistIngredientData(Shoppinglist shoppinglist,
+  static Future<void> updateShoppinglistFromJsonIngredientData(Shoppinglist shoppinglist, List<Ingredient> ingredients,
       List<ShoppinglistIngredient> shoppinglistIngredients, Map<String, String> newIngredientData) async {
     var name = newIngredientData['name'];
     var quantity = double.tryParse(newIngredientData['quantity']);
     var unit = newIngredientData['unit'];
 
-    var ingredient = await IngredientHelper.getFromNameOrCreateNew(name);
+    var ingredient = await IngredientHelper.getFromNameOrCreateNew(name, ingredients);
 
     var shoppinglistIngredient =
-        shoppinglistIngredients.firstWhere((si) => si.ingredientId == ingredient.id, orElse: () => null);
+        shoppinglistIngredients.singleWhere((si) => si.ingredientId == ingredient.id, orElse: () => null);
 
     if (shoppinglistIngredient == null) {
       shoppinglistIngredient = ShoppinglistIngredient(
@@ -89,17 +91,7 @@ class ShoppinglistHelper {
     }
 
     shoppinglist.lastModifiedAt = Timestamp.now();
-    await shoppinglistAPI.update(shoppinglist);
-  }
-
-  static Future<List<Ingredient>> getIngredientsFromShoppinglistIngredients(
-      List<ShoppinglistIngredient> shoppinglistIngredients) async {
-    List<Ingredient> ingredients = [];
-    for (var shoppinglistIngredient in shoppinglistIngredients) {
-      var ingredient = await ingredientsAPI.getFromId(shoppinglistIngredient.ingredientId);
-      ingredients.add(ingredient);
-    }
-    return ingredients;
+    await shoppinglistsAPI.update(shoppinglist);
   }
 
   static List<ShoppinglistIngredient> _squashForSpecificIngredient(

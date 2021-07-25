@@ -9,7 +9,7 @@ class RecipeHelper {
     var recipe = Recipe(name: recipeName);
     recipe.id = await recipesAPI.add(recipe);
     for (var row in ingredientRows) {
-      var ingredient = await IngredientHelper.getFromNameOrCreateNew(row['name']);
+      var ingredient = await IngredientHelper.getFromNameOrCreateNew(row['name'], await ingredientsAPI.getAll());
       var recipeIngredient = RecipeIngredient(
         recipeId: recipe.id,
         ingredientId: ingredient.id,

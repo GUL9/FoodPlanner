@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:grocerylister/Middleware/States/StatesHelper.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 
@@ -56,5 +57,6 @@ class _HomePage extends State<HomePage> with TickerProviderStateMixin<HomePage> 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await StatesHelper.initStates();
   runApp(MaterialApp(theme: standardTheme, home: HomePage(), debugShowCheckedModeBanner: false));
 }

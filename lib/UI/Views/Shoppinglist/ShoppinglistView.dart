@@ -1,14 +1,11 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:grocerylister/Middleware/Helpers/ShoppinglistHelper.dart';
-import 'package:grocerylister/Middleware/States/StateNotifierStreams/StateNotifierStreams.dart';
+import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
+import 'package:grocerylister/Middleware/States/StatesHelper.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/IngredientInputDialog.dart';
@@ -20,25 +17,11 @@ class ShoppinglistView extends State<NavigationView> {
   List<ShoppinglistIngredient> _shoppinglistIngredients = [];
   List<Ingredient> _ingredients = [];
 
-  Future<void> _loadMostRecentShoppinglist() async {
-    var mostRecentShoppinglist = await shoppinglistAPI.getMostRecentlyCreated();
-    var mostRecentShoppinglistIngredients =
-        await shoppinglistIngredientsAPI.getAllFromShoppinglistId(mostRecentShoppinglist.id);
-    var mostRecentIngredients =
-        await ShoppinglistHelper.getIngredientsFromShoppinglistIngredients(mostRecentShoppinglistIngredients);
-    setState(() {
-      _shoppinglist = mostRecentShoppinglist;
-      _shoppinglistIngredients = mostRecentShoppinglistIngredients;
-      _ingredients = mostRecentIngredients;
-    });
-  }
-
   void _openNewShoppinglistIngredientDialog() {
     showDialog(context: context, builder: (_) => IngredientInputDialog()).then((newIngredientData) {
       if (newIngredientData != null)
-        ShoppinglistHelper.updateShoppinglistFromNewShoppinglistIngredientData(
-                _shoppinglist, _shoppinglistIngredients, newIngredientData)
-            .then((_) => Loader.show(context: context, showWhile: _loadMostRecentShoppinglist()));
+        Loader.show(
+            context: context, showWhile: StatesHelper.updateShoppinglistFromJsonIngredientData(newIngredientData));
     });
   }
 
@@ -48,7 +31,7 @@ class ShoppinglistView extends State<NavigationView> {
       _shoppinglist.lastModifiedAt = Timestamp.now();
     });
     shoppinglistIngredientsAPI.update(checkedIngredient);
-    shoppinglistAPI.update(_shoppinglist);
+    shoppinglistsAPI.update(_shoppinglist);
   }
 
   void _removeShoppinglistIngredient(int index) {
@@ -58,16 +41,26 @@ class ShoppinglistView extends State<NavigationView> {
       _ingredients.removeAt(index);
       _shoppinglist.lastModifiedAt = Timestamp.now();
     });
-    shoppinglistAPI.update(_shoppinglist);
+    shoppinglistsAPI.update(_shoppinglist);
+  }
+
+  void loadAndListenToState() {
+    _shoppinglist = currentShoppinglistState;
+    shoppinglistNotifierStream.stream.listen((_) => setState(() => _shoppinglist = currentShoppinglistState));
+
+    _shoppinglistIngredients = currentShoppinglistIngredientsState;
+    _ingredients = ingredientsState;
+
+    shoppinglistIngredientsNotifierStream.stream.listen((_) => setState(() {
+          _shoppinglistIngredients = currentShoppinglistIngredientsState;
+          _ingredients = currentIngredientsState;
+        }));
   }
 
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance.addPostFrameCallback((_) {
-      Loader.show(context: context, showWhile: _loadMostRecentShoppinglist())
-          .then((_) => shoppinglistNotifierStream.stream.listen((_) => _loadMostRecentShoppinglist()));
-    });
+    loadAndListenToState();
   }
 
   ListView _shoppinglistIngredientsView() => ListView.builder(
