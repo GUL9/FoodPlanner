@@ -55,7 +55,6 @@ class IngredientsInStockView extends State<NavigationView> {
               child: CheckboxListTile(
             title: Text(_ingredientsInStock[index].name, style: Theme.of(context).textTheme.bodyText2),
             value: _ingredientsInStock[index].isInStock,
-            controlAffinity: ListTileControlAffinity.leading,
             onChanged: (isChecked) => _checkIngredientInStock(isChecked, _ingredientsInStock[index]),
           )));
 
@@ -66,7 +65,7 @@ class IngredientsInStockView extends State<NavigationView> {
       shape: Theme.of(context).buttonTheme.shape);
 
   Widget _saveStockButton() => FloatingActionButton.extended(
-      onPressed: () => Loader.show(context: context, showWhile: _updateIngredientsInStockAndShoppinglist()),
+      onPressed: _updateIngredientsInStockAndShoppinglist,
       label: Text(Strings.save_stock),
       icon: Icon(Icons.check),
       backgroundColor: affirmative,

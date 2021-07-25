@@ -1,7 +1,5 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Middleware/States/States.dart';
-import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
@@ -26,22 +24,16 @@ class ShoppinglistView extends State<NavigationView> {
   }
 
   void _checkShoppinglistIngredient(bool isChecked, ShoppinglistIngredient checkedIngredient) {
-    setState(() {
-      checkedIngredient.isBought = isChecked;
-      _shoppinglist.lastModifiedAt = Timestamp.now();
-    });
-    shoppinglistIngredientsAPI.update(checkedIngredient);
-    shoppinglistsAPI.update(_shoppinglist);
+    setState(() => checkedIngredient.isBought = isChecked);
+    StatesHelper.updateShoppinglistIngredient(checkedIngredient);
   }
 
   void _removeShoppinglistIngredient(int index) {
-    shoppinglistIngredientsAPI.delete(_shoppinglistIngredients[index]);
+    StatesHelper.removeShoppinglistIngredient(_shoppinglistIngredients[index]);
     setState(() {
       _shoppinglistIngredients.removeAt(index);
       _ingredients.removeAt(index);
-      _shoppinglist.lastModifiedAt = Timestamp.now();
     });
-    shoppinglistsAPI.update(_shoppinglist);
   }
 
   void _loadAndListenToState() {

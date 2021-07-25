@@ -29,8 +29,8 @@ class ShoppinglistHelper {
               isExtra: false));
       }
     }
-
-    shoppinglistIngredients = _squashShoppinglistIngredients(shoppinglistIngredients);
+    if (shoppinglistIngredients.isNotEmpty)
+      shoppinglistIngredients = _squashShoppinglistIngredients(shoppinglistIngredients);
     for (var si in shoppinglistIngredients) si.id = await shoppinglistIngredientsAPI.add(si);
 
     return shoppinglist;
@@ -55,8 +55,8 @@ class ShoppinglistHelper {
               isExtra: false));
       }
     }
-
-    shoppinglistIngredients = _squashShoppinglistIngredients(shoppinglistIngredients);
+    if (shoppinglistIngredients.isNotEmpty)
+      shoppinglistIngredients = _squashShoppinglistIngredients(shoppinglistIngredients);
     for (var si in shoppinglistIngredients) await shoppinglistIngredientsAPI.add(si);
 
     currentShoppinglist.lastModifiedAt = Timestamp.now();
