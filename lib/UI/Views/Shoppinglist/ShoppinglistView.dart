@@ -44,23 +44,24 @@ class ShoppinglistView extends State<NavigationView> {
     shoppinglistsAPI.update(_shoppinglist);
   }
 
-  void loadAndListenToState() {
-    _shoppinglist = currentShoppinglistState;
+  void _loadAndListenToState() {
+    setState(() {
+      _shoppinglist = currentShoppinglistState;
+      _shoppinglistIngredients = currentShoppinglistIngredientsState;
+      _ingredients = ingredientsState;
+    });
+
     shoppinglistNotifierStream.stream.listen((_) => setState(() => _shoppinglist = currentShoppinglistState));
-
-    _shoppinglistIngredients = currentShoppinglistIngredientsState;
-    _ingredients = ingredientsState;
-
     shoppinglistIngredientsNotifierStream.stream.listen((_) => setState(() {
           _shoppinglistIngredients = currentShoppinglistIngredientsState;
-          _ingredients = currentIngredientsState;
+          _ingredients = currentIngredientsInShoppinglistState;
         }));
   }
 
   @override
   void initState() {
     super.initState();
-    loadAndListenToState();
+    _loadAndListenToState();
   }
 
   ListView _shoppinglistIngredientsView() => ListView.builder(

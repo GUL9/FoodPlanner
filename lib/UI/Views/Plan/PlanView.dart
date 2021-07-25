@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Middleware/Helpers/PlanHelper.dart';
 import 'package:grocerylister/Middleware/Helpers/ShoppinglistHelper.dart';
@@ -5,6 +6,7 @@ import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
+import 'package:grocerylister/Middleware/States/StatesHelper.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/SelectRecipeDialog.dart';
@@ -49,36 +51,39 @@ class PlanView extends State<NavigationView> {
   }
 
   Future<void> _savePlanAndUpdateShoppinglist() async {
-    // setState(() {
-    //   _currentPlan.recipes = _currentPlanRecipes.map((r) => r.id).toList();
-    //   _currentPlan.lastModifiedAt = Timestamp.now();
-    //   _isCurrentPlanModified = false;
-    // });
-    // await plansAPI.update(_currentPlan);
-    // Loader.show(context: context, showWhile: ShoppinglistHelper.updateShoppinglistFromPlan(_currentPlan))
-    //     .then((updatedShoppinglist) => shoppinglistNotifierStream.sink.add(updatedShoppinglist));
+    setState(() {
+      _currentPlan.recipes = _currentPlanRecipes.map((r) => r.id).toList();
+      _currentPlan.lastModifiedAt = Timestamp.now();
+      _isCurrentPlanModified = false;
+    });
+    Loader.show(
+        context: context,
+        showWhile: StatesHelper.updatePlan(_currentPlan).then((_) => StatesHelper.updateShoppinglist()));
   }
 
-  Future<void> _loadMostRecentPlan() async {
-    Plan mostRecentPlan = await plansAPI.getMostRecentlyCreated();
-    List<Recipe> recipesInMostRecentPlan = await PlanHelper.getRecipesFromPlan(mostRecentPlan);
+  Future<void> _loadAndListenToState() async {
     setState(() {
-      _currentPlan = mostRecentPlan;
-      _currentPlanRecipes = recipesInMostRecentPlan;
+      _currentPlan = currentPlanState;
+      _currentPlanRecipes = currentRecipesInPlanState;
+    });
+
+    planNotifierStream.stream.listen((_) {
+      _currentPlan = currentPlanState;
+      _currentPlanRecipes = currentRecipesInPlanState;
     });
   }
 
   @override
   void initState() {
     super.initState();
-    _loadMostRecentPlan();
+    _loadAndListenToState();
   }
 
   Widget _planRecipeList() => ReorderableListView.builder(
       onReorder: _swapRecipeOrder,
       itemCount: _currentPlanRecipes.length,
       itemBuilder: (context, index) => Card(
-          key: ValueKey(_currentPlanRecipes[index]),
+          key: ValueKey(index),
           child: ListTile(
               leading: Container(
                   width: 65, child: Text(indexToDayString(index), style: Theme.of(context).textTheme.bodyText1)),

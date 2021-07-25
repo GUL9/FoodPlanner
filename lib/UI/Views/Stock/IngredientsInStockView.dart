@@ -36,17 +36,17 @@ class IngredientsInStockView extends State<NavigationView> {
     setState(() => _isModified = false);
   }
 
-  void loadAndListenToState() {
-    _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList();
-    ingredientsNotifierStream.stream.listen((ingredients) {
-      setState(() => _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList());
-    });
+  void _loadAndListenToState() {
+    setState(() => _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList());
+
+    ingredientsNotifierStream.stream.listen(
+        (ingredients) => setState(() => _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList()));
   }
 
   @override
   void initState() {
     super.initState();
-    loadAndListenToState();
+    _loadAndListenToState();
   }
 
   Widget _ingredientsInstockList() => ListView.builder(

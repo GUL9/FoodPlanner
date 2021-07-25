@@ -1,5 +1,8 @@
+import 'package:grocerylister/APIs/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/RecipeIngredients/DataModel/RecipeIngredient.dart';
+import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/Middleware/Helpers/IngredientHelper.dart';
+import 'package:grocerylister/Middleware/Helpers/PlanHelper.dart';
 import 'package:grocerylister/Middleware/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
@@ -8,6 +11,7 @@ import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.
 class StatesHelper {
   static Future<void> initStates() async {
     await _loadIngredientsState();
+    await _loadRecipesState();
     await _loadRecipeIngredientsState();
     await _loadPlanState();
     await _loadShoppinglistState();
@@ -17,25 +21,33 @@ class StatesHelper {
   static _loadIngredientsState() async {
     var ingredients = await ingredientsAPI.getAll();
     ingredientsState = ingredients.map((i) => i as Ingredient).toList();
-    ingredientsNotifierStream.sink.add(ingredients);
+    ingredientsNotifierStream.sink.add(ingredientsState);
+  }
+
+  static _loadRecipesState() async {
+    var recipes = await recipesAPI.getAll();
+    recipesState = recipes.map((r) => r as Recipe).toList();
+    recipesNotifierStream.sink.add(recipesState);
   }
 
   static _loadRecipeIngredientsState() async {
     var recipeIngredients = await recipeIngredientsAPI.getAll();
     recipeIngredientsState = recipeIngredients.map((ri) => ri as RecipeIngredient).toList();
-    recipeIngredientsNotifierStream.sink.add(recipeIngredients);
+    recipeIngredientsNotifierStream.sink.add(recipeIngredientsState);
   }
 
   static _loadPlanState() async {
     var plan = await plansAPI.getMostRecentlyCreated();
     currentPlanState = plan;
-    ingredientsNotifierStream.sink.add(plan);
+
+    _loadCurrentRecipesInPlanState();
+    ingredientsNotifierStream.sink.add(currentPlanState);
   }
 
   static _loadShoppinglistState() async {
     var shoppinglist = await shoppinglistsAPI.getMostRecentlyCreated();
     currentShoppinglistState = shoppinglist;
-    shoppinglistNotifierStream.sink.add(shoppinglist);
+    shoppinglistNotifierStream.sink.add(currentShoppinglistState);
   }
 
   static _loadShoppinglistIngredientState() async {
@@ -43,22 +55,37 @@ class StatesHelper {
         await shoppinglistIngredientsAPI.getAllFromShoppinglistId(currentShoppinglistState.id);
     currentShoppinglistIngredientsState = shoppinglistIngredients;
 
-    await _loadCurrentIngredientsState();
-    shoppinglistIngredientsNotifierStream.sink.add(shoppinglistIngredients);
+    _loadCurrentIngredientsState();
+    shoppinglistIngredientsNotifierStream.sink.add(currentShoppinglistIngredientsState);
   }
 
-  static _loadCurrentIngredientsState() async {
+  static _loadCurrentRecipesInPlanState() {
+    var recipes = <Recipe>[];
+    for (var rId in currentPlanState.recipes) {
+      var recipe = recipesState.singleWhere((r) => r.id == rId);
+      recipes.add(recipe);
+    }
+
+    currentRecipesInPlanState = recipes;
+  }
+
+  static _loadCurrentIngredientsState() {
     var ingredients = <Ingredient>[];
     for (var si in currentShoppinglistIngredientsState) {
       var ingredient = ingredientsState.singleWhere((i) => i.id == si.ingredientId);
       ingredients.add(ingredient);
     }
-    currentIngredientsState = ingredients;
+    currentIngredientsInShoppinglistState = ingredients;
   }
 
   static Future<void> updateIngredientsInStock(List<Ingredient> ingredientsInStock) async {
     await IngredientHelper.updateIngredients(ingredientsInStock);
     await _loadIngredientsState();
+  }
+
+  static Future<void> updatePlan(Plan plan) async {
+    await plansAPI.update(plan);
+    await _loadPlanState();
   }
 
   static Future<void> updateShoppinglist() async {
