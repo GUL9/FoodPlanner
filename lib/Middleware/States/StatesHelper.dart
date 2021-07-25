@@ -41,7 +41,7 @@ class StatesHelper {
     currentPlanState = plan;
 
     _loadCurrentRecipesInPlanState();
-    ingredientsNotifierStream.sink.add(currentPlanState);
+    planNotifierStream.sink.add(currentPlanState);
   }
 
   static _loadShoppinglistState() async {
@@ -83,9 +83,20 @@ class StatesHelper {
     await _loadIngredientsState();
   }
 
+  static Future<void> generateNewPlan() async {
+    await PlanHelper.generateNewPlan(recipesState);
+    await _loadPlanState();
+  }
+
   static Future<void> updatePlan(Plan plan) async {
     await plansAPI.update(plan);
     await _loadPlanState();
+  }
+
+  static Future<void> generateNewShoppinglist() async {
+    await ShoppinglistHelper.generateNewShoppinglist(currentPlanState, recipeIngredientsState, ingredientsState);
+    await _loadShoppinglistState();
+    await _loadShoppinglistIngredientState();
   }
 
   static Future<void> updateShoppinglist() async {

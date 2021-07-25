@@ -1,9 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:grocerylister/Middleware/Helpers/PlanHelper.dart';
-import 'package:grocerylister/Middleware/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Middleware/States/States.dart';
-import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/Middleware/States/StatesHelper.dart';
@@ -39,26 +36,22 @@ class PlanView extends State<NavigationView> {
   }
 
   Future<void> _generateNewPlanAndShoppinglist() async {
-    var newPlan = await PlanHelper.generateNewPlan();
-    var newRecipes = await PlanHelper.getRecipesFromPlan(newPlan);
-    Loader.show(context: context, showWhile: ShoppinglistHelper.generateNewShoppinglistFromPlan(newPlan))
-        .then((newShoppinglist) => shoppinglistNotifierStream.sink.add(newShoppinglist));
-    setState(() {
-      _currentPlan = newPlan;
-      _currentPlanRecipes = newRecipes;
-      _isCurrentPlanModified = false;
-    });
+    Loader.show(
+        context: context,
+        showWhile: StatesHelper.generateNewPlan().then((_) => StatesHelper.generateNewShoppinglist()));
+    setState(() => _isCurrentPlanModified = false);
   }
 
   Future<void> _savePlanAndUpdateShoppinglist() async {
-    setState(() {
-      _currentPlan.recipes = _currentPlanRecipes.map((r) => r.id).toList();
-      _currentPlan.lastModifiedAt = Timestamp.now();
-      _isCurrentPlanModified = false;
-    });
+    var toUpdate = Plan(
+        id: _currentPlan.id,
+        createdAt: _currentPlan.createdAt,
+        lastModifiedAt: Timestamp.now(),
+        recipes: _currentPlanRecipes.map((r) => r.id).toList());
+
     Loader.show(
-        context: context,
-        showWhile: StatesHelper.updatePlan(_currentPlan).then((_) => StatesHelper.updateShoppinglist()));
+        context: context, showWhile: StatesHelper.updatePlan(toUpdate).then((_) => StatesHelper.updateShoppinglist()));
+    setState(() => _isCurrentPlanModified = false);
   }
 
   Future<void> _loadAndListenToState() async {
@@ -67,10 +60,10 @@ class PlanView extends State<NavigationView> {
       _currentPlanRecipes = currentRecipesInPlanState;
     });
 
-    planNotifierStream.stream.listen((_) {
-      _currentPlan = currentPlanState;
-      _currentPlanRecipes = currentRecipesInPlanState;
-    });
+    planNotifierStream.stream.listen((_) => setState(() {
+          _currentPlan = currentPlanState;
+          _currentPlanRecipes = currentRecipesInPlanState;
+        }));
   }
 
   @override

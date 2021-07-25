@@ -6,12 +6,11 @@ import 'package:grocerylister/APIs/FirebaseAPI/Plans/DataModel/Plan.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 
 class PlanHelper {
-  static Future<Plan> generateNewPlan() async {
-    var allRecipes = await recipesAPI.getAll();
+  static Future<Plan> generateNewPlan(List<Recipe> recipes) async {
     var sevenRandomRecipes = [];
     for (var i = 0; i < 7; i++) {
-      var index = Random().nextInt(allRecipes.length);
-      sevenRandomRecipes.add(allRecipes[index]);
+      var index = Random().nextInt(recipes.length);
+      sevenRandomRecipes.add(recipes[index]);
     }
 
     var now = Timestamp.now();

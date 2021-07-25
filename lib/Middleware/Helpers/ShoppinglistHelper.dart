@@ -8,16 +8,17 @@ import 'package:grocerylister/APIs/FirebaseAPI/ShoppinglistIngredients/DataModel
 import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
 
 class ShoppinglistHelper {
-  static Future<Shoppinglist> generateNewShoppinglistFromPlan(Plan plan) async {
+  static Future<Shoppinglist> generateNewShoppinglist(
+      Plan plan, List<RecipeIngredient> allRecipeIngredients, List<Ingredient> allIngredients) async {
     var now = Timestamp.now();
     var shoppinglist = Shoppinglist(planId: plan.id, createdAt: now, lastModifiedAt: now);
     shoppinglist.id = await shoppinglistsAPI.add(shoppinglist);
 
     var shoppinglistIngredients = <ShoppinglistIngredient>[];
     for (var recipeId in plan.recipes) {
-      var recipeIngredients = await recipeIngredientsAPI.getAllFromRecipeId(recipeId);
+      var recipeIngredients = allRecipeIngredients.where((ri) => ri.recipeId == recipeId).toList();
       for (var ri in recipeIngredients) {
-        var ingredient = await ingredientsAPI.getFromId(ri.ingredientId) as Ingredient;
+        var ingredient = allIngredients.singleWhere((i) => i.id == ri.ingredientId);
         if (!ingredient.isInStock)
           shoppinglistIngredients.add(ShoppinglistIngredient(
               shoppinglistId: shoppinglist.id,
