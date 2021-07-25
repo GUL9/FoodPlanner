@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:grocerylister/Middleware/Helpers/RecipeHelper.dart';
+import 'package:grocerylister/Middleware/States/StatesHelper.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/IngredientInputDialog.dart';
 import 'package:grocerylister/util/strings.dart';
@@ -16,7 +16,7 @@ class NewRecipeViewState extends State<NewRecipeView> {
   ScrollController _ingredientListScrollController = ScrollController();
 
   void _saveRecipeAndReturn() {
-    RecipeHelper.saveRecipe(_recipeNameController.text, _ingredientRows);
+    StatesHelper.saveRecipe(_recipeNameController.text, _ingredientRows);
     Navigator.pop(context);
   }
 

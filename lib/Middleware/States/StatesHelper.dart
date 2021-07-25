@@ -6,6 +6,7 @@ import 'package:grocerylister/APIs/FirebaseAPI/ShoppinglistIngredients/DataModel
 import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
 import 'package:grocerylister/Middleware/Helpers/IngredientHelper.dart';
 import 'package:grocerylister/Middleware/Helpers/PlanHelper.dart';
+import 'package:grocerylister/Middleware/Helpers/RecipeHelper.dart';
 import 'package:grocerylister/Middleware/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
@@ -54,8 +55,10 @@ class StatesHelper {
   }
 
   static _loadShoppinglistIngredientsState() async {
-    var shoppinglistIngredients =
-        await shoppinglistIngredientsAPI.getAllFromShoppinglistId(currentShoppinglistState.id);
+    var shoppinglistIngredients = currentShoppinglistState != null
+        ? await shoppinglistIngredientsAPI.getAllFromShoppinglistId(currentShoppinglistState.id)
+        : <ShoppinglistIngredient>[];
+
     currentShoppinglistIngredientsState = shoppinglistIngredients;
 
     _loadCurrentIngredientsState();
@@ -64,9 +67,11 @@ class StatesHelper {
 
   static _loadCurrentRecipesInPlanState() {
     var recipes = <Recipe>[];
-    for (var rId in currentPlanState.recipes) {
-      var recipe = recipesState.singleWhere((r) => r.id == rId);
-      recipes.add(recipe);
+    if (currentPlanState != null) {
+      for (var rId in currentPlanState.recipes) {
+        var recipe = recipesState.singleWhere((r) => r.id == rId);
+        recipes.add(recipe);
+      }
     }
 
     currentRecipesInPlanState = recipes;
@@ -141,5 +146,19 @@ class StatesHelper {
         lastModifiedAt: Timestamp.now());
     await shoppinglistsAPI.update(shoppinglist);
     await _loadShoppinglistState();
+  }
+
+  static Future<void> saveRecipe(String recipeName, List<Map<String, String>> ingredientJsonRows) async {
+    await RecipeHelper.saveRecipe(recipeName, ingredientJsonRows, ingredientsState);
+    await _loadRecipesState();
+    await _loadRecipeIngredientsState();
+    await _loadIngredientsState();
+  }
+
+  static Future<void> removeRecipe(Recipe recipe) async {
+    await RecipeHelper.removeRecipe(recipe, recipesState, recipeIngredientsState);
+    await recipesAPI.delete(recipe);
+    await _loadRecipesState();
+    await _loadRecipeIngredientsState();
   }
 }
