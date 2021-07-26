@@ -4,6 +4,7 @@ import 'package:grocerylister/APIs/FirebaseAPI/RecipeIngredients/DataModel/Recip
 import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
+import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/ShoppinglistAPI.dart';
 import 'package:grocerylister/Middleware/Helpers/IngredientHelper.dart';
 import 'package:grocerylister/Middleware/Helpers/PlanHelper.dart';
 import 'package:grocerylister/Middleware/Helpers/RecipeHelper.dart';
@@ -102,20 +103,21 @@ class StatesHelper {
   }
 
   static Future<void> generateShoppinglistIngredients() async {
-    await ShoppinglistHelper.generateNewShoppinglist(currentPlanState, recipeIngredientsState, ingredientsState);
+    await ShoppinglistHelper.generateShoppinglistIngredients(
+        currentPlanState, recipeIngredientsState, ingredientsState);
     await _loadShoppinglistState();
     await _loadShoppinglistIngredientsState();
   }
 
   static Future<void> updateShoppinglistIngredients() async {
-    await ShoppinglistHelper.updateShoppinglist(
+    await ShoppinglistHelper.updateShoppinglistIngredients(
         currentShoppinglistState, currentPlanState, ingredientsState, recipeIngredientsState);
     await _loadShoppinglistState();
     await _loadShoppinglistIngredientsState();
   }
 
   static Future<void> updateShoppinglistFromJsonIngredientData(Map<String, dynamic> newIngredientData) async {
-    await ShoppinglistHelper.updateShoppinglistFromJsonIngredientData(
+    await ShoppinglistHelper.updateShoppinglistIngredientsFromJsonIngredientData(
         currentShoppinglistState, ingredientsState, currentShoppinglistIngredientsState, newIngredientData);
     await _loadIngredientsState();
     await _loadShoppinglistState();
@@ -131,7 +133,7 @@ class StatesHelper {
         planId: currentShoppinglistState.planId,
         createdAt: currentShoppinglistState.createdAt,
         lastModifiedAt: Timestamp.now(),
-        allIngredientsBought: ShoppinglistHelper.isAllIngredientsChecked(currentShoppinglistIngredientsState));
+        allIngredientsBought: false);
 
     await shoppinglistsAPI.update(shoppinglist);
     await _loadShoppinglistState();
@@ -145,8 +147,29 @@ class StatesHelper {
         id: currentShoppinglistState.id,
         planId: currentShoppinglistState.planId,
         createdAt: currentShoppinglistState.createdAt,
-        lastModifiedAt: Timestamp.now());
+        lastModifiedAt: Timestamp.now(),
+        allIngredientsBought: false);
     await shoppinglistsAPI.update(shoppinglist);
+    await _loadShoppinglistState();
+  }
+
+  static Future<void> completeShoppinglist() async {
+    var ingredientsNowInStock = <Ingredient>[];
+    for (var i in currentIngredientsInShoppinglistState) {
+      i.isInStock = true;
+      ingredientsNowInStock.add(i);
+    }
+    await IngredientHelper.updateIngredients(ingredientsNowInStock);
+
+    var shoppinglist = Shoppinglist(
+        id: currentShoppinglistState.id,
+        planId: currentShoppinglistState.planId,
+        createdAt: currentShoppinglistState.createdAt,
+        lastModifiedAt: Timestamp.now(),
+        allIngredientsBought: true);
+    await shoppinglistsAPI.update(shoppinglist);
+
+    await _loadIngredientsState();
     await _loadShoppinglistState();
   }
 

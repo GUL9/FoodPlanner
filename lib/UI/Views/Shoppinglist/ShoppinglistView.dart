@@ -30,6 +30,8 @@ class ShoppinglistView extends State<NavigationView> {
     });
   }
 
+  void _completeShoppinglist() => Loader.show(context: context, showWhile: StatesHelper.completeShoppinglist());
+
   void _checkShoppinglistIngredient(bool isChecked, ShoppinglistIngredient checkedIngredient) {
     setState(() => checkedIngredient.isBought = isChecked);
     StatesHelper.updateShoppinglistIngredient(checkedIngredient);
@@ -50,6 +52,14 @@ class ShoppinglistView extends State<NavigationView> {
       arrangedShoppinglist.add(shoppinglistIngredient);
     }
     setState(() => _shoppinglistIngredients = arrangedShoppinglist);
+  }
+
+  bool _isNoShoppinglistOrCompleted() {
+    if (_shoppinglist == null)
+      return true;
+    else if (_shoppinglist.allIngredientsBought) return true;
+
+    return false;
   }
 
   void _loadAndListenToState() {
@@ -112,11 +122,17 @@ class ShoppinglistView extends State<NavigationView> {
       );
 
   Widget _completeShoppinglistButton() => FloatingActionButton.extended(
-      onPressed: null,
+      onPressed: _completeShoppinglist,
       icon: Icon(Icons.check),
       label: Text(Strings.compelte_shoppinglist),
       shape: Theme.of(context).buttonTheme.shape,
       heroTag: null);
+
+  Widget _addOrCompleteButton() => ShoppinglistHelper.isAllIngredientsChecked(_shoppinglistIngredients)
+      ? _completeShoppinglistButton()
+      : _addButton();
+
+  Widget _emptyShoppinglistText() => Expanded(child: Center(child: Text(Strings.empty_shoppinglist)));
 
   @override
   Widget build(BuildContext context) {
@@ -126,11 +142,10 @@ class ShoppinglistView extends State<NavigationView> {
           padding: EdgeInsets.symmetric(horizontal: 5),
           child: Column(children: [
             SearchField(searchOptions: _ingredients.map((i) => i.name).toList(), searchResults: _searchResults),
-            _shoppinglistIngredientsView()
+            _isNoShoppinglistOrCompleted() ? _emptyShoppinglistText() : _shoppinglistIngredientsView()
           ]),
         ),
-        floatingActionButton:
-            _shoppinglist != null && _shoppinglist.allIngredientsBought ? _completeShoppinglistButton() : _addButton(),
+        floatingActionButton: _isNoShoppinglistOrCompleted() ? null : _addOrCompleteButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }

@@ -8,7 +8,7 @@ import 'package:grocerylister/APIs/FirebaseAPI/ShoppinglistIngredients/DataModel
 import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
 
 class ShoppinglistHelper {
-  static Future<Shoppinglist> generateNewShoppinglist(
+  static Future<Shoppinglist> generateShoppinglistIngredients(
       Plan plan, List<RecipeIngredient> allRecipeIngredients, List<Ingredient> allIngredients) async {
     var now = Timestamp.now();
     var shoppinglist = Shoppinglist(planId: plan.id, createdAt: now, lastModifiedAt: now, allIngredientsBought: false);
@@ -36,7 +36,7 @@ class ShoppinglistHelper {
     return shoppinglist;
   }
 
-  static Future<Shoppinglist> updateShoppinglist(Shoppinglist currentShoppinglist, Plan currentPlan,
+  static Future<Shoppinglist> updateShoppinglistIngredients(Shoppinglist currentShoppinglist, Plan currentPlan,
       List<Ingredient> currentIngredients, List<RecipeIngredient> currentRecipeIngredients) async {
     await shoppinglistIngredientsAPI.deleteAllNotExtrafromShoppinglistId(currentShoppinglist.id);
 
@@ -65,8 +65,11 @@ class ShoppinglistHelper {
     return currentShoppinglist;
   }
 
-  static Future<void> updateShoppinglistFromJsonIngredientData(Shoppinglist shoppinglist, List<Ingredient> ingredients,
-      List<ShoppinglistIngredient> shoppinglistIngredients, Map<String, String> newIngredientData) async {
+  static Future<void> updateShoppinglistIngredientsFromJsonIngredientData(
+      Shoppinglist shoppinglist,
+      List<Ingredient> ingredients,
+      List<ShoppinglistIngredient> shoppinglistIngredients,
+      Map<String, String> newIngredientData) async {
     var name = newIngredientData['name'];
     var quantity = double.tryParse(newIngredientData['quantity']);
     var unit = newIngredientData['unit'];
