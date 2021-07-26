@@ -1,4 +1,5 @@
 class Strings {
+  static const String search = "Search...";
   static const String recipe_list = "Recipes";
   static const String shoppinglist = "Shoppinglist";
   static const String stock = "Stock";

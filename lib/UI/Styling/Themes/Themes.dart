@@ -24,7 +24,7 @@ final standardTheme = ThemeData(
     ),
     cardTheme: CardTheme(
         shape: RoundedRectangleBorder(
-            side: BorderSide(width: 2.5, color: primary3), borderRadius: BorderRadius.circular(5)),
+            side: BorderSide(width: 2.5, color: neutral2), borderRadius: BorderRadius.circular(5)),
         color: neutral,
         shadowColor: primary3,
         elevation: 10),

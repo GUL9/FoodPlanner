@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/Middleware/States/StatesHelper.dart';
+import 'package:grocerylister/UI/Views/Components/SearchField.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/SelectIngredientsInStockDialog.dart';
@@ -10,6 +13,8 @@ import 'package:grocerylister/util/strings.dart';
 
 class IngredientsInStockView extends State<NavigationView> {
   bool _isModified = false;
+  StreamController _searchResults = StreamController();
+  ScrollController _scrollController = ScrollController();
   List<Ingredient> _ingredientsInStock = [];
 
   void _checkIngredientInStock(bool isChecked, Ingredient ingredientToUncheck) {
@@ -36,20 +41,27 @@ class IngredientsInStockView extends State<NavigationView> {
     setState(() => _isModified = false);
   }
 
-  void _loadAndListenToState() {
-    setState(() => _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList());
+  void _scrollToSearchResult(int index) => _scrollController.jumpTo((index * 63 + index).toDouble());
 
-    ingredientsNotifierStream.stream.listen(
-        (ingredients) => setState(() => _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList()));
+  void _loadAndListenToState() {
+    _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList();
+    setState(() => _ingredientsInStock.sort((a, b) => a.name.compareTo(b.name)));
+
+    ingredientsNotifierStream.stream.listen((ingredients) {
+      _ingredientsInStock = ingredientsState.where((i) => i.isInStock).toList();
+      setState(() => _ingredientsInStock.sort((a, b) => a.name.compareTo(b.name)));
+    });
   }
 
   @override
   void initState() {
     super.initState();
     _loadAndListenToState();
+    _searchResults.stream.listen((searchResult) => _scrollToSearchResult(searchResult['index']));
   }
 
   Widget _ingredientsInstockList() => ListView.builder(
+      controller: _scrollController,
       itemCount: _ingredientsInStock.length,
       itemBuilder: (context, index) => Card(
               child: CheckboxListTile(
@@ -76,7 +88,13 @@ class IngredientsInStockView extends State<NavigationView> {
     return Scaffold(
         appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
         body: Container(
-            margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100), child: _ingredientsInstockList()),
+            margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
+            child: Column(children: [
+              SearchField(
+                  searchOptions: _ingredientsInStock.map((i) => i.name).toList(), searchResults: _searchResults),
+              Padding(padding: EdgeInsets.only(bottom: 30)),
+              Expanded(child: _ingredientsInstockList())
+            ])),
         floatingActionButton: _isModified ? _saveStockButton() : _addIngredientButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
