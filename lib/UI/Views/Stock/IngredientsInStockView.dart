@@ -8,8 +8,8 @@ import 'package:grocerylister/UI/Views/Components/SearchField.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/SelectIngredientsInStockDialog.dart';
-import 'package:grocerylister/util/Loading.dart';
-import 'package:grocerylister/util/strings.dart';
+import 'package:grocerylister/Utils/Loading.dart';
+import 'package:grocerylister/Utils/strings.dart';
 
 class IngredientsInStockView extends State<NavigationView> {
   bool _isModified = false;
@@ -30,6 +30,7 @@ class IngredientsInStockView extends State<NavigationView> {
           setState(() {
             _isModified = true;
             _ingredientsInStock.addAll(ingredientsToAddInStock);
+            _ingredientsInStock.sort((a, b) => a.name.compareTo(b.name));
           });
       });
 

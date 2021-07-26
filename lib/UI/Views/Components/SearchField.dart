@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
-import 'package:grocerylister/util/strings.dart';
+import 'package:grocerylister/Utils/strings.dart';
 
 class SearchField extends StatefulWidget {
   final StreamController searchResults;

@@ -4,7 +4,7 @@ import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/Middleware/States/StatesHelper.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
-import 'package:grocerylister/util/strings.dart';
+import 'package:grocerylister/Utils/strings.dart';
 
 import 'NewRecipeView.dart';
 

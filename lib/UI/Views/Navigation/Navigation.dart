@@ -4,7 +4,7 @@ import 'package:grocerylister/UI/Views/Plan/PlanView.dart';
 import 'package:grocerylister/UI/Views/Recipes/RecipesView.dart';
 import 'package:grocerylister/UI/Views/Shoppinglist/ShoppinglistView.dart';
 import 'package:grocerylister/UI/Views/Stock/IngredientsInStockView.dart';
-import 'package:grocerylister/util/strings.dart';
+import 'package:grocerylister/Utils/strings.dart';
 
 class NavigationDestination {
   const NavigationDestination(this.title, this.icon);

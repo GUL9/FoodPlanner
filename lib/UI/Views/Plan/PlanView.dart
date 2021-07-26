@@ -7,9 +7,9 @@ import 'package:grocerylister/Middleware/States/StatesHelper.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/SelectRecipeDialog.dart';
-import 'package:grocerylister/util/Loading.dart';
-import 'package:grocerylister/util/strings.dart';
-import 'package:grocerylister/util/InputValidator.dart';
+import 'package:grocerylister/Utils/Loading.dart';
+import 'package:grocerylister/Utils/strings.dart';
+import 'package:grocerylister/Utils/InputValidator.dart';
 
 class PlanView extends State<NavigationView> {
   bool _isCurrentPlanModified = false;

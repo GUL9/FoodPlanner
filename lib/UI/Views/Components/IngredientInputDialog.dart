@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:grocerylister/UI/Views/Components/IngredientInputRow.dart';
-import 'package:grocerylister/util/strings.dart';
+import 'package:grocerylister/Utils/strings.dart';
 
 class IngredientInputDialog extends StatefulWidget {
   @override

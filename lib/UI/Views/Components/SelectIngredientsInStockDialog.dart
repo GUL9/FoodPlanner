@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
-import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
-import 'package:grocerylister/util/Loading.dart';
-import 'package:grocerylister/util/strings.dart';
+import 'package:grocerylister/Middleware/States/States.dart';
+import 'package:grocerylister/UI/Views/Components/SearchField.dart';
+import 'package:grocerylister/Utils/strings.dart';
 
 class SelectIngredientsInStockDialog extends StatefulWidget {
   @override
@@ -11,14 +12,9 @@ class SelectIngredientsInStockDialog extends StatefulWidget {
 }
 
 class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStockDialog> {
+  ScrollController _scrollController = ScrollController();
+  StreamController _searchResults = StreamController();
   List<Ingredient> _ingredientsNotInStock = [];
-
-  Future<void> _loadIngredientsNotInStock() async {
-    var ingredients = await ingredientsAPI.getAllNotInStock();
-    setState(() {
-      for (var i in ingredients) _ingredientsNotInStock.add(i);
-    });
-  }
 
   void _checkIngredient(bool isChecked, Ingredient ingredient) => setState(() => ingredient.isInStock = isChecked);
 
@@ -28,10 +24,11 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
     Navigator.pop(context, checkedIngredients);
   }
 
-  Widget _recipeList() => Container(
-      width: 250,
-      height: 500,
+  void _scrollToSearchResult(int index) => _scrollController.jumpTo((index * 63 + index).toDouble());
+
+  Widget _ingredientsList() => Expanded(
       child: ListView.builder(
+          controller: _scrollController,
           itemCount: _ingredientsNotInStock.length,
           itemBuilder: (context, index) => Card(
               child: CheckboxListTile(
@@ -45,8 +42,9 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
   @override
   void initState() {
     super.initState();
-    SchedulerBinding.instance
-        .addPostFrameCallback((_) => Loader.show(context: context, showWhile: _loadIngredientsNotInStock()));
+    _ingredientsNotInStock = ingredientsState.where((i) => !i.isInStock).toList();
+    _ingredientsNotInStock.sort((a, b) => a.name.compareTo(b.name));
+    _searchResults.stream.listen((searchResult) => _scrollToSearchResult(searchResult['index']));
   }
 
   @override
@@ -59,7 +57,11 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
             child: Column(children: [
               Text(Strings.add_ingredient_toStock, style: Theme.of(context).textTheme.headline2),
               Padding(padding: EdgeInsets.only(bottom: 20)),
-              _recipeList(),
+              SearchField(
+                  searchOptions: _ingredientsNotInStock.map((i) => i.name).toList(), searchResults: _searchResults),
+              Padding(padding: EdgeInsets.only(bottom: 20)),
+              _ingredientsList(),
+              Padding(padding: EdgeInsets.only(bottom: 20)),
               _okButton()
             ])));
   }

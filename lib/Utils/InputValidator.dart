@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:grocerylister/util/strings.dart';
+import 'package:grocerylister/Utils/strings.dart';
 
 class InputValidator {
   static bool isIngredientNameFieldOk(BuildContext context, String name) {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
-import 'package:grocerylister/util/strings.dart';
+import 'package:grocerylister/Utils/strings.dart';
 
 class SelectRecipeDialog extends StatefulWidget {
   final Recipe _oldRecipe;

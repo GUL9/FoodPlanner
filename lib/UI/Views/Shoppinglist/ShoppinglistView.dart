@@ -7,8 +7,8 @@ import 'package:grocerylister/Middleware/States/StatesHelper.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/IngredientInputDialog.dart';
-import 'package:grocerylister/util/Loading.dart';
-import 'package:grocerylister/util/strings.dart';
+import 'package:grocerylister/Utils/Loading.dart';
+import 'package:grocerylister/Utils/strings.dart';
 
 class ShoppinglistView extends State<NavigationView> {
   Shoppinglist _shoppinglist;
