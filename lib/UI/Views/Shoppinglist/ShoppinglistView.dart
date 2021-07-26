@@ -76,7 +76,7 @@ class ShoppinglistView extends State<NavigationView> {
   FloatingActionButton _addButton() => FloatingActionButton.extended(
         onPressed: _openNewShoppinglistIngredientDialog,
         icon: Icon(Icons.add),
-        label: Text(Strings.new_ingredient),
+        label: Text(Strings.add_to_shoppinglist),
         shape: Theme.of(context).buttonTheme.shape,
         heroTag: null,
       );

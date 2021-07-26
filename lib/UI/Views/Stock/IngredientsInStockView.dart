@@ -73,7 +73,7 @@ class IngredientsInStockView extends State<NavigationView> {
 
   Widget _addIngredientButton() => FloatingActionButton.extended(
       onPressed: _openSelectIngredientsInStockDialog,
-      label: Text(Strings.add_ingredient),
+      label: Text(Strings.add_to_stock),
       icon: Icon(Icons.add),
       shape: Theme.of(context).buttonTheme.shape);
 
@@ -93,7 +93,7 @@ class IngredientsInStockView extends State<NavigationView> {
             child: Column(children: [
               SearchField(
                   searchOptions: _ingredientsInStock.map((i) => i.name).toList(), searchResults: _searchResults),
-              Padding(padding: EdgeInsets.only(bottom: 30)),
+              Padding(padding: EdgeInsets.only(bottom: 20)),
               Expanded(child: _ingredientsInstockList())
             ])),
         floatingActionButton: _isModified ? _saveStockButton() : _addIngredientButton(),

@@ -3,6 +3,7 @@ class Strings {
   static const String recipe_list = "Recipes";
   static const String shoppinglist = "Shoppinglist";
   static const String stock = "Stock";
+  static const String add_to_stock = "Add to stock";
   static const String new_recipe = "New recipe";
   static const String add_ingredient = "Add ingredient";
   static const String recipe_name = "Recipe name";
@@ -12,6 +13,7 @@ class Strings {
   static const String ingredient_quantity = "Quantity";
   static const String unit = "Unit";
   static const String new_ingredient = "New ingredient";
+  static const String add_to_shoppinglist = "Add to shoppinglist";
 
   static const String save_recipe = "Save";
   static const String missing_recipe_name = "Recipe name is missing";
