@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:grocerylister/APIs/FirebaseAPI/APIs.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
+import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
+import 'package:grocerylister/UI/Views/Components/SearchField.dart';
 import 'package:grocerylister/Utils/strings.dart';
 
 class SelectRecipeDialog extends StatefulWidget {
@@ -13,24 +16,21 @@ class SelectRecipeDialog extends StatefulWidget {
 
 class _SelectRecipeDialogState extends State<SelectRecipeDialog> {
   _SelectRecipeDialogState({Recipe oldRecipe}) : _oldRecipe = oldRecipe;
-  Recipe _oldRecipe;
+
   List<Recipe> _recipes = [];
+  Recipe _oldRecipe;
   int _selectedIndex = -1;
 
-  Future<void> _loadRecipes() async {
-    var recipes = await recipesAPI.getAll();
-    setState(() {
-      for (var r in recipes) _recipes.add(r);
-    });
-  }
+  ScrollController _scrollController = ScrollController();
+  StreamController _searchResults = StreamController();
 
   void _selectRecipe(int index) => setState(() => _selectedIndex = index);
   void _returnSelectedRecipe() => Navigator.pop(context, _selectedIndex != -1 ? _recipes[_selectedIndex] : null);
+  void _scrollToSearchResult(int index) => _scrollController.jumpTo((index * 63 + index).toDouble());
 
-  Widget _recipeList() => Container(
-      width: 250,
-      height: 500,
+  Widget _recipeList() => Expanded(
       child: ListView.builder(
+          controller: _scrollController,
           itemCount: _recipes.length,
           itemBuilder: (context, index) => Card(
               color: _selectedIndex == index ? neutral2 : neutral,
@@ -51,9 +51,10 @@ class _SelectRecipeDialogState extends State<SelectRecipeDialog> {
   @override
   void initState() {
     super.initState();
-    _loadRecipes().then((_) {
-      _selectedIndex = _recipes.indexWhere((recipe) => recipe.id == _oldRecipe.id);
-    });
+    _recipes = recipesState;
+    _recipes.sort((a, b) => a.name.compareTo(b.name));
+    _selectedIndex = _recipes.indexWhere((recipe) => recipe.id == _oldRecipe.id);
+    _searchResults.stream.listen((searchResult) => _scrollToSearchResult(searchResult['index']));
   }
 
   @override
@@ -66,7 +67,10 @@ class _SelectRecipeDialogState extends State<SelectRecipeDialog> {
             child: Column(children: [
               Text(Strings.select_new_recipe, style: Theme.of(context).textTheme.headline2),
               Padding(padding: EdgeInsets.only(bottom: 20)),
+              SearchField(searchOptions: _recipes.map((r) => r.name).toList(), searchResults: _searchResults),
+              Padding(padding: EdgeInsets.only(bottom: 20)),
               _recipeList(),
+              Padding(padding: EdgeInsets.only(bottom: 20)),
               _okButton()
             ])));
   }
