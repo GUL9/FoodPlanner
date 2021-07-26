@@ -11,7 +11,7 @@ class ShoppinglistHelper {
   static Future<Shoppinglist> generateNewShoppinglist(
       Plan plan, List<RecipeIngredient> allRecipeIngredients, List<Ingredient> allIngredients) async {
     var now = Timestamp.now();
-    var shoppinglist = Shoppinglist(planId: plan.id, createdAt: now, lastModifiedAt: now);
+    var shoppinglist = Shoppinglist(planId: plan.id, createdAt: now, lastModifiedAt: now, allIngredientsBought: false);
     shoppinglist.id = await shoppinglistsAPI.add(shoppinglist);
 
     var shoppinglistIngredients = <ShoppinglistIngredient>[];
@@ -93,6 +93,12 @@ class ShoppinglistHelper {
 
     shoppinglist.lastModifiedAt = Timestamp.now();
     await shoppinglistsAPI.update(shoppinglist);
+  }
+
+  static bool isAllIngredientsChecked(List<ShoppinglistIngredient> shoppinglistIngredients) {
+    for (var si in shoppinglistIngredients) if (!si.isBought) return false;
+
+    return true;
   }
 
   static List<ShoppinglistIngredient> _squashForSpecificIngredient(

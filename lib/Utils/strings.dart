@@ -14,6 +14,7 @@ class Strings {
   static const String unit = "Unit";
   static const String new_ingredient = "New ingredient";
   static const String add_to_shoppinglist = "Add to shoppinglist";
+  static const String compelte_shoppinglist = "Complete shoppinglist";
 
   static const String save_recipe = "Save";
   static const String missing_recipe_name = "Recipe name is missing";

@@ -101,13 +101,13 @@ class StatesHelper {
     await _loadPlanState();
   }
 
-  static Future<void> generateNewShoppinglist() async {
+  static Future<void> generateShoppinglistIngredients() async {
     await ShoppinglistHelper.generateNewShoppinglist(currentPlanState, recipeIngredientsState, ingredientsState);
     await _loadShoppinglistState();
     await _loadShoppinglistIngredientsState();
   }
 
-  static Future<void> updateShoppinglist() async {
+  static Future<void> updateShoppinglistIngredients() async {
     await ShoppinglistHelper.updateShoppinglist(
         currentShoppinglistState, currentPlanState, ingredientsState, recipeIngredientsState);
     await _loadShoppinglistState();
@@ -130,7 +130,9 @@ class StatesHelper {
         id: currentShoppinglistState.id,
         planId: currentShoppinglistState.planId,
         createdAt: currentShoppinglistState.createdAt,
-        lastModifiedAt: Timestamp.now());
+        lastModifiedAt: Timestamp.now(),
+        allIngredientsBought: ShoppinglistHelper.isAllIngredientsChecked(currentShoppinglistIngredientsState));
+
     await shoppinglistsAPI.update(shoppinglist);
     await _loadShoppinglistState();
   }

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:grocerylister/Middleware/Helpers/ShoppinglistHelper.dart';
 import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
@@ -12,7 +13,6 @@ import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/IngredientInputDialog.dart';
 import 'package:grocerylister/Utils/Loading.dart';
 import 'package:grocerylister/Utils/strings.dart';
-import 'package:grocerylister/Utils/util.dart';
 
 class ShoppinglistView extends State<NavigationView> {
   Shoppinglist _shoppinglist;
@@ -103,13 +103,20 @@ class ShoppinglistView extends State<NavigationView> {
             );
           }));
 
-  FloatingActionButton _addButton() => FloatingActionButton.extended(
+  Widget _addButton() => FloatingActionButton.extended(
         onPressed: _openNewShoppinglistIngredientDialog,
         icon: Icon(Icons.add),
         label: Text(Strings.add_to_shoppinglist),
         shape: Theme.of(context).buttonTheme.shape,
         heroTag: null,
       );
+
+  Widget _completeShoppinglistButton() => FloatingActionButton.extended(
+      onPressed: null,
+      icon: Icon(Icons.check),
+      label: Text(Strings.compelte_shoppinglist),
+      shape: Theme.of(context).buttonTheme.shape,
+      heroTag: null);
 
   @override
   Widget build(BuildContext context) {
@@ -122,7 +129,8 @@ class ShoppinglistView extends State<NavigationView> {
             _shoppinglistIngredientsView()
           ]),
         ),
-        floatingActionButton: isKeyboardActive(context) ? null : _addButton(),
+        floatingActionButton:
+            _shoppinglist != null && _shoppinglist.allIngredientsBought ? _completeShoppinglistButton() : _addButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }

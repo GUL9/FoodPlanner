@@ -37,8 +37,8 @@ class IngredientsInStockView extends State<NavigationView> {
   Future<void> _updateIngredientsInStockAndShoppinglist() async {
     Loader.show(
         context: context,
-        showWhile:
-            StatesHelper.updateIngredientsInStock(_ingredientsInStock).then((_) => StatesHelper.updateShoppinglist()));
+        showWhile: StatesHelper.updateIngredientsInStock(_ingredientsInStock)
+            .then((_) => StatesHelper.updateShoppinglistIngredients()));
     setState(() => _isModified = false);
   }
 

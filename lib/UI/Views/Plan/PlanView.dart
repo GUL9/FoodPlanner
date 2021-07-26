@@ -38,7 +38,7 @@ class PlanView extends State<NavigationView> {
   Future<void> _generateNewPlanAndShoppinglist() async {
     Loader.show(
         context: context,
-        showWhile: StatesHelper.generateNewPlan().then((_) => StatesHelper.generateNewShoppinglist()));
+        showWhile: StatesHelper.generateNewPlan().then((_) => StatesHelper.generateShoppinglistIngredients()));
     setState(() => _isCurrentPlanModified = false);
   }
 
@@ -50,7 +50,8 @@ class PlanView extends State<NavigationView> {
         recipes: _currentPlanRecipes.map((r) => r.id).toList());
 
     Loader.show(
-        context: context, showWhile: StatesHelper.updatePlan(toUpdate).then((_) => StatesHelper.updateShoppinglist()));
+        context: context,
+        showWhile: StatesHelper.updatePlan(toUpdate).then((_) => StatesHelper.updateShoppinglistIngredients()));
     setState(() => _isCurrentPlanModified = false);
   }
 
