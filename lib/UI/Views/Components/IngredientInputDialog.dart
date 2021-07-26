@@ -28,7 +28,7 @@ class _IngredientInputDialogState extends State<IngredientInputDialog> {
     return AlertDialog(
         insetPadding: EdgeInsets.all(0),
         content: Container(
-          height: 165,
+          height: 162,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[

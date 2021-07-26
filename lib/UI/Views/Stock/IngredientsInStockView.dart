@@ -84,19 +84,20 @@ class IngredientsInStockView extends State<NavigationView> {
       backgroundColor: affirmative,
       shape: Theme.of(context).buttonTheme.shape);
 
+  Widget _addOrSaveButton() => _isModified ? _saveStockButton() : _addIngredientButton();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
         body: Container(
-            margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
+            padding: EdgeInsets.symmetric(horizontal: 5),
             child: Column(children: [
               SearchField(
                   searchOptions: _ingredientsInStock.map((i) => i.name).toList(), searchResults: _searchResults),
-              Padding(padding: EdgeInsets.only(bottom: 20)),
               Expanded(child: _ingredientsInstockList())
             ])),
-        floatingActionButton: _isModified ? _saveStockButton() : _addIngredientButton(),
+        floatingActionButton: _addOrSaveButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }

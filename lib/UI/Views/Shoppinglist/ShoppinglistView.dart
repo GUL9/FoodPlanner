@@ -1,19 +1,26 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Ingredients/DataModel/Ingredient.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
 import 'package:grocerylister/Middleware/States/StatesHelper.dart';
+import 'package:grocerylister/UI/Views/Components/SearchField.dart';
 import 'package:grocerylister/UI/Views/Navigation/Navigation.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/IngredientInputDialog.dart';
 import 'package:grocerylister/Utils/Loading.dart';
 import 'package:grocerylister/Utils/strings.dart';
+import 'package:grocerylister/Utils/util.dart';
 
 class ShoppinglistView extends State<NavigationView> {
   Shoppinglist _shoppinglist;
   List<ShoppinglistIngredient> _shoppinglistIngredients = [];
   List<Ingredient> _ingredients = [];
+
+  ScrollController _scrollController = ScrollController();
+  StreamController _searchResults = StreamController();
 
   void _openNewShoppinglistIngredientDialog() {
     showDialog(context: context, builder: (_) => IngredientInputDialog()).then((newIngredientData) {
@@ -36,42 +43,65 @@ class ShoppinglistView extends State<NavigationView> {
     });
   }
 
+  void _arrangeShoppinglistByIngredients() {
+    var arrangedShoppinglist = <ShoppinglistIngredient>[];
+    for (var i in _ingredients) {
+      var shoppinglistIngredient = _shoppinglistIngredients.singleWhere((si) => si.ingredientId == i.id, orElse: null);
+      arrangedShoppinglist.add(shoppinglistIngredient);
+    }
+    setState(() => _shoppinglistIngredients = arrangedShoppinglist);
+  }
+
   void _loadAndListenToState() {
     setState(() {
       _shoppinglist = currentShoppinglistState;
+
+      _ingredients = currentIngredientsInShoppinglistState;
+      _ingredients.sort((a, b) => a.name.compareTo(b.name));
+
       _shoppinglistIngredients = currentShoppinglistIngredientsState;
-      _ingredients = ingredientsState;
+      _arrangeShoppinglistByIngredients();
     });
 
     shoppinglistNotifierStream.stream.listen((_) => setState(() => _shoppinglist = currentShoppinglistState));
     shoppinglistIngredientsNotifierStream.stream.listen((_) => setState(() {
           _shoppinglistIngredients = currentShoppinglistIngredientsState;
           _ingredients = currentIngredientsInShoppinglistState;
+
+          _ingredients.sort((a, b) => a.name.compareTo(b.name));
+          _arrangeShoppinglistByIngredients();
         }));
   }
+
+  void _scrollToSearchResult(int index) => _scrollController.jumpTo((index * 63 + index).toDouble());
 
   @override
   void initState() {
     super.initState();
     _loadAndListenToState();
+
+    _searchResults.stream.listen((searchResult) => _scrollToSearchResult(searchResult['index']));
   }
 
-  ListView _shoppinglistIngredientsView() => ListView.builder(
-      itemCount: _shoppinglistIngredients.length,
-      itemBuilder: (context, index) {
-        return Card(
-          child: CheckboxListTile(
-              title: Text(
-                "${_shoppinglistIngredients[index].quantity.toString()} ${_shoppinglistIngredients[index].unit} ${_ingredients[index].name}",
-                style: Theme.of(context).textTheme.bodyText2,
-              ),
-              secondary: IconButton(
-                  icon: Icon(Icons.delete, color: primary3), onPressed: () => _removeShoppinglistIngredient(index)),
-              controlAffinity: ListTileControlAffinity.leading,
-              value: _shoppinglistIngredients[index].isBought,
-              onChanged: (bool isChecked) => _checkShoppinglistIngredient(isChecked, _shoppinglistIngredients[index])),
-        );
-      });
+  Widget _shoppinglistIngredientsView() => Expanded(
+      child: ListView.builder(
+          controller: _scrollController,
+          itemCount: _shoppinglistIngredients.length,
+          itemBuilder: (context, index) {
+            return Card(
+              child: CheckboxListTile(
+                  title: Text(
+                    "${_shoppinglistIngredients[index].quantity.toString()} ${_shoppinglistIngredients[index].unit} ${_ingredients[index].name}",
+                    style: Theme.of(context).textTheme.bodyText2,
+                  ),
+                  secondary: IconButton(
+                      icon: Icon(Icons.delete, color: primary3), onPressed: () => _removeShoppinglistIngredient(index)),
+                  controlAffinity: ListTileControlAffinity.leading,
+                  value: _shoppinglistIngredients[index].isBought,
+                  onChanged: (bool isChecked) =>
+                      _checkShoppinglistIngredient(isChecked, _shoppinglistIngredients[index])),
+            );
+          }));
 
   FloatingActionButton _addButton() => FloatingActionButton.extended(
         onPressed: _openNewShoppinglistIngredientDialog,
@@ -86,10 +116,13 @@ class ShoppinglistView extends State<NavigationView> {
     return Scaffold(
         appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
         body: Container(
-          padding: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
-          child: _shoppinglistIngredientsView(),
+          padding: EdgeInsets.symmetric(horizontal: 5),
+          child: Column(children: [
+            SearchField(searchOptions: _ingredients.map((i) => i.name).toList(), searchResults: _searchResults),
+            _shoppinglistIngredientsView()
+          ]),
         ),
-        floatingActionButton: _addButton(),
+        floatingActionButton: isKeyboardActive(context) ? null : _addButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat);
   }
 }

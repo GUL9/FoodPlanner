@@ -68,9 +68,7 @@ class _SelectRecipeDialogState extends State<SelectRecipeDialog> {
               Text(Strings.select_new_recipe, style: Theme.of(context).textTheme.headline2),
               Padding(padding: EdgeInsets.only(bottom: 20)),
               SearchField(searchOptions: _recipes.map((r) => r.name).toList(), searchResults: _searchResults),
-              Padding(padding: EdgeInsets.only(bottom: 20)),
               _recipeList(),
-              Padding(padding: EdgeInsets.only(bottom: 20)),
               _okButton()
             ])));
   }

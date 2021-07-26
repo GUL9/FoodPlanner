@@ -61,10 +61,9 @@ class RecipesView extends State<NavigationView> {
     return Scaffold(
         appBar: AppBar(title: Text('${widget.destination.title}', style: Theme.of(context).textTheme.headline1)),
         body: Container(
-            margin: EdgeInsets.only(left: 20, right: 20, top: 20, bottom: 100),
+            padding: EdgeInsets.symmetric(horizontal: 5),
             child: Column(children: [
               SearchField(searchOptions: _recipes.map((r) => r.name).toList(), searchResults: _searchResults),
-              Padding(padding: EdgeInsets.only(bottom: 20)),
               _recipeListFromStream(),
             ])),
         floatingActionButton: _addNewRecipeButton(context),

@@ -50,7 +50,6 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-        insetPadding: EdgeInsets.all(10),
         content: Container(
             width: 250,
             height: 600,
@@ -59,9 +58,7 @@ class _SelectIngredientsInStockDialogState extends State<SelectIngredientsInStoc
               Padding(padding: EdgeInsets.only(bottom: 20)),
               SearchField(
                   searchOptions: _ingredientsNotInStock.map((i) => i.name).toList(), searchResults: _searchResults),
-              Padding(padding: EdgeInsets.only(bottom: 20)),
               _ingredientsList(),
-              Padding(padding: EdgeInsets.only(bottom: 20)),
               _okButton()
             ])));
   }
