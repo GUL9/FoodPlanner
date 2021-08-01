@@ -10,6 +10,8 @@ class PlanHelper {
     var sevenRandomRecipes = [];
     for (var i = 0; i < 7; i++) {
       var index = Random().nextInt(recipes.length);
+      while (sevenRandomRecipes.contains(recipes[index])) index = Random().nextInt(recipes.length);
+
       sevenRandomRecipes.add(recipes[index]);
     }
 
