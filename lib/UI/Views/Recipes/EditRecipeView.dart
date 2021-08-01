@@ -1,23 +1,46 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
+import 'package:grocerylister/Middleware/States/States.dart';
 import 'package:grocerylister/Middleware/States/StatesHelper.dart';
 import 'package:grocerylister/UI/Styling/Themes/Themes.dart';
 import 'package:grocerylister/UI/Views/Components/IngredientInputDialog.dart';
+import 'package:grocerylister/Utils/Loading.dart';
 import 'package:grocerylister/Utils/strings.dart';
 
-class NewRecipeView extends StatefulWidget {
+class EditRecipeView extends StatefulWidget {
+  final Recipe _recipe;
+
+  EditRecipeView(Recipe recipeToEdit) : _recipe = recipeToEdit;
+
   @override
-  NewRecipeViewState createState() => NewRecipeViewState();
+  EditRecipeViewState createState() => EditRecipeViewState(_recipe);
 }
 
-class NewRecipeViewState extends State<NewRecipeView> {
+class EditRecipeViewState extends State<EditRecipeView> {
+  EditRecipeViewState(Recipe recipeToEdit) : _recipe = recipeToEdit;
+
+  Recipe _recipe;
   TextEditingController _recipeNameController = TextEditingController();
   List<Map<String, String>> _ingredientRows = [];
   ScrollController _ingredientListScrollController = ScrollController();
 
+  void _loadRecipe() {
+    setState(() => _recipeNameController.text = _recipe.name);
+    var recipeIngredients = recipeIngredientsState.where((ri) => ri.recipeId == _recipe.id);
+
+    for (var ri in recipeIngredients) {
+      var ingredient = ingredientsState.singleWhere((i) => i.id == ri.ingredientId, orElse: null);
+      setState(
+          () => _ingredientRows.add({'name': ingredient.name, 'quantity': ri.quantity.toString(), 'unit': ri.unit}));
+    }
+  }
+
   void _saveRecipeAndReturn() {
-    StatesHelper.saveNewRecipe(_recipeNameController.text, _ingredientRows);
-    Navigator.pop(context);
+    _recipe.name = _recipeNameController.text;
+
+    Loader.show(context: context, showWhile: StatesHelper.updateRecipe(_recipe, _ingredientRows))
+        .then((_) => Navigator.pop(context));
   }
 
   void _openNewRecipeIngredientDialog() {
@@ -67,7 +90,7 @@ class NewRecipeViewState extends State<NewRecipeView> {
             label: Text(Strings.add),
             shape: Theme.of(context).buttonTheme.shape,
             heroTag: null,
-            onPressed: () => takeVoiceInput()),
+            onPressed: null),
         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
         FloatingActionButton.extended(
             icon: Icon(Icons.check),
@@ -77,6 +100,12 @@ class NewRecipeViewState extends State<NewRecipeView> {
             onPressed: _saveRecipeAndReturn),
         Padding(padding: EdgeInsets.symmetric(vertical: 10)),
       ]));
+
+  @override
+  void initState() {
+    _loadRecipe();
+    super.initState();
+  }
 
   @override
   build(BuildContext context) {
@@ -97,25 +126,4 @@ class NewRecipeViewState extends State<NewRecipeView> {
           Align(alignment: Alignment.bottomRight, child: _floatingActionButtonColumn())
         ]));
   }
-
-  void takeVoiceInput() {
-    // if (_recipeNameController.text.isEmpty)
-    //   globals.sttHandler.listenToSpeech(null, handleTextFromSpeech);
-    // else
-    //   globals.sttHandler.listenToSpeech('Storbritannien', handleTextFromSpeech);
-  }
-
-  // Future handleTextFromSpeech(String text) async {
-  //   if (_recipeNameController.text.isEmpty)
-  //     _recipeNameController.text = text;
-  //   else
-  //     await globals.nlpServerComm.requestForIngredient(text, handleParsedIngredient);
-  // }
-
-  // void handleParsedIngredient(List ingredientTokens) {
-  //   String name = ingredientTokens[0];
-  //   String quantity = ingredientTokens[1];
-  //   String unit = allUnitsAsStrings().contains(ingredientTokens[2]) ? ingredientTokens[2] : null;
-  //   setState(() => _ingredientRows.add(IngredientInputRow(name: name, quantity: quantity, unit: unit)));
-  // }
 }

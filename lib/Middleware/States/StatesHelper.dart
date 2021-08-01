@@ -4,7 +4,6 @@ import 'package:grocerylister/APIs/FirebaseAPI/RecipeIngredients/DataModel/Recip
 import 'package:grocerylister/APIs/FirebaseAPI/Recipes/DataModel/Recipe.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/ShoppinglistIngredients/DataModel/ShoppinglistIngredient.dart';
 import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/DataModel/Shoppinglist.dart';
-import 'package:grocerylister/APIs/FirebaseAPI/Shoppinglists/ShoppinglistAPI.dart';
 import 'package:grocerylister/Middleware/Helpers/IngredientHelper.dart';
 import 'package:grocerylister/Middleware/Helpers/PlanHelper.dart';
 import 'package:grocerylister/Middleware/Helpers/RecipeHelper.dart';
@@ -173,11 +172,20 @@ class StatesHelper {
     await _loadShoppinglistState();
   }
 
-  static Future<void> saveRecipe(String recipeName, List<Map<String, String>> ingredientJsonRows) async {
-    await RecipeHelper.saveRecipe(recipeName, ingredientJsonRows, ingredientsState);
+  static Future<void> saveNewRecipe(String recipeName, List<Map<String, String>> ingredientJsonRows) async {
+    await RecipeHelper.saveNewRecipe(recipeName, ingredientJsonRows, ingredientsState);
     await _loadRecipesState();
     await _loadRecipeIngredientsState();
     await _loadIngredientsState();
+  }
+
+  static Future<void> updateRecipe(Recipe recipe, List<Map<String, String>> ingredientJsonRows) async {
+    await RecipeHelper.updateRecipe(recipe, ingredientJsonRows, ingredientsState, recipeIngredientsState);
+    await _loadRecipesState();
+    await _loadRecipeIngredientsState();
+    await _loadIngredientsState();
+
+    if (currentPlanState.recipes.contains(recipe.id)) updateShoppinglistIngredients();
   }
 
   static Future<void> removeRecipe(Recipe recipe) async {
