@@ -48,8 +48,8 @@ class ShoppinglistView extends State<NavigationView> {
   void _arrangeShoppinglistByIngredients() {
     var arrangedShoppinglist = <ShoppinglistIngredient>[];
     for (var i in _ingredients) {
-      var shoppinglistIngredient = _shoppinglistIngredients.singleWhere((si) => si.ingredientId == i.id, orElse: null);
-      arrangedShoppinglist.add(shoppinglistIngredient);
+      var shoppinglistIngredients = _shoppinglistIngredients.where((si) => si.ingredientId == i.id);
+      arrangedShoppinglist.addAll(shoppinglistIngredients);
     }
     setState(() => _shoppinglistIngredients = arrangedShoppinglist);
   }
